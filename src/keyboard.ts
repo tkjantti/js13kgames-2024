@@ -33,11 +33,11 @@ export type Key =
     | "KeyS"
     | "KeyD";
 
-type ControlsMutable = Record<Key, boolean>;
+type KeysMutable = Record<Key, boolean>;
 
-export type Controls = Readonly<ControlsMutable>;
+export type Keys = Readonly<KeysMutable>;
 
-const createControls = (): ControlsMutable => ({
+const createKeys = (): KeysMutable => ({
     ["ArrowLeft"]: false,
     ["ArrowRight"]: false,
     ["ArrowUp"]: false,
@@ -48,25 +48,25 @@ const createControls = (): ControlsMutable => ({
     ["KeyD"]: false,
 });
 
-let controls: ControlsMutable = createControls();
+let keys: KeysMutable = createKeys();
 
 const onKeyDown = (event: KeyboardEvent): void => {
-    if (event.code in controls) {
-        controls[event.code as Key] = true;
+    if (event.code in keys) {
+        keys[event.code as Key] = true;
     }
 };
 
 const onKeyUp = (event: KeyboardEvent): void => {
-    if (event.code in controls) {
-        controls[event.code as Key] = false;
+    if (event.code in keys) {
+        keys[event.code as Key] = false;
     }
 };
 
-export const initializeControls = (): void => {
+export const initializeKeyboard = (): void => {
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("keyup", onKeyUp);
     window.addEventListener("blur", () => {
-        controls = createControls();
+        keys = createKeys();
     });
 };
 
@@ -98,4 +98,4 @@ export const waitForEnter = (): Promise<void> => {
     });
 };
 
-export const getControls = (): Controls => controls;
+export const getKeys = (): Keys => keys;

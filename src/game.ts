@@ -1,9 +1,13 @@
 import { canvas, cx } from "./graphics";
+import { initializeKeyboard } from "./keyboard";
+import { Level } from "./Level";
 
 const TIME_STEP = 1000 / 60;
 const MAX_FRAME = TIME_STEP * 5;
 
 let lastTime = 0;
+
+const level = new Level();
 
 const gameLoop = (t: number): void => {
     requestAnimationFrame(gameLoop);
@@ -15,25 +19,21 @@ const gameLoop = (t: number): void => {
     draw(t, dt);
 };
 
-let x = 0;
-let y = 0;
-
 const update = (t: number, dt: number): void => {
-    const newX = x + dt * 0.5;
-    const newY = t < 5000 ? (t / 5000) * 300 : 300;
-    x = newX < canvas.width ? newX : 0;
-    y = newY;
+    level.update(t, dt);
 };
 
-const draw = (t: number, _: number): void => {
+const draw = (t: number, dt: number): void => {
     cx.save();
     cx.fillStyle = "black";
     cx.fillRect(0, 0, canvas.width, canvas.height);
-    cx.fillStyle = `rgb(100, 100, ${200 + Math.sin(t / 500) * 55})`;
-    cx.fillRect(x, y, 150, 150);
+
+    level.draw(t, dt);
+
     cx.restore();
 };
 
 export const start = async (): Promise<void> => {
+    initializeKeyboard();
     window.requestAnimationFrame(gameLoop);
 };
