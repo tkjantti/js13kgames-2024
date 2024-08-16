@@ -31,6 +31,11 @@ export enum CharacterAnimation {
     Run,
 }
 
+export enum CharacterFacingDirection {
+    Right,
+    Forward,
+}
+
 const color = "rgb(200,200,200)";
 const LegColor = "rgb(140,140,140)";
 const LegColorDarker = "rgb(120,120,120)";
@@ -44,6 +49,7 @@ export function renderCharacter(
     w: number,
     h: number,
     t: number,
+    direction: CharacterFacingDirection,
     animation: CharacterAnimation,
 ): void {
     let period = 0;
@@ -83,8 +89,12 @@ export function renderCharacter(
     cx.translate(x, y);
     cx.translate(0, -bouncing);
 
+    const armLength = 0.35 * h;
+    const legLength = 0.4 * h;
+    const torsoLength = 0.4 * h;
+
     cx.fillStyle = color;
-    cx.lineWidth = w * 0.4;
+    cx.lineWidth = w * 0.3;
 
     // Debug border
     // cx.save();
@@ -93,58 +103,121 @@ export function renderCharacter(
     // cx.strokeRect(0, 0, w, h);
     // cx.restore();
 
-    // Arm (back)
-    cx.save();
-    cx.strokeStyle = ArmColorDarker;
-    cx.translate(0.5 * w, 0.4 * h);
-    cx.rotate(angle2);
-    cx.beginPath();
-    cx.moveTo(0, 0);
-    cx.lineTo(0, 0.35 * h);
-    cx.stroke();
-    cx.restore();
+    switch (direction) {
+        case CharacterFacingDirection.Right:
+            {
+                // Arm (back)
+                cx.save();
+                cx.strokeStyle = ArmColorDarker;
+                cx.translate(0.5 * w, 0.4 * h);
+                cx.rotate(angle2);
+                cx.beginPath();
+                cx.moveTo(0, 0);
+                cx.lineTo(0, armLength);
+                cx.stroke();
+                cx.restore();
 
-    // Leg (back)
-    cx.save();
-    cx.strokeStyle = LegColorDarker;
-    cx.translate(0.5 * w, 0.6 * h);
-    cx.rotate(angle1);
-    cx.beginPath();
-    cx.moveTo(0, 0);
-    cx.lineTo(0, 0.4 * h);
-    cx.stroke();
-    cx.restore();
+                // Leg (back)
+                cx.save();
+                cx.strokeStyle = LegColorDarker;
+                cx.translate(0.5 * w, 0.6 * h);
+                cx.rotate(angle1);
+                cx.beginPath();
+                cx.moveTo(0, 0);
+                cx.lineTo(0, legLength);
+                cx.stroke();
+                cx.restore();
 
-    // Leg (front)
-    cx.save();
-    cx.strokeStyle = LegColor;
-    cx.translate(0.5 * w, 0.6 * h);
-    cx.rotate(angle2);
-    cx.beginPath();
-    cx.moveTo(0, 0);
-    cx.lineTo(0, 0.4 * h);
-    cx.stroke();
-    cx.restore();
+                // Leg (front)
+                cx.save();
+                cx.strokeStyle = LegColor;
+                cx.translate(0.5 * w, 0.6 * h);
+                cx.rotate(angle2);
+                cx.beginPath();
+                cx.moveTo(0, 0);
+                cx.lineTo(0, legLength);
+                cx.stroke();
+                cx.restore();
 
-    // Head
-    const headRadius = w * 0.35;
-    cx.beginPath();
-    cx.arc(0.5 * w, 0.15 * h, headRadius, 0, 2 * Math.PI);
-    cx.fill();
+                // Head
+                const headRadius = w * 0.35;
+                cx.beginPath();
+                cx.arc(0.5 * w, 0.15 * h, headRadius, 0, 2 * Math.PI);
+                cx.fill();
 
-    // Torso
-    cx.fillRect(0 * w, 0.3 * h, 1 * w, 0.4 * h);
+                // Torso
+                cx.fillRect(0.2 * w, 0.3 * h, 0.6 * w, torsoLength);
 
-    // Arm (front)
-    cx.save();
-    cx.strokeStyle = ArmColor;
-    cx.translate(0.5 * w, 0.4 * h);
-    cx.rotate(angle1);
-    cx.beginPath();
-    cx.moveTo(0, 0);
-    cx.lineTo(0, 0.35 * h);
-    cx.stroke();
-    cx.restore();
+                // Arm (front)
+                cx.save();
+                cx.strokeStyle = ArmColor;
+                cx.translate(0.5 * w, 0.4 * h);
+                cx.rotate(angle1);
+                cx.beginPath();
+                cx.moveTo(0, 0);
+                cx.lineTo(0, armLength);
+                cx.stroke();
+                cx.restore();
+            }
+            break;
+        case CharacterFacingDirection.Forward: {
+            // Leg (left)
+            cx.save();
+            cx.strokeStyle = LegColorDarker;
+            cx.translate(0.35 * w, 0.6 * h);
+            cx.scale(1, Math.cos(angle1 + Math.PI / 8));
+            cx.beginPath();
+            cx.moveTo(0, 0);
+            cx.lineTo(0, legLength);
+            cx.stroke();
+            cx.restore();
+
+            // Leg (right)
+            cx.save();
+            cx.strokeStyle = LegColor;
+            cx.translate(0.65 * w, 0.6 * h);
+            cx.scale(1, Math.cos(angle2 + Math.PI / 8));
+            cx.beginPath();
+            cx.moveTo(0, 0);
+            cx.lineTo(0, legLength);
+            cx.stroke();
+            cx.restore();
+
+            // Arm (left)
+            cx.save();
+            cx.strokeStyle = ArmColor;
+            cx.translate(0.1 * w, 0.3 * h);
+            cx.scale(1, Math.cos(angle2 + Math.PI / 8));
+            cx.beginPath();
+            cx.moveTo(0, 0);
+            cx.lineTo(0, armLength);
+            cx.stroke();
+            cx.restore();
+
+            // Arm (front)
+            cx.save();
+            cx.strokeStyle = ArmColor;
+            cx.translate(0.9 * w, 0.3 * h);
+            cx.scale(1, Math.cos(angle1 + Math.PI / 8));
+            cx.beginPath();
+            cx.moveTo(0, 0);
+            cx.lineTo(0, armLength);
+            cx.stroke();
+            cx.restore();
+
+            // Head
+            const headRadius = w * 0.35;
+            cx.beginPath();
+            cx.arc(0.5 * w, 0.15 * h, headRadius, 0, 2 * Math.PI);
+            cx.fill();
+
+            // Torso
+            cx.fillRect(0.2 * w, 0.3 * h, 0.6 * w, torsoLength);
+            break;
+        }
+        default:
+            break;
+    }
 
     cx.restore();
 }

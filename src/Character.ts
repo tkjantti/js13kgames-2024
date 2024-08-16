@@ -22,7 +22,11 @@
  * SOFTWARE.
  */
 
-import { CharacterAnimation, renderCharacter } from "./CharacterAnimation";
+import {
+    CharacterAnimation,
+    CharacterFacingDirection,
+    renderCharacter,
+} from "./CharacterAnimation";
 import { cx } from "./graphics";
 import { isZero, Vector } from "./Vector";
 
@@ -54,6 +58,11 @@ export class Character {
             ? CharacterAnimation.Still
             : CharacterAnimation.Walk;
 
-        renderCharacter(cx, this.x, this.y, 75, 150, t, animation);
+        const direction: CharacterFacingDirection =
+            this.direction.y !== 0
+                ? CharacterFacingDirection.Forward
+                : CharacterFacingDirection.Right;
+
+        renderCharacter(cx, this.x, this.y, 75, 150, t, direction, animation);
     }
 }
