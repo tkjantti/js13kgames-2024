@@ -22,12 +22,15 @@
  * SOFTWARE.
  */
 
+import { CharacterAnimation, renderCharacter } from "./CharacterAnimation";
 import { cx } from "./graphics";
-import { Vector } from "./Vector";
+import { isZero, Vector } from "./Vector";
 
 const PLAYER_SPEED = 3;
 
 export class Character {
+    private direction: Vector = { x: 0, y: 0 };
+
     x: number;
     y: number;
 
@@ -37,6 +40,7 @@ export class Character {
     }
 
     move(direction: Vector): void {
+        this.direction = direction;
         this.x += direction.x * PLAYER_SPEED;
         this.y += direction.y * PLAYER_SPEED;
     }
@@ -46,7 +50,10 @@ export class Character {
 
     // eslint-disable-next-line
     draw(t: number, _: number): void {
-        cx.fillStyle = `rgb(100, 100, ${200 + Math.sin(t / 500) * 55})`;
-        cx.fillRect(this.x, this.y, 150, 150);
+        const animation: CharacterAnimation = isZero(this.direction)
+            ? CharacterAnimation.Still
+            : CharacterAnimation.Walk;
+
+        renderCharacter(cx, this.x, this.y, 75, 150, t, animation);
     }
 }

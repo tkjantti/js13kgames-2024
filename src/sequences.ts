@@ -22,39 +22,6 @@
  * SOFTWARE.
  */
 
-export interface Vector {
-    x: number;
-    y: number;
-}
-
-export function isZero(a: Vector): boolean {
-    return a.x === 0 && a.y === 0;
-}
-
-export function distance(a: Vector, b: Vector): number {
-    const dx = a.x - b.x;
-    const dy = a.y - b.y;
-    return Math.sqrt(dx * dx + dy * dy);
-}
-
-export function length(a: Vector): number {
-    return Math.sqrt(a.x * a.x + a.y * a.y);
-}
-
-export function subtract(a: Vector, b: Vector): Vector {
-    return {
-        x: a.x - b.x,
-        y: a.y - b.y,
-    };
-}
-
-export function divide(a: Vector, divisor: number): Vector {
-    return {
-        x: a.x / divisor,
-        y: a.y / divisor,
-    };
-}
-
-export function normalize(a: Vector): Vector {
-    return divide(a, length(a));
-}
+export const triangle = (period: number, t: number): number => {
+    return 2 * Math.abs(t / period - Math.floor(t / period + 0.5));
+};
