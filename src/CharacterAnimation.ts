@@ -45,8 +45,6 @@ const ArmColorDarker = "rgb(120,120,200)";
 
 export function renderCharacter(
     cx: CanvasRenderingContext2D,
-    x: number,
-    y: number,
     w: number,
     h: number,
     t: number,
@@ -87,7 +85,6 @@ export function renderCharacter(
     }
 
     cx.save();
-    cx.translate(x, y);
     cx.translate(0, -bouncing);
 
     const armLength = 0.35 * h;
@@ -96,6 +93,10 @@ export function renderCharacter(
 
     const limbWidth = 0.3 * w;
     const armWidth = 0.2 * w;
+
+    const headHeight = 0.3 * h;
+    const headDepth = 0.5 * w;
+    const headWidth = 0.45 * w;
 
     const torsoWidth = 0.6 * w;
     const torsoDepth = 0.4 * w;
@@ -148,10 +149,7 @@ export function renderCharacter(
                 cx.restore();
 
                 // Head
-                const headRadius = w * 0.35;
-                cx.beginPath();
-                cx.arc(0.5 * w, 0.15 * h, headRadius, 0, 2 * Math.PI);
-                cx.fill();
+                cx.fillRect(0.3 * w, 0, headDepth, headHeight);
 
                 // Torso
                 cx.fillRect(
@@ -222,10 +220,7 @@ export function renderCharacter(
             cx.restore();
 
             // Head
-            const headRadius = w * 0.35;
-            cx.beginPath();
-            cx.arc(0.5 * w, 0.15 * h, headRadius, 0, 2 * Math.PI);
-            cx.fill();
+            cx.fillRect((w - headWidth) / 2, 0, headWidth, headHeight);
 
             // Torso
             cx.fillRect(0.2 * w, 0.3 * h, torsoWidth, torsoLength);
@@ -270,10 +265,7 @@ export function renderCharacter(
             cx.restore();
 
             // Head
-            const headRadius = w * 0.35;
-            cx.beginPath();
-            cx.arc(0.5 * w, 0.15 * h, headRadius, 0, 2 * Math.PI);
-            cx.fill();
+            cx.fillRect((w - headWidth) / 2, 0, headWidth, headHeight);
 
             // Torso
             cx.fillRect((w - torsoWidth) / 2, 0.3 * h, torsoWidth, torsoLength);

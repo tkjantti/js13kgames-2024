@@ -28,6 +28,7 @@ import {
     renderCharacter,
 } from "./CharacterAnimation";
 import { cx } from "./graphics";
+import { mirrorHorizontally } from "./rendering";
 import { isZero, Vector } from "./Vector";
 
 const PLAYER_SPEED = 3;
@@ -37,6 +38,8 @@ export class Character {
 
     x: number;
     y: number;
+    width = 75;
+    height = 150;
 
     constructor(x: number, y: number) {
         this.x = x;
@@ -65,6 +68,14 @@ export class Character {
                     : CharacterFacingDirection.ForwardRight
                 : CharacterFacingDirection.Right;
 
-        renderCharacter(cx, this.x, this.y, 75, 150, t, direction, animation);
+        cx.save();
+        cx.translate(this.x, this.y);
+
+        if (this.direction.x < 0) {
+            mirrorHorizontally(cx, this.width);
+        }
+
+        renderCharacter(cx, this.width, this.height, t, direction, animation);
+        cx.restore();
     }
 }

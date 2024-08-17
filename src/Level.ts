@@ -31,7 +31,7 @@ export class Level {
     private player: Character;
 
     constructor() {
-        this.player = new Character(100, 500);
+        this.player = new Character(300, 300);
         this.characters.push(this.player);
     }
 
