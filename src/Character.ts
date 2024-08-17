@@ -39,7 +39,7 @@ export class Character {
     x: number;
     y: number;
     width = 75;
-    height = 150;
+    height = 50;
 
     constructor(x: number, y: number) {
         this.x = x;
@@ -69,13 +69,25 @@ export class Character {
                 : CharacterFacingDirection.Right;
 
         cx.save();
-        cx.translate(this.x, this.y);
+
+        // Debug border
+        // cx.save();
+        // cx.strokeStyle = "red";
+        // cx.lineWidth = 1;
+        // cx.strokeRect(this.x, this.y, this.width, this.height);
+        // cx.restore();
+
+        // Different render height than actual height, for pseudo-3d effect.
+        const renderHeight = this.height * 3;
+        const heightDiff = renderHeight - this.height;
+
+        cx.translate(this.x, this.y - heightDiff);
 
         if (this.direction.x < 0) {
             mirrorHorizontally(cx, this.width);
         }
 
-        renderCharacter(cx, this.width, this.height, t, direction, animation);
+        renderCharacter(cx, this.width, renderHeight, t, direction, animation);
         cx.restore();
     }
 }

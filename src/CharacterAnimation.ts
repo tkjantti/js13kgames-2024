@@ -104,13 +104,6 @@ export function renderCharacter(
     cx.fillStyle = color;
     cx.lineWidth = limbWidth;
 
-    // Debug border
-    // cx.save();
-    // cx.strokeStyle = "red";
-    // cx.lineWidth = 1;
-    // cx.strokeRect(0, 0, w, h);
-    // cx.restore();
-
     switch (direction) {
         case CharacterFacingDirection.Right:
             {
