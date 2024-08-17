@@ -60,7 +60,9 @@ export class Character {
 
         const direction: CharacterFacingDirection =
             this.direction.y !== 0
-                ? CharacterFacingDirection.Forward
+                ? this.direction.x === 0
+                    ? CharacterFacingDirection.Forward
+                    : CharacterFacingDirection.ForwardRight
                 : CharacterFacingDirection.Right;
 
         renderCharacter(cx, this.x, this.y, 75, 150, t, direction, animation);

@@ -34,6 +34,7 @@ export enum CharacterAnimation {
 export enum CharacterFacingDirection {
     Right,
     Forward,
+    ForwardRight,
 }
 
 const color = "rgb(200,200,200)";
@@ -93,8 +94,14 @@ export function renderCharacter(
     const legLength = 0.4 * h;
     const torsoLength = 0.4 * h;
 
+    const limbWidth = 0.3 * w;
+    const armWidth = 0.2 * w;
+
+    const torsoWidth = 0.6 * w;
+    const torsoDepth = 0.4 * w;
+
     cx.fillStyle = color;
-    cx.lineWidth = w * 0.3;
+    cx.lineWidth = limbWidth;
 
     // Debug border
     // cx.save();
@@ -109,6 +116,7 @@ export function renderCharacter(
                 // Arm (back)
                 cx.save();
                 cx.strokeStyle = ArmColorDarker;
+                cx.lineWidth = armWidth;
                 cx.translate(0.5 * w, 0.4 * h);
                 cx.rotate(angle2);
                 cx.beginPath();
@@ -146,11 +154,17 @@ export function renderCharacter(
                 cx.fill();
 
                 // Torso
-                cx.fillRect(0.2 * w, 0.3 * h, 0.6 * w, torsoLength);
+                cx.fillRect(
+                    (w - torsoDepth) / 2,
+                    0.3 * h,
+                    torsoDepth,
+                    torsoLength,
+                );
 
                 // Arm (front)
                 cx.save();
                 cx.strokeStyle = ArmColor;
+                cx.lineWidth = armWidth;
                 cx.translate(0.5 * w, 0.4 * h);
                 cx.rotate(angle1);
                 cx.beginPath();
@@ -186,6 +200,7 @@ export function renderCharacter(
             // Arm (left)
             cx.save();
             cx.strokeStyle = ArmColor;
+            cx.lineWidth = armWidth;
             cx.translate(0.1 * w, 0.3 * h);
             cx.scale(1, Math.cos(angle2 + Math.PI / 8));
             cx.beginPath();
@@ -194,9 +209,10 @@ export function renderCharacter(
             cx.stroke();
             cx.restore();
 
-            // Arm (front)
+            // Arm (right)
             cx.save();
             cx.strokeStyle = ArmColor;
+            cx.lineWidth = armWidth;
             cx.translate(0.9 * w, 0.3 * h);
             cx.scale(1, Math.cos(angle1 + Math.PI / 8));
             cx.beginPath();
@@ -212,7 +228,69 @@ export function renderCharacter(
             cx.fill();
 
             // Torso
-            cx.fillRect(0.2 * w, 0.3 * h, 0.6 * w, torsoLength);
+            cx.fillRect(0.2 * w, 0.3 * h, torsoWidth, torsoLength);
+            break;
+        }
+        case CharacterFacingDirection.ForwardRight: {
+            // Leg (left)
+            cx.save();
+            cx.strokeStyle = LegColorDarker;
+            cx.translate(0.35 * w, 0.6 * h);
+            cx.rotate(angle2 / 4);
+            cx.scale(1, Math.cos(angle1 + Math.PI / 8));
+            cx.beginPath();
+            cx.moveTo(0, 0);
+            cx.lineTo(0, legLength);
+            cx.stroke();
+            cx.restore();
+
+            // Leg (right)
+            cx.save();
+            cx.strokeStyle = LegColor;
+            cx.translate(0.65 * w, 0.6 * h);
+            cx.rotate(angle2 / 4);
+            cx.scale(1, Math.cos(angle2 + Math.PI / 8));
+            cx.beginPath();
+            cx.moveTo(0, 0);
+            cx.lineTo(0, legLength);
+            cx.stroke();
+            cx.restore();
+
+            // Arm (left)
+            cx.save();
+            cx.strokeStyle = ArmColor;
+            cx.lineWidth = armWidth;
+            cx.translate(0.1 * w, 0.3 * h);
+            cx.rotate(angle2 / 2);
+            cx.scale(1, Math.cos(angle2 + Math.PI / 8));
+            cx.beginPath();
+            cx.moveTo(0, 0);
+            cx.lineTo(0, armLength);
+            cx.stroke();
+            cx.restore();
+
+            // Head
+            const headRadius = w * 0.35;
+            cx.beginPath();
+            cx.arc(0.5 * w, 0.15 * h, headRadius, 0, 2 * Math.PI);
+            cx.fill();
+
+            // Torso
+            cx.fillRect((w - torsoWidth) / 2, 0.3 * h, torsoWidth, torsoLength);
+
+            // Arm (right)
+            cx.save();
+            cx.strokeStyle = ArmColor;
+            cx.lineWidth = armWidth;
+            cx.translate(0.9 * w, 0.3 * h);
+            cx.rotate(angle2 / 2);
+            cx.scale(1, Math.cos(angle1 + Math.PI / 8));
+            cx.beginPath();
+            cx.moveTo(0, 0);
+            cx.lineTo(0, armLength);
+            cx.stroke();
+            cx.restore();
+
             break;
         }
         default:
