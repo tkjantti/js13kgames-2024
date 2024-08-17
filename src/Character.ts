@@ -65,7 +65,9 @@ export class Character {
             this.direction.y !== 0
                 ? this.direction.x === 0
                     ? CharacterFacingDirection.Forward
-                    : CharacterFacingDirection.ForwardRight
+                    : this.direction.y > 0
+                      ? CharacterFacingDirection.BackwardRight
+                      : CharacterFacingDirection.ForwardRight
                 : CharacterFacingDirection.Right;
 
         cx.save();

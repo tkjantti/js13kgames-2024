@@ -35,6 +35,7 @@ export enum CharacterFacingDirection {
     Right,
     Forward,
     ForwardRight,
+    BackwardRight,
 }
 
 const color = "rgb(200,200,200)";
@@ -276,6 +277,64 @@ export function renderCharacter(
             cx.stroke();
             cx.restore();
 
+            break;
+        }
+        case CharacterFacingDirection.BackwardRight: {
+            // Leg (right)
+            cx.save();
+            cx.strokeStyle = LegColor;
+            cx.translate(0.65 * w, 0.6 * h);
+            cx.rotate(angle2 / 4);
+            cx.scale(1, Math.cos(angle2 + Math.PI / 8));
+            cx.beginPath();
+            cx.moveTo(0, 0);
+            cx.lineTo(0, legLength);
+            cx.stroke();
+            cx.restore();
+
+            // Leg (left)
+            cx.save();
+            cx.strokeStyle = LegColorDarker;
+            cx.translate(0.35 * w, 0.6 * h);
+            cx.rotate(angle2 / 4);
+            cx.scale(1, Math.cos(angle1 + Math.PI / 8));
+            cx.beginPath();
+            cx.moveTo(0, 0);
+            cx.lineTo(0, legLength);
+            cx.stroke();
+            cx.restore();
+
+            // Arm (right)
+            cx.save();
+            cx.strokeStyle = ArmColor;
+            cx.lineWidth = armWidth;
+            cx.translate(0.9 * w, 0.3 * h);
+            cx.rotate(angle2 / 2);
+            cx.scale(1, Math.cos(angle1 + Math.PI / 8));
+            cx.beginPath();
+            cx.moveTo(0, 0);
+            cx.lineTo(0, armLength);
+            cx.stroke();
+            cx.restore();
+
+            // Head
+            cx.fillRect((w - headWidth) / 2, 0, headWidth, headHeight);
+
+            // Torso
+            cx.fillRect((w - torsoWidth) / 2, 0.3 * h, torsoWidth, torsoLength);
+
+            // Arm (left)
+            cx.save();
+            cx.strokeStyle = ArmColor;
+            cx.lineWidth = armWidth;
+            cx.translate(0.1 * w, 0.3 * h);
+            cx.rotate(angle2 / 2);
+            cx.scale(1, Math.cos(angle2 + Math.PI / 8));
+            cx.beginPath();
+            cx.moveTo(0, 0);
+            cx.lineTo(0, armLength);
+            cx.stroke();
+            cx.restore();
             break;
         }
         default:
