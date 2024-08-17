@@ -53,7 +53,7 @@ export class Character {
     }
 
     // eslint-disable-next-line
-    update(t: number, dt: number): void {}
+    update(_t: number, _dt: number): void {}
 
     // eslint-disable-next-line
     draw(t: number, _: number): void {
