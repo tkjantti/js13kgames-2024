@@ -22,16 +22,10 @@
  * SOFTWARE.
  */
 
-import "./style.css";
-import { canvas } from "./graphics";
-import { start } from "./game";
-
-const resize = (): void => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+/*
+ * Triagle wave mathematical function.
+ * https://en.wikipedia.org/wiki/Triangle_wave
+ */
+export const triangle = (period: number, t: number): number => {
+    return 2 * Math.abs(t / period - Math.floor(t / period + 0.5));
 };
-
-window.addEventListener("resize", resize, false);
-resize();
-
-start();

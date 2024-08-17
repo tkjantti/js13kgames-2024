@@ -22,16 +22,12 @@
  * SOFTWARE.
  */
 
-import "./style.css";
-import { canvas } from "./graphics";
-import { start } from "./game";
+// https://easings.net/#easeInOutQuad
+export function easeInOutQuad(x: number): number {
+    return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+}
 
-const resize = (): void => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-};
-
-window.addEventListener("resize", resize, false);
-resize();
-
-start();
+// https://easings.net/#easeInOutSine
+export function easeInOutSine(x: number): number {
+    return -(Math.cos(Math.PI * x) - 1) / 2;
+}

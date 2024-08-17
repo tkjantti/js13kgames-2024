@@ -22,16 +22,11 @@
  * SOFTWARE.
  */
 
-import "./style.css";
-import { canvas } from "./graphics";
-import { start } from "./game";
-
-const resize = (): void => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-};
-
-window.addEventListener("resize", resize, false);
-resize();
-
-start();
+export function mirrorHorizontally(
+    context: CanvasRenderingContext2D,
+    width: number,
+): void {
+    context.translate(width / 2, 0);
+    context.scale(-1, 1);
+    context.translate(-width / 2, 0);
+}
