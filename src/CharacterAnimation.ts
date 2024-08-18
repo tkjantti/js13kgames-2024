@@ -34,11 +34,18 @@ export enum CharacterAnimation {
 export enum CharacterFacingDirection {
     Right,
     Forward,
+    Backward,
     ForwardRight,
     BackwardRight,
 }
 
 const color = "rgb(200,200,200)";
+
+const faceColor = "rgb(200,150,150)";
+const eyeColor = "rgb(230,230,230)";
+const pupilColor = "rgb(30,0,0)";
+const noseColor = "rgb(170,120,120)";
+
 const LegColor = "rgb(140,140,140)";
 const LegColorDarker = "rgb(120,120,120)";
 const ArmColor = "rgb(140,140,220)";
@@ -95,9 +102,13 @@ export function renderCharacter(
     const limbWidth = 0.3 * w;
     const armWidth = 0.2 * w;
 
-    const headHeight = 0.3 * h;
+    const headHeight = 0.25 * h;
     const headDepth = 0.5 * w;
     const headWidth = 0.45 * w;
+    const headRounding = 0.2 * w;
+
+    const faceMargin = 0.15 * w; // How much face is smaller than head
+    const faceRounding = 0.6 * headRounding;
 
     const torsoWidth = 0.6 * w;
     const torsoDepth = 0.4 * w;
@@ -143,7 +154,14 @@ export function renderCharacter(
                 cx.restore();
 
                 // Head
-                cx.fillRect(0.3 * w, 0, headDepth, headHeight);
+                cx.roundRect(
+                    0.3 * w,
+                    headHeight / 4,
+                    headDepth,
+                    headHeight,
+                    headRounding,
+                );
+                cx.fill();
 
                 // Torso
                 cx.fillRect(
@@ -166,7 +184,8 @@ export function renderCharacter(
                 cx.restore();
             }
             break;
-        case CharacterFacingDirection.Forward: {
+        case CharacterFacingDirection.Forward:
+        case CharacterFacingDirection.Backward: {
             // Leg (left)
             cx.save();
             cx.strokeStyle = LegColorDarker;
@@ -213,11 +232,19 @@ export function renderCharacter(
             cx.stroke();
             cx.restore();
 
-            // Head
-            cx.fillRect((w - headWidth) / 2, 0, headWidth, headHeight);
-
             // Torso
             cx.fillRect(0.2 * w, 0.3 * h, torsoWidth, torsoLength);
+
+            // Head
+            cx.roundRect(
+                (w - headWidth) / 2,
+                headHeight / 4,
+                headWidth,
+                headHeight,
+                headRounding,
+            );
+            cx.fill();
+
             break;
         }
         case CharacterFacingDirection.ForwardRight: {
@@ -259,7 +286,14 @@ export function renderCharacter(
             cx.restore();
 
             // Head
-            cx.fillRect((w - headWidth) / 2, 0, headWidth, headHeight);
+            cx.roundRect(
+                (w - headWidth) / 2,
+                headHeight / 4,
+                headWidth,
+                headHeight,
+                headRounding,
+            );
+            cx.fill();
 
             // Torso
             cx.fillRect((w - torsoWidth) / 2, 0.3 * h, torsoWidth, torsoLength);
@@ -318,7 +352,14 @@ export function renderCharacter(
             cx.restore();
 
             // Head
-            cx.fillRect((w - headWidth) / 2, 0, headWidth, headHeight);
+            cx.roundRect(
+                (w - headWidth) / 2,
+                headHeight / 4,
+                headWidth,
+                headHeight,
+                headRounding,
+            );
+            cx.fill();
 
             // Torso
             cx.fillRect((w - torsoWidth) / 2, 0.3 * h, torsoWidth, torsoLength);
@@ -339,6 +380,80 @@ export function renderCharacter(
         }
         default:
             break;
+    }
+
+    // Face with eyes and nose
+    if (
+        direction === CharacterFacingDirection.Backward ||
+        direction === CharacterFacingDirection.BackwardRight
+    ) {
+        cx.save();
+
+        // Face
+        cx.fillStyle = faceColor;
+        const faceWidth = headWidth - faceMargin;
+        const faceHeight = headHeight - faceMargin * 1.75;
+        const faceX = (w - faceWidth) / 2;
+        const faceY = headHeight - faceHeight;
+
+        cx.beginPath();
+        cx.roundRect(faceX, faceY, faceWidth, faceHeight, faceRounding);
+        cx.fill();
+        cx.closePath();
+
+        // Eyes
+        const eyeRadius = 0.05 * headWidth;
+        const eyeXOffset = faceWidth / 4;
+        const eyeYOffset = faceHeight / 3;
+        const leftEyeX = faceX + eyeXOffset;
+        const rightEyeX = faceX + faceWidth - eyeXOffset;
+        const eyeY = faceY + eyeYOffset;
+
+        cx.fillStyle = eyeColor;
+        cx.beginPath();
+        cx.arc(leftEyeX, eyeY, eyeRadius, 0, Math.PI * 2);
+        cx.arc(rightEyeX, eyeY, eyeRadius, 0, Math.PI * 2);
+        cx.fill();
+        cx.closePath();
+
+        // Pupils
+        const pupilRadius = 0.02 * headWidth;
+        const pupilXOffset = 0.01 * headWidth;
+        const pupilYOffset = 0.01 * headHeight;
+
+        cx.fillStyle = pupilColor;
+        cx.beginPath();
+        cx.arc(
+            leftEyeX + pupilXOffset,
+            eyeY + pupilYOffset,
+            pupilRadius,
+            0,
+            Math.PI * 2,
+        );
+        cx.arc(
+            rightEyeX + pupilXOffset,
+            eyeY + pupilYOffset,
+            pupilRadius,
+            0,
+            Math.PI * 2,
+        );
+        cx.fill();
+        cx.closePath();
+
+        // Nose
+        const noseWidth = 0.1 * headWidth;
+        const noseHeight = 0.15 * headHeight;
+        const noseX = faceX + (faceWidth - noseWidth) / 1.75;
+        const noseY = faceY + (faceHeight - noseHeight) / 1.5;
+
+        cx.fillStyle = noseColor;
+        cx.beginPath();
+        cx.moveTo(noseX, noseY);
+        cx.lineTo(noseX + noseWidth / 2, noseY + noseHeight);
+        cx.lineTo(noseX - noseWidth / 2, noseY + noseHeight);
+        cx.closePath();
+        cx.fill();
+        cx.restore();
     }
 
     cx.restore();
