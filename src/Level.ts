@@ -23,15 +23,32 @@
  */
 
 import { Character } from "./Character";
+import { isInsideRectangle } from "./geometry";
+import { cx } from "./graphics";
 import { getKeys } from "./keyboard";
 import { normalize, Vector } from "./Vector";
 
+const trackWidth = 100;
+
 export class Level {
+    private track: Vector[] = [
+        { x: 100, y: 600 },
+        { x: 100, y: 100 },
+        { x: 700, y: 100 },
+        { x: 700, y: 400 },
+    ];
+
     private characters: Character[] = [];
     private player: Character;
 
+    public get progress(): string {
+        return (
+            this.player.waypoint.toString() + " / " + (this.track.length - 1)
+        );
+    }
+
     constructor() {
-        this.player = new Character(300, 300);
+        this.player = new Character(this.track[0]);
         this.characters.push(this.player);
     }
 
@@ -41,8 +58,9 @@ export class Level {
 
             const movement =
                 c === this.player ? this.getPlayerMovement() : { x: 0, y: 0 };
-
             c.move(movement);
+
+            this.checkProgress(c);
 
             c.update(t, dt);
         }
@@ -70,9 +88,55 @@ export class Level {
     }
 
     draw(t: number, dt: number): void {
+        const first = this.track[0];
+
+        cx.save();
+        cx.strokeStyle = "rgb(70,50,70)";
+        cx.lineWidth = trackWidth;
+        cx.beginPath();
+        cx.moveTo(first.x, first.y);
+        for (let i = 1; i < this.track.length; i++) {
+            const p = this.track[i];
+            cx.lineTo(p.x, p.y);
+        }
+        cx.stroke();
+
+        cx.fillStyle = "rgb(40, 120, 40)";
+        cx.fillRect(
+            first.x - trackWidth / 2,
+            first.y - trackWidth / 2,
+            trackWidth,
+            trackWidth,
+        );
+
+        for (let i = 1; i < this.track.length; i++) {
+            const p = this.track[i];
+            cx.fillStyle = "rgb(120, 40, 40)";
+            cx.fillRect(
+                p.x - trackWidth / 2,
+                p.y - trackWidth / 2,
+                trackWidth,
+                trackWidth,
+            );
+        }
+        cx.restore();
+
         for (let i = 0; i < this.characters.length; i++) {
             const c = this.characters[i];
             c.draw(t, dt);
+        }
+    }
+
+    checkProgress(c: Character): void {
+        if (c.waypoint >= this.track.length - 1) {
+            return;
+        }
+
+        const nextWayPointIndex = c.waypoint + 1;
+        const waypoint = this.track[nextWayPointIndex];
+
+        if (isInsideRectangle(c, waypoint, trackWidth / 2)) {
+            c.waypoint += 1;
         }
     }
 }
