@@ -38,12 +38,14 @@ export class Character {
 
     x: number;
     y: number;
-    width = 75;
-    height = 50;
+    width = 30;
+    height = 20;
 
-    constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
+    waypoint = 0;
+
+    constructor(position: Vector) {
+        this.x = position.x;
+        this.y = position.y;
     }
 
     move(direction: Vector): void {

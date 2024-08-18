@@ -30,6 +30,8 @@ const draw = (t: number, dt: number): void => {
 
     level.draw(t, dt);
 
+    drawStatus();
+
     cx.restore();
 };
 
@@ -37,3 +39,9 @@ export const start = async (): Promise<void> => {
     initializeKeyboard();
     window.requestAnimationFrame(gameLoop);
 };
+
+function drawStatus() {
+    cx.fillStyle = "rgb(200, 200, 200)";
+    cx.font = "30px Sans-serif";
+    cx.fillText("WAYPOINTS: " + level.progress, 30, 30);
+}
