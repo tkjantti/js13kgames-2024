@@ -35,6 +35,7 @@ const PLAYER_SPEED = 3;
 
 export class Character {
     private direction: Vector = { x: 0, y: 0 };
+    private latestDirection: Vector = { x: 0, y: 0 };
 
     x: number;
     y: number;
@@ -50,6 +51,9 @@ export class Character {
 
     move(direction: Vector): void {
         this.direction = direction;
+        if (!isZero(direction)) {
+            this.latestDirection = direction;
+        }
         this.x += direction.x * PLAYER_SPEED;
         this.y += direction.y * PLAYER_SPEED;
     }
@@ -64,10 +68,10 @@ export class Character {
             : CharacterAnimation.Walk;
 
         const direction: CharacterFacingDirection =
-            this.direction.y !== 0
-                ? this.direction.x === 0
+            this.latestDirection.y !== 0
+                ? this.latestDirection.x === 0
                     ? CharacterFacingDirection.Forward
-                    : this.direction.y > 0
+                    : this.latestDirection.y > 0
                       ? CharacterFacingDirection.BackwardRight
                       : CharacterFacingDirection.ForwardRight
                 : CharacterFacingDirection.Right;
@@ -87,11 +91,20 @@ export class Character {
 
         cx.translate(this.x, this.y - heightDiff);
 
-        if (this.direction.x < 0) {
+        if (this.latestDirection.x < 0) {
             mirrorHorizontally(cx, this.width);
         }
 
-        renderCharacter(cx, this.width, renderHeight, t, direction, animation);
+        const animationTime = isZero(this.direction) ? 0 : t;
+
+        renderCharacter(
+            cx,
+            this.width,
+            renderHeight,
+            animationTime,
+            direction,
+            animation,
+        );
         cx.restore();
     }
 }
