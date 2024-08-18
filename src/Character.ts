@@ -39,8 +39,8 @@ export class Character {
 
     x: number;
     y: number;
-    width = 30;
-    height = 20;
+    width = 40;
+    height = 40;
 
     waypoint = 0;
 
@@ -70,7 +70,9 @@ export class Character {
         const direction: CharacterFacingDirection =
             this.latestDirection.y !== 0
                 ? this.latestDirection.x === 0
-                    ? CharacterFacingDirection.Forward
+                    ? this.latestDirection.y < 0
+                        ? CharacterFacingDirection.Forward
+                        : CharacterFacingDirection.Backward
                     : this.latestDirection.y > 0
                       ? CharacterFacingDirection.BackwardRight
                       : CharacterFacingDirection.ForwardRight
