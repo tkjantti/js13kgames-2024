@@ -23,32 +23,27 @@
  */
 
 import { Character } from "./Character";
-import { isInsideRectangle } from "./geometry";
 import { cx } from "./graphics";
 import { getKeys } from "./keyboard";
 import { normalize, Vector } from "./Vector";
 
-const trackWidth = 100;
+const trackWidth = 200;
+const trackCenterX = 0 + trackWidth / 2;
+const trackMaxY = 600;
+const waypointHeight = 50;
 
 export class Level {
-    private track: Vector[] = [
-        { x: 100, y: 600 },
-        { x: 100, y: 100 },
-        { x: 700, y: 100 },
-        { x: 700, y: 400 },
-    ];
+    private track: number[] = [100, 300, 500];
 
     private characters: Character[] = [];
     private player: Character;
 
     public get progress(): string {
-        return (
-            this.player.waypoint.toString() + " / " + (this.track.length - 1)
-        );
+        return this.player.waypoint.toString() + " / " + this.track.length;
     }
 
     constructor() {
-        this.player = new Character(this.track[0]);
+        this.player = new Character({ x: trackCenterX, y: trackMaxY });
         this.characters.push(this.player);
     }
 
@@ -88,35 +83,32 @@ export class Level {
     }
 
     draw(t: number, dt: number): void {
-        const first = this.track[0];
+        const lastY = trackMaxY - this.track[this.track.length - 1];
 
         cx.save();
         cx.strokeStyle = "rgb(70,50,70)";
         cx.lineWidth = trackWidth;
         cx.beginPath();
-        cx.moveTo(first.x, first.y);
-        for (let i = 1; i < this.track.length; i++) {
-            const p = this.track[i];
-            cx.lineTo(p.x, p.y);
-        }
+        cx.moveTo(trackCenterX, trackMaxY);
+        cx.lineTo(trackCenterX, lastY);
         cx.stroke();
 
         cx.fillStyle = "rgb(40, 120, 40)";
         cx.fillRect(
-            first.x - trackWidth / 2,
-            first.y - trackWidth / 2,
+            trackCenterX - trackWidth / 2,
+            trackMaxY - waypointHeight,
             trackWidth,
-            trackWidth,
+            waypointHeight,
         );
 
-        for (let i = 1; i < this.track.length; i++) {
-            const p = this.track[i];
+        for (let i = 0; i < this.track.length; i++) {
+            const y = this.track[i];
             cx.fillStyle = "rgb(120, 40, 40)";
             cx.fillRect(
-                p.x - trackWidth / 2,
-                p.y - trackWidth / 2,
+                trackCenterX - trackWidth / 2,
+                trackMaxY - y - waypointHeight,
                 trackWidth,
-                trackWidth,
+                waypointHeight,
             );
         }
         cx.restore();
@@ -128,14 +120,14 @@ export class Level {
     }
 
     checkProgress(c: Character): void {
-        if (c.waypoint >= this.track.length - 1) {
+        if (c.waypoint >= this.track.length) {
             return;
         }
 
-        const nextWayPointIndex = c.waypoint + 1;
-        const waypoint = this.track[nextWayPointIndex];
+        const nextWayPointIndex = c.waypoint;
+        const waypointY = trackMaxY - this.track[nextWayPointIndex];
 
-        if (isInsideRectangle(c, waypoint, trackWidth / 2)) {
+        if (c.y < waypointY) {
             c.waypoint += 1;
         }
     }
