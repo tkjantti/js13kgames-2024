@@ -35,6 +35,10 @@ const draw = (t: number, dt: number): void => {
     cx.restore();
 };
 
+export const onCanvasSizeChanged = (): void => {
+    level.resetZoom();
+};
+
 export const start = async (): Promise<void> => {
     initializeKeyboard();
     window.requestAnimationFrame(gameLoop);

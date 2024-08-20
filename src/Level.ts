@@ -64,6 +64,11 @@ export class Level implements Area {
         this.player = new Character({ x: trackCenterX, y: this.trackStartY });
         this.characters.push(this.player);
         this.camera.follow(this.player);
+        this.resetZoom();
+    }
+
+    resetZoom() {
+        this.camera.zoom = 2;
         this.camera.update();
     }
 
