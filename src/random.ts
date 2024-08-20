@@ -22,17 +22,16 @@
  * SOFTWARE.
  */
 
-import "./style.css";
-import { canvas } from "./graphics";
-import { onCanvasSizeChanged, start } from "./game";
-
-const resize = (): void => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    onCanvasSizeChanged();
+/*
+ * Returns a random number between [0, max).
+ */
+export const random = (max = 1): number => {
+    return Math.random() * max;
 };
 
-window.addEventListener("resize", resize, false);
-resize();
-
-start();
+/*
+ * Random number between [0, max).
+ */
+export const randomInt = (max: number): number => {
+    return Math.floor(Math.random() * max);
+};

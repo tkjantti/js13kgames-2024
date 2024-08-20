@@ -22,17 +22,11 @@
  * SOFTWARE.
  */
 
-import "./style.css";
-import { canvas } from "./graphics";
-import { onCanvasSizeChanged, start } from "./game";
+export interface GameObject {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
 
-const resize = (): void => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    onCanvasSizeChanged();
-};
-
-window.addEventListener("resize", resize, false);
-resize();
-
-start();
+    draw(t: number, dt: number): void;
+}

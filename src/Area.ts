@@ -22,17 +22,12 @@
  * SOFTWARE.
  */
 
-import { Vector } from "./Vector";
+export interface Dimensions {
+    readonly width: number;
+    readonly height: number;
+}
 
-export function isInsideRectangle(
-    p: Vector,
-    center: Vector,
-    radius: number,
-): boolean {
-    return (
-        p.x - radius <= center.x &&
-        center.x <= p.x + radius &&
-        p.y - radius <= center.y &&
-        center.y <= p.y + radius
-    );
+export interface Area extends Dimensions {
+    readonly x: number;
+    readonly y: number;
 }
