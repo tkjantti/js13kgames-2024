@@ -27,20 +27,21 @@ import {
     CharacterFacingDirection,
     renderCharacter,
 } from "./CharacterAnimation";
+import { GameObject } from "./GameObject";
 import { cx } from "./graphics";
 import { mirrorHorizontally } from "./rendering";
 import { isZero, Vector } from "./Vector";
 
-const PLAYER_SPEED = 3;
+const PLAYER_SPEED = 0.5;
 
-export class Character {
+export class Character implements GameObject {
     private direction: Vector = { x: 0, y: 0 };
     private latestDirection: Vector = { x: 0, y: 0 };
 
     x: number;
     y: number;
-    width = 40;
-    height = 40;
+    width = 1;
+    height = 1;
 
     waypoint = 0;
 
@@ -83,7 +84,7 @@ export class Character {
         // Debug border
         // cx.save();
         // cx.strokeStyle = "red";
-        // cx.lineWidth = 1;
+        // cx.lineWidth = 0.1;
         // cx.strokeRect(this.x, this.y, this.width, this.height);
         // cx.restore();
 

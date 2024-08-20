@@ -22,32 +22,54 @@
  * SOFTWARE.
  */
 
+import { Area } from "./Area";
+import { Camera } from "./Camera";
 import { Character } from "./Character";
-import { cx } from "./graphics";
+import { canvas, cx } from "./graphics";
 import { getKeys } from "./keyboard";
 import { normalize, Vector } from "./Vector";
 
-const trackWidth = 200;
-const trackCenterX = 0 + trackWidth / 2;
-const trackMaxY = 600;
-const waypointHeight = 50;
+// Width of empty area on the left and right side of the track.
+const bankWidth = 3;
 
-export class Level {
-    private track: number[] = [100, 300, 500];
+// Length of empty area before the start and after the end of the
+// track.
+const bankHeight = 50;
+
+const trackWidth = 40;
+const trackCenterX = bankWidth + trackWidth / 2;
+const waypointHeight = 2;
+
+export class Level implements Area {
+    private camera: Camera = new Camera(this, canvas);
+
+    private track: number[] = [100, 200, 300, 400, 500];
+    private trackLength: number = this.track[this.track.length - 1];
+    private trackStartY: number = 0 + bankHeight + this.trackLength;
+    private trackEndY: number = 0 + bankHeight;
 
     private characters: Character[] = [];
     private player: Character;
+
+    readonly x = 0;
+    readonly y = 0;
+    readonly width = trackWidth + 2 * bankWidth;
+    readonly height = this.track[this.track.length - 1] + 2 * bankHeight;
 
     public get progress(): string {
         return this.player.waypoint.toString() + " / " + this.track.length;
     }
 
     constructor() {
-        this.player = new Character({ x: trackCenterX, y: trackMaxY });
+        this.player = new Character({ x: trackCenterX, y: this.trackStartY });
         this.characters.push(this.player);
+        this.camera.follow(this.player);
+        this.camera.update();
     }
 
     update(t: number, dt: number): void {
+        this.camera.update();
+
         for (let i = 0; i < this.characters.length; i++) {
             const c = this.characters[i];
 
@@ -83,20 +105,25 @@ export class Level {
     }
 
     draw(t: number, dt: number): void {
-        const lastY = trackMaxY - this.track[this.track.length - 1];
+        cx.save();
+
+        // Apply camera - drawing in level coordinates after these lines:
+        cx.translate(canvas.width / 2, canvas.height / 2);
+        cx.scale(this.camera.zoom, this.camera.zoom);
+        cx.translate(-this.camera.x, -this.camera.y);
 
         cx.save();
         cx.strokeStyle = "rgb(70,50,70)";
         cx.lineWidth = trackWidth;
         cx.beginPath();
-        cx.moveTo(trackCenterX, trackMaxY);
-        cx.lineTo(trackCenterX, lastY);
+        cx.moveTo(trackCenterX, this.trackStartY);
+        cx.lineTo(trackCenterX, this.trackEndY);
         cx.stroke();
 
         cx.fillStyle = "rgb(40, 120, 40)";
         cx.fillRect(
             trackCenterX - trackWidth / 2,
-            trackMaxY - waypointHeight,
+            this.trackStartY - waypointHeight,
             trackWidth,
             waypointHeight,
         );
@@ -106,7 +133,7 @@ export class Level {
             cx.fillStyle = "rgb(120, 40, 40)";
             cx.fillRect(
                 trackCenterX - trackWidth / 2,
-                trackMaxY - y - waypointHeight,
+                this.trackStartY - y - waypointHeight,
                 trackWidth,
                 waypointHeight,
             );
@@ -117,6 +144,8 @@ export class Level {
             const c = this.characters[i];
             c.draw(t, dt);
         }
+
+        cx.restore(); // End camera - Drawing no longer in level coordinates
     }
 
     checkProgress(c: Character): void {
@@ -125,7 +154,7 @@ export class Level {
         }
 
         const nextWayPointIndex = c.waypoint;
-        const waypointY = trackMaxY - this.track[nextWayPointIndex];
+        const waypointY = this.trackStartY - this.track[nextWayPointIndex];
 
         if (c.y < waypointY) {
             c.waypoint += 1;
