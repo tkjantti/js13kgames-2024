@@ -29,39 +29,110 @@ import { canvas, cx } from "./graphics";
 import { getKeys } from "./keyboard";
 import { normalize, Vector } from "./Vector";
 
+const TRACK_START_Y = 400;
+const ELEMENT_HEIGHT = 20;
+
 // Width of empty area on the left and right side of the track.
-const bankWidth = 3;
+const BANK_WIDTH = 10;
 
 // Length of empty area before the start and after the end of the
 // track.
-const bankHeight = 50;
+const BANK_HEIGHT = 40;
 
-const trackWidth = 40;
-const trackCenterX = bankWidth + trackWidth / 2;
-const waypointHeight = 2;
+class Element {
+    readonly surfaces: readonly Area[];
+    readonly minX: number;
+    readonly maxX: number;
+
+    constructor(surfaces: readonly Area[]) {
+        this.surfaces = surfaces;
+        this.minX = Math.min(...this.surfaces.map((s) => s.x));
+        this.maxX = Math.max(...this.surfaces.map((s) => s.x + s.width));
+    }
+}
 
 export class Level implements Area {
     private camera: Camera = new Camera(this, canvas);
 
-    private track: number[] = [100, 200, 300, 400, 500];
-    private trackLength: number = this.track[this.track.length - 1];
-    private trackStartY: number = 0 + bankHeight + this.trackLength;
-    private trackEndY: number = 0 + bankHeight;
+    private elements: Element[] = [];
 
     private characters: Character[] = [];
     private player: Character;
 
-    readonly x = 0;
-    readonly y = 0;
-    readonly width = trackWidth + 2 * bankWidth;
-    readonly height = this.track[this.track.length - 1] + 2 * bankHeight;
-
-    public get progress(): string {
-        return this.player.waypoint.toString() + " / " + this.track.length;
-    }
+    readonly x;
+    readonly y;
+    readonly width;
+    readonly height;
 
     constructor() {
-        this.player = new Character({ x: trackCenterX, y: this.trackStartY });
+        this.elements = [
+            new Element([
+                {
+                    x: -40,
+                    y: TRACK_START_Y - ELEMENT_HEIGHT,
+                    width: 80,
+                    height: ELEMENT_HEIGHT,
+                },
+            ]),
+            new Element([
+                {
+                    x: -20,
+                    y: TRACK_START_Y - ELEMENT_HEIGHT * 2,
+                    width: 40,
+                    height: ELEMENT_HEIGHT,
+                },
+            ]),
+            new Element([
+                {
+                    x: -40,
+                    y: TRACK_START_Y - ELEMENT_HEIGHT * 3,
+                    width: 80,
+                    height: ELEMENT_HEIGHT,
+                },
+            ]),
+            new Element([
+                {
+                    x: -40,
+                    y: TRACK_START_Y - ELEMENT_HEIGHT * 4,
+                    width: 30,
+                    height: ELEMENT_HEIGHT,
+                },
+                {
+                    x: 10,
+                    y: TRACK_START_Y - ELEMENT_HEIGHT * 4,
+                    width: 30,
+                    height: ELEMENT_HEIGHT,
+                },
+            ]),
+            new Element([
+                {
+                    x: -40,
+                    y: TRACK_START_Y - ELEMENT_HEIGHT * 5,
+                    width: 80,
+                    height: ELEMENT_HEIGHT,
+                },
+            ]),
+            new Element([
+                {
+                    x: -40,
+                    y: TRACK_START_Y - ELEMENT_HEIGHT * 6,
+                    width: 80,
+                    height: ELEMENT_HEIGHT,
+                },
+            ]),
+        ];
+
+        const trackMinX = Math.min(...this.elements.map((e) => e.minX));
+        const trackMaxX = Math.max(...this.elements.map((e) => e.maxX));
+        const trackWidth = trackMaxX - trackMinX;
+        const trackHeight = this.elements.length * ELEMENT_HEIGHT;
+
+        this.x = 0 - trackWidth / 2 - BANK_WIDTH;
+        this.y = TRACK_START_Y - trackHeight - BANK_HEIGHT;
+        this.width = trackWidth + 2 * BANK_WIDTH;
+        this.height = trackHeight + 2 * BANK_HEIGHT;
+
+        this.player = new Character({ x: 0, y: TRACK_START_Y });
         this.characters.push(this.player);
         this.camera.follow(this.player);
         this.resetZoom();
@@ -81,8 +152,6 @@ export class Level implements Area {
             const movement =
                 c === this.player ? this.getPlayerMovement() : { x: 0, y: 0 };
             c.move(movement);
-
-            this.checkProgress(c);
 
             c.update(t, dt);
         }
@@ -118,31 +187,26 @@ export class Level implements Area {
         cx.translate(-this.camera.x, -this.camera.y);
 
         cx.save();
-        cx.strokeStyle = "rgb(70,50,70)";
-        cx.lineWidth = trackWidth;
-        cx.beginPath();
-        cx.moveTo(trackCenterX, this.trackStartY);
-        cx.lineTo(trackCenterX, this.trackEndY);
-        cx.stroke();
 
-        cx.fillStyle = "rgb(40, 120, 40)";
-        cx.fillRect(
-            trackCenterX - trackWidth / 2,
-            this.trackStartY - waypointHeight,
-            trackWidth,
-            waypointHeight,
-        );
+        cx.strokeStyle = "red";
+        cx.lineWidth = 1;
+        cx.strokeRect(this.x, this.y, this.width, this.height);
 
-        for (let i = 0; i < this.track.length; i++) {
-            const y = this.track[i];
-            cx.fillStyle = "rgb(120, 40, 40)";
-            cx.fillRect(
-                trackCenterX - trackWidth / 2,
-                this.trackStartY - y - waypointHeight,
-                trackWidth,
-                waypointHeight,
-            );
+        for (let i = 0; i < this.elements.length; i++) {
+            const surfaces = this.elements[i].surfaces;
+            cx.fillStyle = "rgb(70,50,70)";
+
+            for (let j = 0; j < surfaces.length; j++) {
+                const surface = surfaces[j];
+                cx.fillRect(
+                    surface.x,
+                    surface.y,
+                    surface.width,
+                    surface.height,
+                );
+            }
         }
+
         cx.restore();
 
         for (let i = 0; i < this.characters.length; i++) {
@@ -151,18 +215,5 @@ export class Level implements Area {
         }
 
         cx.restore(); // End camera - Drawing no longer in level coordinates
-    }
-
-    checkProgress(c: Character): void {
-        if (c.waypoint >= this.track.length) {
-            return;
-        }
-
-        const nextWayPointIndex = c.waypoint;
-        const waypointY = this.trackStartY - this.track[nextWayPointIndex];
-
-        if (c.y < waypointY) {
-            c.waypoint += 1;
-        }
     }
 }
