@@ -1,13 +1,14 @@
 import { canvas, cx } from "./graphics";
 import { initializeKeyboard } from "./keyboard";
 import { Level } from "./Level";
+import { simpleTrack } from "./tracks";
 
 const TIME_STEP = 1000 / 60;
 const MAX_FRAME = TIME_STEP * 5;
 
 let lastTime = 0;
 
-const level = new Level();
+const level = new Level(simpleTrack);
 
 const gameLoop = (t: number): void => {
     requestAnimationFrame(gameLoop);

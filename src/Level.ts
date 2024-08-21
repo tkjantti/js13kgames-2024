@@ -27,10 +27,14 @@ import { Camera } from "./Camera";
 import { Character } from "./Character";
 import { canvas, cx } from "./graphics";
 import { getKeys } from "./keyboard";
+import {
+    createTrack,
+    TrackElement,
+    TrackElementTemplate,
+} from "./TrackElement";
 import { normalize, Vector } from "./Vector";
 
 const TRACK_START_Y = 400;
-const ELEMENT_HEIGHT = 20;
 
 // Width of empty area on the left and right side of the track.
 const BANK_WIDTH = 10;
@@ -39,22 +43,10 @@ const BANK_WIDTH = 10;
 // track.
 const BANK_HEIGHT = 40;
 
-class Element {
-    readonly surfaces: readonly Area[];
-    readonly minX: number;
-    readonly maxX: number;
-
-    constructor(surfaces: readonly Area[]) {
-        this.surfaces = surfaces;
-        this.minX = Math.min(...this.surfaces.map((s) => s.x));
-        this.maxX = Math.max(...this.surfaces.map((s) => s.x + s.width));
-    }
-}
-
 export class Level implements Area {
     private camera: Camera = new Camera(this, canvas);
 
-    private elements: Element[] = [];
+    private elements: TrackElement[] = [];
 
     private characters: Character[] = [];
     private player: Character;
@@ -64,75 +56,23 @@ export class Level implements Area {
     readonly width;
     readonly height;
 
-    constructor() {
-        this.elements = [
-            new Element([
-                {
-                    x: -40,
-                    y: TRACK_START_Y - ELEMENT_HEIGHT,
-                    width: 80,
-                    height: ELEMENT_HEIGHT,
-                },
-            ]),
-            new Element([
-                {
-                    x: -20,
-                    y: TRACK_START_Y - ELEMENT_HEIGHT * 2,
-                    width: 40,
-                    height: ELEMENT_HEIGHT,
-                },
-            ]),
-            new Element([
-                {
-                    x: -40,
-                    y: TRACK_START_Y - ELEMENT_HEIGHT * 3,
-                    width: 80,
-                    height: ELEMENT_HEIGHT,
-                },
-            ]),
-            new Element([
-                {
-                    x: -40,
-                    y: TRACK_START_Y - ELEMENT_HEIGHT * 4,
-                    width: 30,
-                    height: ELEMENT_HEIGHT,
-                },
-                {
-                    x: 10,
-                    y: TRACK_START_Y - ELEMENT_HEIGHT * 4,
-                    width: 30,
-                    height: ELEMENT_HEIGHT,
-                },
-            ]),
-            new Element([
-                {
-                    x: -40,
-                    y: TRACK_START_Y - ELEMENT_HEIGHT * 5,
-                    width: 80,
-                    height: ELEMENT_HEIGHT,
-                },
-            ]),
-            new Element([
-                {
-                    x: -40,
-                    y: TRACK_START_Y - ELEMENT_HEIGHT * 6,
-                    width: 80,
-                    height: ELEMENT_HEIGHT,
-                },
-            ]),
-        ];
+    constructor(trackTemplate: readonly TrackElementTemplate[]) {
+        this.elements = createTrack(trackTemplate, TRACK_START_Y);
 
         const trackMinX = Math.min(...this.elements.map((e) => e.minX));
         const trackMaxX = Math.max(...this.elements.map((e) => e.maxX));
         const trackWidth = trackMaxX - trackMinX;
-        const trackHeight = this.elements.length * ELEMENT_HEIGHT;
+        const trackHeight = this.elements.reduce(
+            (total, current) => total + current.height,
+            0,
+        );
 
         this.x = 0 - trackWidth / 2 - BANK_WIDTH;
         this.y = TRACK_START_Y - trackHeight - BANK_HEIGHT;
         this.width = trackWidth + 2 * BANK_WIDTH;
         this.height = trackHeight + 2 * BANK_HEIGHT;
 
-        this.player = new Character({ x: 0, y: TRACK_START_Y });
+        this.player = new Character({ x: 0, y: TRACK_START_Y - 10 });
         this.characters.push(this.player);
         this.camera.follow(this.player);
         this.resetZoom();
