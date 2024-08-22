@@ -27,11 +27,7 @@ import { Camera } from "./Camera";
 import { Character } from "./Character";
 import { canvas, cx } from "./graphics";
 import { getKeys } from "./keyboard";
-import {
-    createTrack,
-    TrackElement,
-    TrackElementTemplate,
-} from "./TrackElement";
+import { createTrack, TrackElement, TT } from "./TrackElement";
 import { normalize, Vector } from "./Vector";
 
 const TRACK_START_Y = 400;
@@ -56,7 +52,7 @@ export class Level implements Area {
     readonly width;
     readonly height;
 
-    constructor(trackTemplate: readonly TrackElementTemplate[]) {
+    constructor(trackTemplate: readonly TT[]) {
         this.elements = createTrack(trackTemplate, TRACK_START_Y);
 
         const trackMinX = Math.min(...this.elements.map((e) => e.minX));

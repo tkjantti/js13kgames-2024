@@ -34,12 +34,12 @@ const VERY_NARROW_WIDTH = 20;
 const LEFTMOST_EDGE = -FULL_WIDTH / 2;
 const RIGHTMOST_EDGE = FULL_WIDTH / 2;
 
-export enum TrackElementTemplate {
-    Full,
-    Normal,
+export enum TT { // "Track template"
+    FullWidth,
+    Basic,
     Narrow,
     VeryNarrow,
-    Dual,
+    DualPassage,
 }
 
 export class TrackElement {
@@ -57,7 +57,7 @@ export class TrackElement {
 }
 
 export function createTrack(
-    templates: readonly TrackElementTemplate[],
+    templates: readonly TT[],
     startY: number,
 ): TrackElement[] {
     return templates.map((t, i) => {
@@ -65,7 +65,7 @@ export function createTrack(
         let surfaces: Area[] = [];
 
         switch (t) {
-            case TrackElementTemplate.Full:
+            case TT.FullWidth:
                 surfaces = [
                     {
                         x: -FULL_WIDTH / 2,
@@ -75,7 +75,7 @@ export function createTrack(
                     },
                 ];
                 break;
-            case TrackElementTemplate.Normal:
+            case TT.Basic:
                 surfaces = [
                     {
                         x: -NORMAL_WIDTH / 2,
@@ -85,7 +85,7 @@ export function createTrack(
                     },
                 ];
                 break;
-            case TrackElementTemplate.Narrow:
+            case TT.Narrow:
                 surfaces = [
                     {
                         x: -NARROW_WIDTH / 2,
@@ -95,7 +95,7 @@ export function createTrack(
                     },
                 ];
                 break;
-            case TrackElementTemplate.VeryNarrow:
+            case TT.VeryNarrow:
                 surfaces = [
                     {
                         x: -VERY_NARROW_WIDTH / 2,
@@ -105,7 +105,7 @@ export function createTrack(
                     },
                 ];
                 break;
-            case TrackElementTemplate.Dual:
+            case TT.DualPassage:
                 surfaces = [
                     {
                         x: LEFTMOST_EDGE + VERY_NARROW_WIDTH / 2,

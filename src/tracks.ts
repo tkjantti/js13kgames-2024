@@ -22,13 +22,13 @@
  * SOFTWARE.
  */
 
-import { TrackElementTemplate } from "./TrackElement";
+import { TT } from "./TrackElement";
 
-export const simpleTrack: readonly TrackElementTemplate[] = [
-    TrackElementTemplate.Full,
-    TrackElementTemplate.Dual,
-    TrackElementTemplate.Full,
-    TrackElementTemplate.Normal,
-    TrackElementTemplate.VeryNarrow,
-    TrackElementTemplate.Narrow,
+export const simpleTrack: readonly TT[] = [
+    TT.FullWidth,
+    TT.DualPassage,
+    TT.FullWidth,
+    TT.Basic,
+    TT.VeryNarrow,
+    TT.Narrow,
 ];
