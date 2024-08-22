@@ -111,15 +111,15 @@ export class Camera {
         // Keep camera within level in x-direction.
         if (x - viewAreaWidth / 2 < this.level.x) {
             x = this.level.x + viewAreaWidth / 2;
-        } else if (x + viewAreaWidth / 2 > this.level.width) {
-            x = this.level.width - viewAreaWidth / 2;
+        } else if (x + viewAreaWidth / 2 > this.level.x + this.level.width) {
+            x = this.level.x + this.level.width - viewAreaWidth / 2;
         }
 
         // Keep camera within level in y-direction.
         if (y - viewAreaHeight / 2 < this.level.y) {
             y = this.level.y + viewAreaHeight / 2;
-        } else if (y + viewAreaHeight / 2 > this.level.height) {
-            y = this.level.height - viewAreaHeight / 2;
+        } else if (y + viewAreaHeight / 2 > this.level.y + this.level.height) {
+            y = this.level.y + this.level.height - viewAreaHeight / 2;
         }
 
         this.x = x;

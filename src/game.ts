@@ -1,13 +1,14 @@
 import { canvas, cx } from "./graphics";
 import { initializeKeyboard } from "./keyboard";
 import { Level } from "./Level";
+import { simpleTrack } from "./tracks";
 
 const TIME_STEP = 1000 / 60;
 const MAX_FRAME = TIME_STEP * 5;
 
 let lastTime = 0;
 
-const level = new Level();
+const level = new Level(simpleTrack);
 
 const gameLoop = (t: number): void => {
     requestAnimationFrame(gameLoop);
@@ -30,8 +31,6 @@ const draw = (t: number, dt: number): void => {
 
     level.draw(t, dt);
 
-    drawStatus();
-
     cx.restore();
 };
 
@@ -43,9 +42,3 @@ export const start = async (): Promise<void> => {
     initializeKeyboard();
     window.requestAnimationFrame(gameLoop);
 };
-
-function drawStatus() {
-    cx.fillStyle = "rgb(200, 200, 200)";
-    cx.font = "30px Sans-serif";
-    cx.fillText("WAYPOINTS: " + level.progress, 30, 30);
-}

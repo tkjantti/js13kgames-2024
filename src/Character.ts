@@ -36,7 +36,7 @@ const PLAYER_SPEED = 0.5;
 
 export class Character implements GameObject {
     private direction: Vector = { x: 0, y: 0 };
-    private latestDirection: Vector = { x: 0, y: 0 };
+    private latestDirection: Vector = { x: 0, y: -1 };
 
     x: number;
     y: number;
