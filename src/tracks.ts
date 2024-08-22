@@ -26,6 +26,7 @@ import { TT } from "./TrackElement";
 
 export const simpleTrack: readonly TT[] = [
     TT.FullWidth,
+    TT.FullWidthWithObstacleAtCenter,
     TT.DualPassage,
     TT.FullWidth,
     TT.Basic,

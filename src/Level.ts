@@ -124,22 +124,26 @@ export class Level implements Area {
 
         cx.save();
 
-        cx.strokeStyle = "red";
-        cx.lineWidth = 1;
-        cx.strokeRect(this.x, this.y, this.width, this.height);
+        for (let e = 0; e < this.elements.length; e++) {
+            const element = this.elements[e];
 
-        for (let i = 0; i < this.elements.length; i++) {
-            const surfaces = this.elements[i].surfaces;
+            const surfaces = element.surfaces;
             cx.fillStyle = "rgb(70,50,70)";
 
-            for (let j = 0; j < surfaces.length; j++) {
-                const surface = surfaces[j];
+            for (let i = 0; i < surfaces.length; i++) {
+                const surface = surfaces[i];
                 cx.fillRect(
                     surface.x,
                     surface.y,
                     surface.width,
                     surface.height,
                 );
+            }
+
+            const objects = element.objects;
+            for (let i = 0; i < objects.length; i++) {
+                const o = objects[i];
+                o.draw(t, dt);
             }
         }
 

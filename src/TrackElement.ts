@@ -23,6 +23,8 @@
  */
 
 import { Area } from "./Area";
+import { GameObject } from "./GameObject";
+import { Obstacle } from "./Obstacle";
 
 const ELEMENT_HEIGHT = 20;
 
@@ -40,6 +42,7 @@ export enum TT { // "Track template"
     Narrow,
     VeryNarrow,
     DualPassage,
+    FullWidthWithObstacleAtCenter,
 }
 
 export class TrackElement {
@@ -47,9 +50,11 @@ export class TrackElement {
     readonly height: number;
     readonly minX: number;
     readonly maxX: number;
+    readonly objects: readonly GameObject[];
 
-    constructor(surfaces: readonly Area[]) {
+    constructor(surfaces: readonly Area[], objects: readonly GameObject[]) {
         this.surfaces = surfaces;
+        this.objects = objects;
         this.height = ELEMENT_HEIGHT;
         this.minX = Math.min(...this.surfaces.map((s) => s.x));
         this.maxX = Math.max(...this.surfaces.map((s) => s.x + s.width));
@@ -62,7 +67,9 @@ export function createTrack(
 ): TrackElement[] {
     return templates.map((t, i) => {
         const y = startY - ELEMENT_HEIGHT * (i + 1);
+        const centerY = y + ELEMENT_HEIGHT / 2;
         let surfaces: Area[] = [];
+        let objects: GameObject[] = [];
 
         switch (t) {
             case TT.FullWidth:
@@ -124,10 +131,27 @@ export function createTrack(
                     },
                 ];
                 break;
+            case TT.FullWidthWithObstacleAtCenter:
+                surfaces = [
+                    {
+                        x: -FULL_WIDTH / 2,
+                        y,
+                        width: FULL_WIDTH,
+                        height: ELEMENT_HEIGHT,
+                    },
+                ];
+                objects = [
+                    new Obstacle({
+                        x: -Obstacle.WIDTH / 2,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                ];
+                break;
+
             default:
                 break;
         }
 
-        return new TrackElement(surfaces);
+        return new TrackElement(surfaces, objects);
     });
 }
