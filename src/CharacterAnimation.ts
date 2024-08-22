@@ -112,7 +112,7 @@ export function renderCharacter(
     const faceRounding = 0.6 * headRounding;
 
     const torsoWidth = 0.6 * w;
-    const torsoDepth = 0.4 * w;
+    const torsoDepth = 0.5 * w;
 
     cx.fillStyle = color;
     cx.lineWidth = limbWidth;
@@ -184,15 +184,16 @@ export function renderCharacter(
                     headHeight,
                     headRounding,
                 );
-                cx.fill();
 
                 // Torso
-                cx.fillRect(
+                cx.roundRect(
                     (w - torsoDepth) / 2,
                     0.3 * h,
                     torsoDepth,
                     torsoLength,
+                    torsoRounding,
                 );
+                cx.fill();
                 cx.restore();
 
                 // Arm (front)
