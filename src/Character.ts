@@ -32,7 +32,7 @@ import { cx } from "./graphics";
 import { mirrorHorizontally } from "./rendering";
 import { isZero, Vector } from "./Vector";
 
-const PLAYER_SPEED = 0.5;
+const PLAYER_SPEED = 0.1;
 
 export class Character implements GameObject {
     private direction: Vector = { x: 0, y: 0 };
