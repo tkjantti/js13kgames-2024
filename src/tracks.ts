@@ -28,6 +28,8 @@ export const simpleTrack: readonly TT[] = [
     TT.FullWidth,
     TT.FullWidthWithObstacleAtCenter,
     TT.DualPassage,
+    TT.FullWidthWithObstacleAtCenter,
+    TT.FullWidthWithObstacleAtCenter,
     TT.FullWidth,
     TT.Basic,
     TT.VeryNarrow,

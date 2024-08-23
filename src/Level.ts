@@ -27,7 +27,7 @@ import { Camera } from "./Camera";
 import { Character } from "./Character";
 import { canvas, cx } from "./graphics";
 import { getKeys } from "./keyboard";
-import { createTrack, TrackElement, TT } from "./TrackElement";
+import { createTrack, ELEMENT_HEIGHT, TrackElement, TT } from "./TrackElement";
 import { normalize, Vector } from "./Vector";
 
 const TRACK_START_Y = 400;
@@ -124,7 +124,23 @@ export class Level implements Area {
 
         cx.save();
 
-        for (let e = 0; e < this.elements.length; e++) {
+        const viewArea = this.camera.getViewArea();
+
+        const countOfElementsToLastVisible = Math.ceil(
+            Math.max(TRACK_START_Y - viewArea.y, 0) / ELEMENT_HEIGHT,
+        );
+        const countOfElementsToFirstVisible = Math.floor(
+            Math.max(TRACK_START_Y - (viewArea.y + viewArea.height), 0) /
+                ELEMENT_HEIGHT,
+        );
+        const elementEndIndex =
+            Math.min(countOfElementsToLastVisible, this.elements.length) - 1;
+        const elementStartIndex = Math.max(
+            countOfElementsToFirstVisible - 1,
+            0,
+        );
+
+        for (let e = elementEndIndex; e >= elementStartIndex; e--) {
             const element = this.elements[e];
 
             const surfaces = element.surfaces;

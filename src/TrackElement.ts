@@ -26,7 +26,7 @@ import { Area } from "./Area";
 import { GameObject } from "./GameObject";
 import { Obstacle } from "./Obstacle";
 
-const ELEMENT_HEIGHT = 20;
+export const ELEMENT_HEIGHT = 20;
 
 const FULL_WIDTH = 80;
 const NORMAL_WIDTH = 60;
@@ -45,6 +45,8 @@ export enum TT { // "Track template"
     FullWidthWithObstacleAtCenter,
 }
 
+// An element is one horizontal slice of the track. A track is
+// composed by laying down several elements one after the other.
 export class TrackElement {
     readonly surfaces: readonly Area[];
     readonly height: number;
