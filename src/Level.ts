@@ -25,6 +25,7 @@
 import { Area } from "./Area";
 import { Camera } from "./Camera";
 import { Character } from "./Character";
+import { GameObject } from "./GameObject";
 import { canvas, cx } from "./graphics";
 import { getKeys } from "./keyboard";
 import { createTrack, ELEMENT_HEIGHT, TrackElement, TT } from "./TrackElement";
@@ -122,6 +123,8 @@ export class Level implements Area {
         cx.scale(this.camera.zoom, this.camera.zoom);
         cx.translate(-this.camera.x, -this.camera.y);
 
+        const objectsToDraw: GameObject[] = [];
+
         cx.save();
 
         const viewArea = this.camera.getViewArea();
@@ -156,17 +159,19 @@ export class Level implements Area {
                 );
             }
 
-            const objects = element.objects;
-            for (let i = 0; i < objects.length; i++) {
-                const o = objects[i];
-                o.draw(t, dt);
-            }
+            objectsToDraw.push(...element.objects);
         }
 
         cx.restore();
 
-        for (let i = 0; i < this.characters.length; i++) {
-            const c = this.characters[i];
+        objectsToDraw.push(...this.characters);
+
+        // Sort the objects so that objects in front get drawn after
+        // objects behind them.
+        objectsToDraw.sort((a, b) => a.y + a.height / 2 - (b.y + b.height / 2));
+
+        for (let i = 0; i < objectsToDraw.length; i++) {
+            const c = objectsToDraw[i];
             c.draw(t, dt);
         }
 
