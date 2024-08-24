@@ -92,7 +92,6 @@ export function renderCharacter(
             break;
     }
 
-    cx.save();
     cx.translate(0, -bouncing);
 
     const armLength = 0.35 * h;
@@ -176,6 +175,7 @@ export function renderCharacter(
                 cx.restore();
 
                 // Head
+                cx.save();
                 cx.beginPath();
                 cx.roundRect(
                     0.3 * w,
@@ -184,8 +184,10 @@ export function renderCharacter(
                     headHeight,
                     headRounding,
                 );
+                cx.restore();
 
                 // Torso
+                cx.save();
                 cx.roundRect(
                     (w - torsoDepth) / 2,
                     0.3 * h,
@@ -267,6 +269,7 @@ export function renderCharacter(
             cx.restore();
 
             // Torso
+            cx.save();
             cx.beginPath();
             cx.roundRect(
                 0.2 * w,
@@ -275,7 +278,10 @@ export function renderCharacter(
                 torsoLength,
                 torsoRounding,
             );
+            cx.restore();
+
             // Head
+            cx.save();
             cx.roundRect(
                 (w - headWidth) / 2,
                 headHeight / 4,
@@ -342,6 +348,7 @@ export function renderCharacter(
             cx.restore();
 
             // Head
+            cx.save();
             cx.beginPath();
             cx.roundRect(
                 (w - headWidth) / 2,
@@ -350,8 +357,10 @@ export function renderCharacter(
                 headHeight,
                 headRounding,
             );
+            cx.restore();
 
             // Torso
+            cx.save();
             cx.roundRect(
                 (w - torsoWidth) / 2,
                 0.3 * h,
@@ -360,6 +369,7 @@ export function renderCharacter(
                 torsoRounding,
             );
             cx.fill();
+            cx.restore();
 
             break;
         }
@@ -418,6 +428,7 @@ export function renderCharacter(
             cx.restore();
 
             // Head
+            cx.save();
             cx.beginPath();
             cx.roundRect(
                 (w - headWidth) / 2,
@@ -426,8 +437,10 @@ export function renderCharacter(
                 headHeight,
                 headRounding,
             );
+            cx.restore();
 
             // Torso
+            cx.save();
             cx.roundRect(
                 (w - torsoWidth) / 2,
                 0.3 * h,
@@ -436,6 +449,7 @@ export function renderCharacter(
                 torsoRounding,
             );
             cx.fill();
+            cx.restore();
 
             break;
         }
@@ -514,8 +528,7 @@ export function renderCharacter(
         cx.lineTo(noseX - noseWidth / 2, noseY + noseHeight);
         cx.closePath();
         cx.fill();
+
         cx.restore();
     }
-
-    cx.restore();
 }

@@ -40,6 +40,12 @@ const BANK_WIDTH = 10;
 // track.
 const BANK_HEIGHT = 40;
 
+export enum State {
+    RUNNING,
+    GAME_OVER,
+    FINISHED,
+}
+
 export class Level implements Area {
     private camera: Camera = new Camera(this, canvas);
 
@@ -52,6 +58,8 @@ export class Level implements Area {
     readonly y;
     readonly width;
     readonly height;
+
+    state: State = State.RUNNING;
 
     constructor(trackTemplate: readonly TT[]) {
         this.elements = createTrack(trackTemplate, TRACK_START_Y);
