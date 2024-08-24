@@ -25,13 +25,10 @@
 import { Area } from "./Area";
 import { Camera } from "./Camera";
 import { Character } from "./Character";
+import { GameObject } from "./GameObject";
 import { canvas, cx } from "./graphics";
 import { getKeys } from "./keyboard";
-import {
-    createTrack,
-    TrackElement,
-    TrackElementTemplate,
-} from "./TrackElement";
+import { createTrack, ELEMENT_HEIGHT, TrackElement, TT } from "./TrackElement";
 import { normalize, Vector } from "./Vector";
 
 const TRACK_START_Y = 400;
@@ -56,7 +53,7 @@ export class Level implements Area {
     readonly width;
     readonly height;
 
-    constructor(trackTemplate: readonly TrackElementTemplate[]) {
+    constructor(trackTemplate: readonly TT[]) {
         this.elements = createTrack(trackTemplate, TRACK_START_Y);
 
         const trackMinX = Math.min(...this.elements.map((e) => e.minX));
@@ -126,18 +123,34 @@ export class Level implements Area {
         cx.scale(this.camera.zoom, this.camera.zoom);
         cx.translate(-this.camera.x, -this.camera.y);
 
+        const objectsToDraw: GameObject[] = [];
+
         cx.save();
 
-        cx.strokeStyle = "red";
-        cx.lineWidth = 1;
-        cx.strokeRect(this.x, this.y, this.width, this.height);
+        const viewArea = this.camera.getViewArea();
 
-        for (let i = 0; i < this.elements.length; i++) {
-            const surfaces = this.elements[i].surfaces;
+        const countOfElementsToLastVisible = Math.ceil(
+            Math.max(TRACK_START_Y - viewArea.y, 0) / ELEMENT_HEIGHT,
+        );
+        const countOfElementsToFirstVisible = Math.floor(
+            Math.max(TRACK_START_Y - (viewArea.y + viewArea.height), 0) /
+                ELEMENT_HEIGHT,
+        );
+        const elementEndIndex =
+            Math.min(countOfElementsToLastVisible, this.elements.length) - 1;
+        const elementStartIndex = Math.max(
+            countOfElementsToFirstVisible - 1,
+            0,
+        );
+
+        for (let e = elementEndIndex; e >= elementStartIndex; e--) {
+            const element = this.elements[e];
+
+            const surfaces = element.surfaces;
             cx.fillStyle = "rgb(70,50,70)";
 
-            for (let j = 0; j < surfaces.length; j++) {
-                const surface = surfaces[j];
+            for (let i = 0; i < surfaces.length; i++) {
+                const surface = surfaces[i];
                 cx.fillRect(
                     surface.x,
                     surface.y,
@@ -145,12 +158,20 @@ export class Level implements Area {
                     surface.height,
                 );
             }
+
+            objectsToDraw.push(...element.objects);
         }
 
         cx.restore();
 
-        for (let i = 0; i < this.characters.length; i++) {
-            const c = this.characters[i];
+        objectsToDraw.push(...this.characters);
+
+        // Sort the objects so that objects in front get drawn after
+        // objects behind them.
+        objectsToDraw.sort((a, b) => a.y + a.height / 2 - (b.y + b.height / 2));
+
+        for (let i = 0; i < objectsToDraw.length; i++) {
+            const c = objectsToDraw[i];
             c.draw(t, dt);
         }
 

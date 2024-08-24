@@ -23,8 +23,10 @@
  */
 
 import { Area } from "./Area";
+import { GameObject } from "./GameObject";
+import { Obstacle } from "./Obstacle";
 
-const ELEMENT_HEIGHT = 20;
+export const ELEMENT_HEIGHT = 20;
 
 const FULL_WIDTH = 80;
 const NORMAL_WIDTH = 60;
@@ -34,22 +36,27 @@ const VERY_NARROW_WIDTH = 20;
 const LEFTMOST_EDGE = -FULL_WIDTH / 2;
 const RIGHTMOST_EDGE = FULL_WIDTH / 2;
 
-export enum TrackElementTemplate {
-    Full,
-    Normal,
+export enum TT { // "Track template"
+    FullWidth,
+    Basic,
     Narrow,
     VeryNarrow,
-    Dual,
+    DualPassage,
+    FullWidthWithObstacleAtCenter,
 }
 
+// An element is one horizontal slice of the track. A track is
+// composed by laying down several elements one after the other.
 export class TrackElement {
     readonly surfaces: readonly Area[];
     readonly height: number;
     readonly minX: number;
     readonly maxX: number;
+    readonly objects: readonly GameObject[];
 
-    constructor(surfaces: readonly Area[]) {
+    constructor(surfaces: readonly Area[], objects: readonly GameObject[]) {
         this.surfaces = surfaces;
+        this.objects = objects;
         this.height = ELEMENT_HEIGHT;
         this.minX = Math.min(...this.surfaces.map((s) => s.x));
         this.maxX = Math.max(...this.surfaces.map((s) => s.x + s.width));
@@ -57,15 +64,17 @@ export class TrackElement {
 }
 
 export function createTrack(
-    templates: readonly TrackElementTemplate[],
+    templates: readonly TT[],
     startY: number,
 ): TrackElement[] {
     return templates.map((t, i) => {
         const y = startY - ELEMENT_HEIGHT * (i + 1);
+        const centerY = y + ELEMENT_HEIGHT / 2;
         let surfaces: Area[] = [];
+        let objects: GameObject[] = [];
 
         switch (t) {
-            case TrackElementTemplate.Full:
+            case TT.FullWidth:
                 surfaces = [
                     {
                         x: -FULL_WIDTH / 2,
@@ -75,7 +84,7 @@ export function createTrack(
                     },
                 ];
                 break;
-            case TrackElementTemplate.Normal:
+            case TT.Basic:
                 surfaces = [
                     {
                         x: -NORMAL_WIDTH / 2,
@@ -85,7 +94,7 @@ export function createTrack(
                     },
                 ];
                 break;
-            case TrackElementTemplate.Narrow:
+            case TT.Narrow:
                 surfaces = [
                     {
                         x: -NARROW_WIDTH / 2,
@@ -95,7 +104,7 @@ export function createTrack(
                     },
                 ];
                 break;
-            case TrackElementTemplate.VeryNarrow:
+            case TT.VeryNarrow:
                 surfaces = [
                     {
                         x: -VERY_NARROW_WIDTH / 2,
@@ -105,7 +114,7 @@ export function createTrack(
                     },
                 ];
                 break;
-            case TrackElementTemplate.Dual:
+            case TT.DualPassage:
                 surfaces = [
                     {
                         x: LEFTMOST_EDGE + VERY_NARROW_WIDTH / 2,
@@ -124,10 +133,27 @@ export function createTrack(
                     },
                 ];
                 break;
+            case TT.FullWidthWithObstacleAtCenter:
+                surfaces = [
+                    {
+                        x: -FULL_WIDTH / 2,
+                        y,
+                        width: FULL_WIDTH,
+                        height: ELEMENT_HEIGHT,
+                    },
+                ];
+                objects = [
+                    new Obstacle({
+                        x: -Obstacle.WIDTH / 2,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                ];
+                break;
+
             default:
                 break;
         }
 
-        return new TrackElement(surfaces);
+        return new TrackElement(surfaces, objects);
     });
 }

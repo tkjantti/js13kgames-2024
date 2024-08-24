@@ -41,6 +41,20 @@ export class Camera {
         private view: Dimensions,
     ) {}
 
+    // Returns the area of the level that is currently visible on the
+    // camera.
+    getViewArea(): Area {
+        const viewAreaWidth = this.view.width / this.zoom;
+        const viewAreaHeight = this.view.height / this.zoom;
+
+        return {
+            x: this.x - viewAreaWidth / 2,
+            y: this.y - viewAreaHeight / 2,
+            width: viewAreaWidth,
+            height: viewAreaHeight,
+        };
+    }
+
     follow(target: GameObject): void {
         this.target = target;
     }
