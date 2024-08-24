@@ -28,7 +28,8 @@ import { Character } from "./Character";
 import { GameObject } from "./GameObject";
 import { canvas, cx } from "./graphics";
 import { getKeys } from "./keyboard";
-import { createTrack, ELEMENT_HEIGHT, TrackElement, TT } from "./TrackElement";
+import { Track } from "./Track";
+import { TT } from "./TrackElement";
 import { normalize, Vector } from "./Vector";
 
 const TRACK_START_Y = 400;
@@ -43,7 +44,7 @@ const BANK_HEIGHT = 40;
 export class Level implements Area {
     private camera: Camera = new Camera(this, canvas);
 
-    private elements: TrackElement[] = [];
+    private track: Track;
 
     private characters: Character[] = [];
     private player: Character;
@@ -54,20 +55,12 @@ export class Level implements Area {
     readonly height;
 
     constructor(trackTemplate: readonly TT[]) {
-        this.elements = createTrack(trackTemplate, TRACK_START_Y);
+        this.track = new Track(trackTemplate, TRACK_START_Y);
 
-        const trackMinX = Math.min(...this.elements.map((e) => e.minX));
-        const trackMaxX = Math.max(...this.elements.map((e) => e.maxX));
-        const trackWidth = trackMaxX - trackMinX;
-        const trackHeight = this.elements.reduce(
-            (total, current) => total + current.height,
-            0,
-        );
-
-        this.x = 0 - trackWidth / 2 - BANK_WIDTH;
-        this.y = TRACK_START_Y - trackHeight - BANK_HEIGHT;
-        this.width = trackWidth + 2 * BANK_WIDTH;
-        this.height = trackHeight + 2 * BANK_HEIGHT;
+        this.x = 0 - this.track.width / 2 - BANK_WIDTH;
+        this.y = TRACK_START_Y - this.track.height - BANK_HEIGHT;
+        this.width = this.track.width + 2 * BANK_WIDTH;
+        this.height = this.track.height + 2 * BANK_HEIGHT;
 
         this.player = new Character({ x: 0, y: TRACK_START_Y - 10 });
         this.characters.push(this.player);
@@ -128,23 +121,13 @@ export class Level implements Area {
         cx.save();
 
         const viewArea = this.camera.getViewArea();
-
-        const countOfElementsToLastVisible = Math.ceil(
-            Math.max(TRACK_START_Y - viewArea.y, 0) / ELEMENT_HEIGHT,
-        );
-        const countOfElementsToFirstVisible = Math.floor(
-            Math.max(TRACK_START_Y - (viewArea.y + viewArea.height), 0) /
-                ELEMENT_HEIGHT,
-        );
-        const elementEndIndex =
-            Math.min(countOfElementsToLastVisible, this.elements.length) - 1;
-        const elementStartIndex = Math.max(
-            countOfElementsToFirstVisible - 1,
-            0,
+        const { minI, maxI } = this.track.getBetween(
+            viewArea.y,
+            viewArea.y + viewArea.height,
         );
 
-        for (let e = elementEndIndex; e >= elementStartIndex; e--) {
-            const element = this.elements[e];
+        for (let e = maxI; e >= minI; e--) {
+            const element = this.track.get(e);
 
             const surfaces = element.surfaces;
             cx.fillStyle = "rgb(70,50,70)";
