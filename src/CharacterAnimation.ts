@@ -92,6 +92,7 @@ export function renderCharacter(
             break;
     }
 
+    cx.save();
     cx.translate(0, -bouncing);
 
     const armLength = 0.35 * h;
@@ -531,4 +532,6 @@ export function renderCharacter(
 
         cx.restore();
     }
+
+    cx.restore();
 }
