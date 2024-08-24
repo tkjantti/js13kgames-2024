@@ -96,7 +96,7 @@ const centerText = (
 
 const draw = (t: number, dt: number): void => {
     cx.save();
-    cx.fillStyle = "rgb(20, 50, 50)";
+    cx.fillStyle = "rgb(10, 10, 30)";
     cx.fillRect(0, 0, canvas.width, canvas.height);
     level.draw(t, dt);
     cx.restore();
@@ -184,7 +184,7 @@ const drawInitialScreen = (text: string): void => {
     cx.rect(0, 0, canvas.width, canvas.height);
     cx.fill();
 
-    centerText('"13th guys"', 64, "Brush Script MT", 1, -20);
+    centerText('"13th guy"', 64, "Brush Script MT", 1, -20);
     centerText("WIP", 24, "Brush Script MT", 1, 20);
     centerText(text, 24, "Sans-serif", 1, 80);
     cx.restore();
