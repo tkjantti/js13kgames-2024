@@ -10,8 +10,6 @@ let lastTime = 0;
 
 let level = new Level(simpleTrack);
 
-let successes = 0;
-
 const maxRadius = Math.max(screen.width, screen.height) / 1.5;
 
 enum GameState {
@@ -161,15 +159,7 @@ const draw = (t: number, dt: number): void => {
             cx.fill();
 
             centerText("Race finised", 48, "Brush Script MT", 1, -20);
-            centerText(
-                "READY FOR NEXT RACE " +
-                    successes +
-                    (successes > 1 ? " TIMES!" : " TIME!"),
-                48,
-                "Brush Script MT",
-                1,
-                30,
-            );
+            centerText("READY FOR NEXT RACE ", 48, "Brush Script MT", 1, 30);
             centerText("Press enter", 32, "Sans-serif", 24, 100);
 
             if (radius >= maxRadius) {
