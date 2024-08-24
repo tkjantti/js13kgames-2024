@@ -42,7 +42,6 @@ const setState = (state: GameState): void => {
             // playTune(SFX_FINISHED);
             break;
         case GameState.GameFinished:
-            successes++;
             radius = 1;
             break;
         default:
