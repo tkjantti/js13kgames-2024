@@ -10,7 +10,6 @@ let lastTime = 0;
 
 let level = new Level(simpleTrack);
 
-let spawns = 0;
 let successes = 0;
 
 const maxRadius = Math.max(screen.width, screen.height) / 1.5;
@@ -46,7 +45,6 @@ const setState = (state: GameState): void => {
             break;
         case GameState.GameFinished:
             successes++;
-            spawns = spawns + 5; // Make it harder this time
             radius = 1;
             break;
         default:
