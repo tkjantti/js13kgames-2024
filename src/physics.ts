@@ -25,7 +25,7 @@
 import { add, isZero, length, multiply, normalize, Vector } from "./Vector";
 import { GameObject } from "./GameObject";
 
-const CHARACTER_MAX_SPEED = 0.5;
+const CHARACTER_MAX_SPEED = 0.2;
 const CHARACTER_RUN_ACCELERATION = 0.001;
 const CHARACTER_STOP_ACCELERATION = 0.001;
 
