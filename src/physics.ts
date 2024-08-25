@@ -22,12 +22,24 @@
  * SOFTWARE.
  */
 
-import { add, isZero, length, multiply, normalize, Vector } from "./Vector";
+import {
+    add,
+    distance,
+    dotProduct,
+    isZero,
+    length,
+    multiply,
+    normalize,
+    subtract,
+    Vector,
+} from "./Vector";
 import { GameObject } from "./GameObject";
 
 const CHARACTER_MAX_SPEED = 0.2;
 const CHARACTER_RUN_ACCELERATION = 0.001;
 const CHARACTER_STOP_ACCELERATION = 0.001;
+
+const OBSTACLE_BOUNCE_FACTOR = 1.5;
 
 export function getMovementVelocity(
     c: GameObject,
@@ -58,4 +70,30 @@ export function getMovementVelocity(
     }
 
     return newVelocity;
+}
+
+export function calculateCollision(c: GameObject, obstacle: GameObject): void {
+    const radiusC = c.width / 2;
+    const radiusObstacle = obstacle.width / 2;
+
+    const centerC: Vector = {
+        x: c.x + c.width / 2,
+        y: c.y + c.height / 2,
+    };
+    const centerObstacle: Vector = {
+        x: obstacle.x + obstacle.width / 2,
+        y: obstacle.y + obstacle.height / 2,
+    };
+
+    if (distance(centerC, centerObstacle) < radiusC + radiusObstacle) {
+        const directionToOther = normalize(subtract(centerObstacle, centerC));
+        const speedToOther = dotProduct(c.velocity, directionToOther);
+        const bouncingVelocity = multiply(
+            directionToOther,
+            -speedToOther * OBSTACLE_BOUNCE_FACTOR,
+        );
+        const updatedVelocity = add(c.velocity, bouncingVelocity);
+
+        c.velocity = updatedVelocity;
+    }
 }

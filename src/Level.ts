@@ -28,18 +28,10 @@ import { Character } from "./Character";
 import { GameObject } from "./GameObject";
 import { canvas, cx } from "./graphics";
 import { getKeys } from "./keyboard";
-import { getMovementVelocity } from "./physics";
+import { calculateCollision, getMovementVelocity } from "./physics";
 import { Track } from "./Track";
 import { TT } from "./TrackElement";
-import {
-    add,
-    distance,
-    dotProduct,
-    multiply,
-    normalize,
-    subtract,
-    Vector,
-} from "./Vector";
+import { normalize, Vector } from "./Vector";
 
 const TRACK_START_Y = 400;
 
@@ -49,8 +41,6 @@ const BANK_WIDTH = 10;
 // Length of empty area before the start and after the end of the
 // track.
 const BANK_HEIGHT = 40;
-
-const OBSTACLE_BOUNCE_FACTOR = 1.5;
 
 export enum State {
     RUNNING,
@@ -103,8 +93,6 @@ export class Level implements Area {
 
             c.velocity = getMovementVelocity(c, movementDirection, dt);
 
-            c.move(movementDirection);
-
             const { minI, maxI } = this.track.getBetween(c.y, c.y + c.height);
 
             for (let ei = minI; ei <= maxI; ei++) {
@@ -112,40 +100,11 @@ export class Level implements Area {
                 for (let oi = 0; oi < element.objects.length; oi++) {
                     const o = element.objects[oi];
 
-                    const radiusC = c.width / 2;
-                    const radiusO = o.width / 2;
-
-                    const centerC: Vector = {
-                        x: c.x + c.width / 2,
-                        y: c.y + c.height / 2,
-                    };
-                    const centerO: Vector = {
-                        x: o.x + o.width / 2,
-                        y: o.y + o.height / 2,
-                    };
-
-                    if (distance(centerC, centerO) < radiusC + radiusO) {
-                        const directionToOther = normalize(
-                            subtract(centerO, centerC),
-                        );
-                        const speedToOther = dotProduct(
-                            c.velocity,
-                            directionToOther,
-                        );
-                        const bouncingVelocity = multiply(
-                            directionToOther,
-                            -speedToOther * OBSTACLE_BOUNCE_FACTOR,
-                        );
-                        const updatedVelocity = add(
-                            c.velocity,
-                            bouncingVelocity,
-                        );
-
-                        c.velocity = updatedVelocity;
-                        c.move(movementDirection);
-                    }
+                    calculateCollision(c, o);
                 }
             }
+
+            c.move(movementDirection);
 
             c.update(t, dt);
         }
