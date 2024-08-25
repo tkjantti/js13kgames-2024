@@ -101,12 +101,11 @@ const FadeIn = (tune, vol = 1) => {
 export const playTune = (tune) => {
     switch (tune) {
         case SFX_MAIN: {
-            FadeIn(mainTune);
-            FadeOut(mainTune, 0.4); // Just for dev time until new tune is used
+            FadeIn(mainTune, 0.5);
             break;
         }
         case SFX_FINISHED: {
-            FadeOut(mainTune, 0.05);
+            FadeOut(mainTune, 0.1);
             break;
         }
         case SFX_START: {

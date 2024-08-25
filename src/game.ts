@@ -208,9 +208,9 @@ export const start = async (): Promise<void> => {
 
     drawInitialScreen("Press enter key to start the race!");
 
-    setState(GameState.Ready);
-
     await waitForEnter();
+
+    setState(GameState.Ready);
 
     window.requestAnimationFrame(gameLoop);
 };
