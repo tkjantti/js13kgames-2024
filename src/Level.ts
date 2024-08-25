@@ -28,8 +28,18 @@ import { Character } from "./Character";
 import { GameObject } from "./GameObject";
 import { canvas, cx } from "./graphics";
 import { getKeys } from "./keyboard";
-import { createTrack, ELEMENT_HEIGHT, TrackElement, TT } from "./TrackElement";
-import { normalize, Vector } from "./Vector";
+import { getMovementVelocity } from "./physics";
+import { Track } from "./Track";
+import { TT } from "./TrackElement";
+import {
+    add,
+    distance,
+    dotProduct,
+    multiply,
+    normalize,
+    subtract,
+    Vector,
+} from "./Vector";
 
 const TRACK_START_Y = 400;
 
@@ -40,6 +50,8 @@ const BANK_WIDTH = 10;
 // track.
 const BANK_HEIGHT = 40;
 
+const OBSTACLE_BOUNCE_FACTOR = 1.5;
+
 export enum State {
     RUNNING,
     GAME_OVER,
@@ -49,7 +61,7 @@ export enum State {
 export class Level implements Area {
     private camera: Camera = new Camera(this, canvas);
 
-    private elements: TrackElement[] = [];
+    private track: Track;
 
     private characters: Character[] = [];
     private player: Character;
@@ -62,20 +74,12 @@ export class Level implements Area {
     state: State = State.RUNNING;
 
     constructor(trackTemplate: readonly TT[]) {
-        this.elements = createTrack(trackTemplate, TRACK_START_Y);
+        this.track = new Track(trackTemplate, TRACK_START_Y);
 
-        const trackMinX = Math.min(...this.elements.map((e) => e.minX));
-        const trackMaxX = Math.max(...this.elements.map((e) => e.maxX));
-        const trackWidth = trackMaxX - trackMinX;
-        const trackHeight = this.elements.reduce(
-            (total, current) => total + current.height,
-            0,
-        );
-
-        this.x = 0 - trackWidth / 2 - BANK_WIDTH;
-        this.y = TRACK_START_Y - trackHeight - BANK_HEIGHT;
-        this.width = trackWidth + 2 * BANK_WIDTH;
-        this.height = trackHeight + 2 * BANK_HEIGHT;
+        this.x = 0 - this.track.width / 2 - BANK_WIDTH;
+        this.y = TRACK_START_Y - this.track.height - BANK_HEIGHT;
+        this.width = this.track.width + 2 * BANK_WIDTH;
+        this.height = this.track.height + 2 * BANK_HEIGHT;
 
         this.player = new Character({ x: 0, y: TRACK_START_Y - 10 });
         this.characters.push(this.player);
@@ -94,9 +98,54 @@ export class Level implements Area {
         for (let i = 0; i < this.characters.length; i++) {
             const c = this.characters[i];
 
-            const movement =
+            const movementDirection =
                 c === this.player ? this.getPlayerMovement() : { x: 0, y: 0 };
-            c.move(movement);
+
+            c.velocity = getMovementVelocity(c, movementDirection, dt);
+
+            c.move(movementDirection);
+
+            const { minI, maxI } = this.track.getBetween(c.y, c.y + c.height);
+
+            for (let ei = minI; ei <= maxI; ei++) {
+                const element = this.track.get(ei);
+                for (let oi = 0; oi < element.objects.length; oi++) {
+                    const o = element.objects[oi];
+
+                    const radiusC = c.width / 2;
+                    const radiusO = o.width / 2;
+
+                    const centerC: Vector = {
+                        x: c.x + c.width / 2,
+                        y: c.y + c.height / 2,
+                    };
+                    const centerO: Vector = {
+                        x: o.x + o.width / 2,
+                        y: o.y + o.height / 2,
+                    };
+
+                    if (distance(centerC, centerO) < radiusC + radiusO) {
+                        const directionToOther = normalize(
+                            subtract(centerO, centerC),
+                        );
+                        const speedToOther = dotProduct(
+                            c.velocity,
+                            directionToOther,
+                        );
+                        const bouncingVelocity = multiply(
+                            directionToOther,
+                            -speedToOther * OBSTACLE_BOUNCE_FACTOR,
+                        );
+                        const updatedVelocity = add(
+                            c.velocity,
+                            bouncingVelocity,
+                        );
+
+                        c.velocity = updatedVelocity;
+                        c.move(movementDirection);
+                    }
+                }
+            }
 
             c.update(t, dt);
         }
@@ -136,23 +185,13 @@ export class Level implements Area {
         cx.save();
 
         const viewArea = this.camera.getViewArea();
-
-        const countOfElementsToLastVisible = Math.ceil(
-            Math.max(TRACK_START_Y - viewArea.y, 0) / ELEMENT_HEIGHT,
-        );
-        const countOfElementsToFirstVisible = Math.floor(
-            Math.max(TRACK_START_Y - (viewArea.y + viewArea.height), 0) /
-                ELEMENT_HEIGHT,
-        );
-        const elementEndIndex =
-            Math.min(countOfElementsToLastVisible, this.elements.length) - 1;
-        const elementStartIndex = Math.max(
-            countOfElementsToFirstVisible - 1,
-            0,
+        const { minI, maxI } = this.track.getBetween(
+            viewArea.y,
+            viewArea.y + viewArea.height,
         );
 
-        for (let e = elementEndIndex; e >= elementStartIndex; e--) {
-            const element = this.elements[e];
+        for (let e = maxI; e >= minI; e--) {
+            const element = this.track.get(e);
 
             const surfaces = element.surfaces;
             cx.fillStyle = "rgb(70,50,70)";

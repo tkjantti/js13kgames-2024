@@ -22,11 +22,15 @@
  * SOFTWARE.
  */
 
+import { Vector } from "./Vector";
+
 export interface GameObject {
     x: number;
     y: number;
     width: number;
     height: number;
+
+    velocity: Vector;
 
     draw(t: number, dt: number): void;
 }
