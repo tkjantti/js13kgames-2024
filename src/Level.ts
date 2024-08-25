@@ -52,6 +52,12 @@ const BANK_HEIGHT = 40;
 
 const OBSTACLE_BOUNCE_FACTOR = 1.5;
 
+export enum State {
+    RUNNING,
+    GAME_OVER,
+    FINISHED,
+}
+
 export class Level implements Area {
     private camera: Camera = new Camera(this, canvas);
 
@@ -64,6 +70,8 @@ export class Level implements Area {
     readonly y;
     readonly width;
     readonly height;
+
+    state: State = State.RUNNING;
 
     constructor(trackTemplate: readonly TT[]) {
         this.track = new Track(trackTemplate, TRACK_START_Y);

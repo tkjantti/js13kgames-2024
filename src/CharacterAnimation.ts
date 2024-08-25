@@ -194,7 +194,6 @@ export function renderCharacter(
                     torsoRounding,
                 );
                 cx.fill();
-                cx.restore();
 
                 // Arm (front)
                 cx.save();
@@ -275,6 +274,7 @@ export function renderCharacter(
                 torsoLength,
                 torsoRounding,
             );
+
             // Head
             cx.roundRect(
                 (w - headWidth) / 2,
@@ -284,7 +284,6 @@ export function renderCharacter(
                 headRounding,
             );
             cx.fill();
-            cx.restore();
 
             break;
         }
@@ -514,6 +513,7 @@ export function renderCharacter(
         cx.lineTo(noseX - noseWidth / 2, noseY + noseHeight);
         cx.closePath();
         cx.fill();
+
         cx.restore();
     }
 
