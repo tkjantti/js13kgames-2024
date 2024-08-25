@@ -22,57 +22,40 @@
  * SOFTWARE.
  */
 
-export interface Vector {
-    x: number;
-    y: number;
-}
+import { add, isZero, length, multiply, normalize, Vector } from "./Vector";
+import { GameObject } from "./GameObject";
 
-export function isZero(a: Vector): boolean {
-    return a.x === 0 && a.y === 0;
-}
+const CHARACTER_MAX_SPEED = 0.5;
+const CHARACTER_RUN_ACCELERATION = 0.001;
+const CHARACTER_STOP_ACCELERATION = 0.001;
 
-export function distance(a: Vector, b: Vector): number {
-    const dx = a.x - b.x;
-    const dy = a.y - b.y;
-    return Math.sqrt(dx * dx + dy * dy);
-}
+export function getMovementVelocity(
+    c: GameObject,
+    direction: Vector,
+    dt: number,
+): Vector {
+    if (isZero(direction)) {
+        // Slow down
+        const currentSpeed = length(c.velocity);
+        const acc = CHARACTER_STOP_ACCELERATION * dt;
+        const slowerSpeed = currentSpeed > acc ? currentSpeed - acc : 0;
+        const newVelocity =
+            slowerSpeed > 0
+                ? multiply(normalize(c.velocity), slowerSpeed)
+                : { x: 0, y: 0 };
+        return newVelocity;
+    }
 
-export function length(a: Vector): number {
-    return Math.sqrt(a.x * a.x + a.y * a.y);
-}
+    const changeOfSpeed = Math.min(
+        CHARACTER_RUN_ACCELERATION * dt,
+        CHARACTER_MAX_SPEED,
+    );
+    const movement = multiply(direction, changeOfSpeed);
+    let newVelocity = add(c.velocity, movement);
 
-export function add(a: Vector, b: Vector): Vector {
-    return {
-        x: a.x + b.x,
-        y: a.y + b.y,
-    };
-}
+    if (length(newVelocity) > CHARACTER_MAX_SPEED) {
+        newVelocity = multiply(normalize(newVelocity), CHARACTER_MAX_SPEED);
+    }
 
-export function subtract(a: Vector, b: Vector): Vector {
-    return {
-        x: a.x - b.x,
-        y: a.y - b.y,
-    };
-}
-
-export function multiply(a: Vector, multiplier: number): Vector {
-    return {
-        x: a.x * multiplier,
-        y: a.y * multiplier,
-    };
-}
-
-export function divide(a: Vector, divisor: number): Vector {
-    return {
-        x: a.x / divisor,
-        y: a.y / divisor,
-    };
-}
-
-export function normalize(a: Vector): Vector {
-    return divide(a, length(a));
-}
-
-export function dotProduct(a: Vector, b: Vector): number {
-    return a.x * b.x + a.y * b.y;
+    return newVelocity;
 }

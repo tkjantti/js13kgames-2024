@@ -24,6 +24,11 @@
 
 import { createTrack, ELEMENT_HEIGHT, TrackElement, TT } from "./TrackElement";
 
+export interface IndexRange {
+    minI: number;
+    maxI: number;
+}
+
 export class Track {
     private elements: TrackElement[] = [];
     private startY: number;
@@ -46,7 +51,7 @@ export class Track {
         return this.elements[i];
     }
 
-    getBetween(topY: number, bottomY: number): { minI: number; maxI: number } {
+    getBetween(topY: number, bottomY: number): IndexRange {
         const countOfElementsToTopY = Math.ceil(
             Math.max(this.startY - topY, 0) / ELEMENT_HEIGHT,
         );

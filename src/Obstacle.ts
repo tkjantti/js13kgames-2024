@@ -35,6 +35,8 @@ export class Obstacle implements GameObject {
     width: number = Obstacle.WIDTH;
     height: number = Obstacle.HEIGHT;
 
+    velocity: Vector = { x: 0, y: 0 };
+
     constructor(position: Vector) {
         this.x = position.x;
         this.y = position.y;

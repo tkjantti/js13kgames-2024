@@ -32,8 +32,6 @@ import { cx } from "./graphics";
 import { mirrorHorizontally } from "./rendering";
 import { isZero, Vector } from "./Vector";
 
-const PLAYER_SPEED = 0.1;
-
 export class Character implements GameObject {
     private direction: Vector = { x: 0, y: 0 };
     private latestDirection: Vector = { x: 0, y: -1 };
@@ -43,7 +41,7 @@ export class Character implements GameObject {
     width = 1;
     height = 1;
 
-    waypoint = 0;
+    velocity: Vector = { x: 0, y: 0 };
 
     constructor(position: Vector) {
         this.x = position.x;
@@ -55,8 +53,8 @@ export class Character implements GameObject {
         if (!isZero(direction)) {
             this.latestDirection = direction;
         }
-        this.x += direction.x * PLAYER_SPEED;
-        this.y += direction.y * PLAYER_SPEED;
+        this.x += this.velocity.x;
+        this.y += this.velocity.y;
     }
 
     // eslint-disable-next-line
