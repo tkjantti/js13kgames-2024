@@ -40,6 +40,13 @@ import {
     subtract,
     Vector,
 } from "./Vector";
+import {
+    playTune,
+    SFX_BOUNCE,
+    // Ignore lint errors from JS import
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+} from "./sfx/sfx.js";
 
 const TRACK_START_Y = 400;
 
@@ -50,7 +57,7 @@ const BANK_WIDTH = 10;
 // track.
 const BANK_HEIGHT = 40;
 
-const OBSTACLE_BOUNCE_FACTOR = 1.5;
+const OBSTACLE_BOUNCE_FACTOR = 15;
 
 export enum State {
     RUNNING,
@@ -143,6 +150,8 @@ export class Level implements Area {
 
                         c.velocity = updatedVelocity;
                         c.move(movementDirection);
+
+                        playTune(SFX_BOUNCE);
                     }
                 }
             }

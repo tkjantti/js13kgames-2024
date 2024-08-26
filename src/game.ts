@@ -3,6 +3,17 @@ import { initializeKeyboard, waitForEnter } from "./keyboard";
 import { Level, State } from "./Level";
 import { simpleTrack } from "./tracks";
 
+import {
+    initialize,
+    playTune,
+    SFX_START,
+    SFX_MAIN,
+    SFX_FINISHED,
+    // Ignore lint errors from JS import
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+} from "./sfx/sfx.js";
+
 const TIME_STEP = 1000 / 60;
 const MAX_FRAME = TIME_STEP * 5;
 
@@ -32,14 +43,14 @@ const setState = (state: GameState): void => {
         case GameState.Ready:
             level = new Level(simpleTrack);
             radius = maxRadius;
-            // playTune(SFX_START);
+            playTune(SFX_START);
             break;
         case GameState.Running:
-            // playTune(SFX_MAIN);
+            playTune(SFX_MAIN);
             break;
         case GameState.GameOver:
             radius = 1;
-            // playTune(SFX_FINISHED);
+            playTune(SFX_FINISHED);
             break;
         case GameState.GameFinished:
             radius = 1;
@@ -184,8 +195,8 @@ const drawInitialScreen = (text: string): void => {
     cx.rect(0, 0, canvas.width, canvas.height);
     cx.fill();
 
-    centerText('"13th guy"', 64, "Brush Script MT", 1, -20);
-    centerText("WIP", 24, "Brush Script MT", 1, 20);
+    centerText("don't be the", 24, "Brush Script MT", 1, -20);
+    centerText("13TH GUY", 64, "Brush Script MT", 1, 30);
     centerText(text, 24, "Sans-serif", 1, 80);
     cx.restore();
 };
@@ -193,11 +204,13 @@ const drawInitialScreen = (text: string): void => {
 export const start = async (): Promise<void> => {
     initializeKeyboard();
     drawInitialScreen("Loading...");
-    // await initialize();
+    await initialize();
 
     drawInitialScreen("Press enter key to start the race!");
+
     await waitForEnter();
 
     setState(GameState.Ready);
+
     window.requestAnimationFrame(gameLoop);
 };
