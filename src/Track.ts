@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+import { Area, overlap } from "./Area";
 import { createTrack, ELEMENT_HEIGHT, TrackElement, TT } from "./TrackElement";
 
 export interface IndexRange {
@@ -63,5 +64,24 @@ export class Track {
             minI: Math.max(countOfElementsToBottomY - 1, 0),
             maxI: Math.min(countOfElementsToTopY, this.elements.length) - 1,
         };
+    }
+
+    isOnPlatform(range: IndexRange, area: Area): boolean {
+        const { minI, maxI } = range;
+
+        for (let e = maxI; e >= minI; e--) {
+            const element = this.get(e);
+            const surfaces = element.surfaces;
+
+            for (let i = 0; i < surfaces.length; i++) {
+                const surface = surfaces[i];
+
+                if (overlap(area, surface)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

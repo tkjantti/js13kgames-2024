@@ -42,6 +42,8 @@ const BANK_WIDTH = 10;
 // track.
 const BANK_HEIGHT = 40;
 
+const START_POSITION: Vector = { x: 0, y: TRACK_START_Y - 10 };
+
 export enum State {
     RUNNING,
     GAME_OVER,
@@ -71,7 +73,7 @@ export class Level implements Area {
         this.width = this.track.width + 2 * BANK_WIDTH;
         this.height = this.track.height + 2 * BANK_HEIGHT;
 
-        this.player = new Character({ x: 0, y: TRACK_START_Y - 10 });
+        this.player = new Character(START_POSITION);
         this.characters.push(this.player);
         this.camera.follow(this.player);
         this.resetZoom();
@@ -88,12 +90,18 @@ export class Level implements Area {
         for (let i = 0; i < this.characters.length; i++) {
             const c = this.characters[i];
 
+            const range = this.track.getBetween(c.y, c.y + c.height);
+            const { minI, maxI } = range;
+
+            if (!this.track.isOnPlatform(range, c)) {
+                c.x = START_POSITION.x;
+                c.y = START_POSITION.y;
+            }
+
             const movementDirection =
                 c === this.player ? this.getPlayerMovement() : { x: 0, y: 0 };
 
             c.velocity = getMovementVelocity(c, movementDirection, dt);
-
-            const { minI, maxI } = this.track.getBetween(c.y, c.y + c.height);
 
             for (let ei = minI; ei <= maxI; ei++) {
                 const element = this.track.get(ei);
