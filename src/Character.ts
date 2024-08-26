@@ -30,10 +30,10 @@ import {
 import { GameObject } from "./GameObject";
 import { cx } from "./graphics";
 import { mirrorHorizontally } from "./rendering";
-import { isZero, Vector } from "./Vector";
+import { isZero, Vector, ZERO_VECTOR } from "./Vector";
 
 export class Character implements GameObject {
-    private direction: Vector = { x: 0, y: 0 };
+    private direction: Vector = ZERO_VECTOR;
     private latestDirection: Vector = { x: 0, y: -1 };
 
     x: number;
@@ -41,7 +41,7 @@ export class Character implements GameObject {
     width = 1;
     height = 1;
 
-    velocity: Vector = { x: 0, y: 0 };
+    velocity: Vector = ZERO_VECTOR;
 
     constructor(position: Vector) {
         this.x = position.x;

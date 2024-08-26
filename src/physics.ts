@@ -32,6 +32,7 @@ import {
     normalize,
     subtract,
     Vector,
+    ZERO_VECTOR,
 } from "./Vector";
 import { GameObject } from "./GameObject";
 
@@ -54,7 +55,7 @@ export function getMovementVelocity(
         const newVelocity =
             slowerSpeed > 0
                 ? multiply(normalize(c.velocity), slowerSpeed)
-                : { x: 0, y: 0 };
+                : ZERO_VECTOR;
         return newVelocity;
     }
 

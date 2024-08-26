@@ -31,7 +31,7 @@ import { getKeys } from "./keyboard";
 import { calculateCollision, getMovementVelocity } from "./physics";
 import { Track } from "./Track";
 import { TT } from "./TrackElement";
-import { normalize, Vector } from "./Vector";
+import { normalize, Vector, ZERO_VECTOR } from "./Vector";
 
 const TRACK_START_Y = 400;
 
@@ -99,7 +99,7 @@ export class Level implements Area {
             }
 
             const movementDirection =
-                c === this.player ? this.getPlayerMovement() : { x: 0, y: 0 };
+                c === this.player ? this.getPlayerMovement() : ZERO_VECTOR;
 
             c.velocity = getMovementVelocity(c, movementDirection, dt);
 
@@ -130,7 +130,7 @@ export class Level implements Area {
         const dy = up ? -1 : down ? 1 : 0;
 
         if (dx === 0 && dy === 0) {
-            return { x: 0, y: 0 };
+            return ZERO_VECTOR;
         }
 
         return normalize({
