@@ -10,58 +10,48 @@
 export const bounceSfx = {
     songData: [
         {
+            // Instrument 0
             i: [
-                0, 255, 104, 1, 0, 80, 99, 0, 0, 0, 4, 0, 66, 0, 0, 3, 0, 0, 0,
-                1, 0, 1, 2, 32, 0, 12, 60, 8,
+                0, // OSC1_WAVEFORM
+                160, // OSC1_VOL
+                106, // OSC1_SEMI
+                64, // OSC1_XENV
+                0, // OSC2_WAVEFORM
+                198, // OSC2_VOL
+                106, // OSC2_SEMI
+                0, // OSC2_DETUNE
+                64, // OSC2_XENV
+                0, // NOISE_VOL
+                28, // ENV_ATTACK
+                28, // ENV_SUSTAIN
+                93, // ENV_RELEASE
+                0, // ENV_EXP_DECAY
+                0, // ARP_CHORD
+                0, // ARP_SPEED
+                0, // LFO_WAVEFORM
+                0, // LFO_AMT
+                0, // LFO_FREQ
+                0, // LFO_FX_FREQ
+                2, // FX_FILTER
+                255, // FX_FREQ
+                0, // FX_RESONANCE
+                2, // FX_DIST
+                32, // FX_DRIVE
+                83, // FX_PAN_AMT
+                5, // FX_PAN_FREQ
+                25, // FX_DELAY_AMT
+                1, // FX_DELAY_TIME
             ],
+            // Patterns
             p: [1],
-            c: [
-                {
-                    n: [137],
-                    f: [
-                        27,
-                        28,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        ,
-                        60,
-                        8,
-                    ],
-                },
-            ],
+            // Columns
+            c: [{ n: [147], f: [] }],
         },
     ],
-    rowLen: 5513,
-    patternLen: 8,
-    endPattern: 0,
-    numChannels: 1,
+    rowLen: 5513, // In sample lengths
+    patternLen: 32, // Rows per pattern
+    endPattern: 0, // End pattern
+    numChannels: 1, // Number of channels
 };
 
 // Song data
