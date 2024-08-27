@@ -30,6 +30,7 @@ const maxRadius = Math.max(screen.width, screen.height) / 1.5;
 
 enum GameState {
     Init,
+    Start,
     Ready,
     Running,
     GameOver,
@@ -45,10 +46,12 @@ const setState = (state: GameState): void => {
     gameState = state;
 
     switch (state) {
+        case GameState.Start:
+            playTune(SFX_START);
+            break;
         case GameState.Ready:
             level = new Level(simpleTrack);
             radius = maxRadius;
-            playTune(SFX_START);
             break;
         case GameState.Running:
             playTune(SFX_MAIN);
@@ -221,14 +224,26 @@ const drawInitialScreen = (text: string): void => {
 
 export const start = async (): Promise<void> => {
     initializeKeyboard();
-    drawInitialScreen("Loading...");
+    cx.restore();
+    centerText("Loading...", 24, "Sans-serif", 1, 80);
+    cx.restore();
     await initialize();
 
-    drawInitialScreen("Press enter key to start the race!");
+    cx.save();
+    cx.fillStyle = "rgb(20, 20, 50)";
+    cx.rect(0, 0, canvas.width, canvas.height);
+    cx.fill();
+    centerText("don't be the", 24, "Brush Script MT", 1, -20);
+    centerText("13TH GUY", 64, "Brush Script MT", 1, 30);
+    centerText("Press enter key", 24, "Sans-serif", 1, 80);
+    cx.restore();
+    await waitForEnter();
 
+    setState(GameState.Start);
+
+    drawInitialScreen("Press enter key to start the race!");
     await waitForEnter();
 
     setState(GameState.Ready);
-
     window.requestAnimationFrame(gameLoop);
 };
