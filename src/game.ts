@@ -13,6 +13,11 @@ import {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
 } from "./sfx/sfx.js";
+import {
+    CharacterAnimation,
+    CharacterFacingDirection,
+    renderCharacter,
+} from "./CharacterAnimation.js";
 
 const TIME_STEP = 1000 / 60;
 const MAX_FRAME = TIME_STEP * 5;
@@ -194,6 +199,19 @@ const drawInitialScreen = (text: string): void => {
     cx.fillStyle = "rgb(20, 20, 50)";
     cx.rect(0, 0, canvas.width, canvas.height);
     cx.fill();
+    cx.restore();
+
+    cx.save();
+    cx.translate(canvas.width / 4, canvas.height / 2.5);
+    renderCharacter(
+        cx,
+        canvas.height / 6,
+        canvas.height / 2,
+        0,
+        CharacterFacingDirection.Backward,
+        CharacterAnimation.Still,
+    );
+    cx.restore();
 
     centerText("don't be the", 24, "Brush Script MT", 1, -20);
     centerText("13TH GUY", 64, "Brush Script MT", 1, 30);
