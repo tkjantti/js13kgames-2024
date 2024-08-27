@@ -32,6 +32,13 @@ import { calculateCollision, getMovementVelocity } from "./physics";
 import { Track } from "./Track";
 import { TT } from "./TrackElement";
 import { normalize, Vector, ZERO_VECTOR } from "./Vector";
+import {
+    playTune,
+    SFX_BOUNCE,
+    // Ignore lint errors from JS import
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+} from "./sfx/sfx.js";
 
 const TRACK_START_Y = 400;
 
@@ -108,7 +115,9 @@ export class Level implements Area {
                 for (let oi = 0; oi < element.objects.length; oi++) {
                     const o = element.objects[oi];
 
-                    calculateCollision(c, o);
+                    if (calculateCollision(c, o)) {
+                        playTune(SFX_BOUNCE);
+                    }
                 }
             }
 

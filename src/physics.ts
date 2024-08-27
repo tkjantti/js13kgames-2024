@@ -40,7 +40,7 @@ const CHARACTER_MAX_SPEED = 0.2;
 const CHARACTER_RUN_ACCELERATION = 0.001;
 const CHARACTER_STOP_ACCELERATION = 0.001;
 
-const OBSTACLE_BOUNCE_FACTOR = 1.5;
+const OBSTACLE_BOUNCE_FACTOR = 15;
 
 export function getMovementVelocity(
     c: GameObject,
@@ -73,7 +73,10 @@ export function getMovementVelocity(
     return newVelocity;
 }
 
-export function calculateCollision(c: GameObject, obstacle: GameObject): void {
+export function calculateCollision(
+    c: GameObject,
+    obstacle: GameObject,
+): boolean {
     const radiusC = c.width / 2;
     const radiusObstacle = obstacle.width / 2;
 
@@ -96,5 +99,8 @@ export function calculateCollision(c: GameObject, obstacle: GameObject): void {
         const updatedVelocity = add(c.velocity, bouncingVelocity);
 
         c.velocity = updatedVelocity;
+        return true;
     }
+
+    return false;
 }

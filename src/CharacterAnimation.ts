@@ -398,7 +398,6 @@ export function renderCharacter(
             cx.scale(1, Math.cos(angle1 + Math.PI / 8));
             cx.beginPath();
             cx.moveTo(0, 0);
-            //cx.lineTo(0, armLength);
             cx.quadraticCurveTo(armLength / 4, armLength / 2, 0, armLength);
             cx.stroke();
             cx.restore();
