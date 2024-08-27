@@ -122,8 +122,6 @@ export class Level implements Area {
             }
 
             c.move(movementDirection);
-
-            c.update(t, dt);
         }
     }
 

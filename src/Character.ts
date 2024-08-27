@@ -58,9 +58,6 @@ export class Character implements GameObject {
     }
 
     // eslint-disable-next-line
-    update(_t: number, _dt: number): void {}
-
-    // eslint-disable-next-line
     draw(t: number, _: number): void {
         const animation: CharacterAnimation = isZero(this.direction)
             ? CharacterAnimation.Still
