@@ -29,6 +29,7 @@ export enum CharacterAnimation {
     Still,
     Walk,
     Run,
+    Fall,
 }
 
 export enum CharacterFacingDirection {
@@ -91,6 +92,26 @@ export function renderCharacter(
                 easeInOutQuad(triangle(period, t + period / 2)) *
                     3 *
                     (Math.PI / 4);
+            break;
+        case CharacterAnimation.Fall:
+            period = 3200;
+            bouncing = easeInOutSine(triangle(period / 2, t)) * 0.02 * h;
+            leg1Angle =
+                -Math.PI * (3 / 8) +
+                easeInOutQuad(triangle(period, t)) * (Math.PI * (3 / 4));
+
+            leg2Angle =
+                -Math.PI * (3 / 8) +
+                easeInOutQuad(triangle(period, t + period / 2)) *
+                    (Math.PI * (3 / 4));
+
+            arm1Angle =
+                -Math.PI * (8 / 8) +
+                easeInOutQuad(triangle(period, t + period / 2)) * (Math.PI / 4);
+
+            arm2Angle =
+                -Math.PI * (8 / 8) +
+                easeInOutQuad(triangle(period, t)) * (Math.PI / 4);
             break;
     }
 

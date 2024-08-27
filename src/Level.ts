@@ -51,6 +51,8 @@ const BANK_HEIGHT = 40;
 
 const START_POSITION: Vector = { x: 0, y: TRACK_START_Y - 10 };
 
+const FALL_TIME: number = 500;
+
 export enum State {
     RUNNING,
     GAME_OVER,
@@ -100,15 +102,21 @@ export class Level implements Area {
             const range = this.track.getBetween(c.y, c.y + c.height);
             const { minI, maxI } = range;
 
-            if (!this.track.isOnPlatform(range, c)) {
-                c.x = START_POSITION.x;
-                c.y = START_POSITION.y;
+            let movementDirection: Vector = ZERO_VECTOR;
+
+            if (c.fallStartTime != null && t - c.fallStartTime > FALL_TIME) {
+                c.drop(START_POSITION);
+            } else if (
+                c.fallStartTime == null &&
+                !this.track.isOnPlatform(range, c)
+            ) {
+                c.fallStartTime = t;
+            } else {
+                movementDirection =
+                    c === this.player ? this.getPlayerMovement() : ZERO_VECTOR;
+
+                c.velocity = getMovementVelocity(c, movementDirection, dt);
             }
-
-            const movementDirection =
-                c === this.player ? this.getPlayerMovement() : ZERO_VECTOR;
-
-            c.velocity = getMovementVelocity(c, movementDirection, dt);
 
             for (let ei = minI; ei <= maxI; ei++) {
                 const element = this.track.get(ei);
