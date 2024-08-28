@@ -13,6 +13,11 @@ import {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
 } from "./sfx/sfx.js";
+import {
+    CharacterAnimation,
+    CharacterFacingDirection,
+    renderCharacter,
+} from "./CharacterAnimation.js";
 
 const TIME_STEP = 1000 / 60;
 const MAX_FRAME = TIME_STEP * 5;
@@ -25,6 +30,7 @@ const maxRadius = Math.max(screen.width, screen.height) / 1.5;
 
 enum GameState {
     Init,
+    Start,
     Ready,
     Running,
     GameOver,
@@ -40,10 +46,12 @@ const setState = (state: GameState): void => {
     gameState = state;
 
     switch (state) {
+        case GameState.Start:
+            playTune(SFX_START);
+            break;
         case GameState.Ready:
             level = new Level(simpleTrack);
             radius = maxRadius;
-            playTune(SFX_START);
             break;
         case GameState.Running:
             playTune(SFX_MAIN);
@@ -194,6 +202,19 @@ const drawInitialScreen = (text: string): void => {
     cx.fillStyle = "rgb(20, 20, 50)";
     cx.rect(0, 0, canvas.width, canvas.height);
     cx.fill();
+    cx.restore();
+
+    cx.save();
+    cx.translate(canvas.width / 4, canvas.height / 2.5);
+    renderCharacter(
+        cx,
+        canvas.height / 6,
+        canvas.height / 2,
+        0,
+        CharacterFacingDirection.Backward,
+        CharacterAnimation.Still,
+    );
+    cx.restore();
 
     centerText("don't be the", 24, "Brush Script MT", 1, -20);
     centerText("13TH GUY", 64, "Brush Script MT", 1, 30);
@@ -203,14 +224,26 @@ const drawInitialScreen = (text: string): void => {
 
 export const start = async (): Promise<void> => {
     initializeKeyboard();
-    drawInitialScreen("Loading...");
+    cx.restore();
+    centerText("Loading...", 24, "Sans-serif", 1, 80);
+    cx.restore();
     await initialize();
 
-    drawInitialScreen("Press enter key to start the race!");
+    cx.save();
+    cx.fillStyle = "rgb(20, 20, 50)";
+    cx.rect(0, 0, canvas.width, canvas.height);
+    cx.fill();
+    centerText("don't be the", 24, "Brush Script MT", 1, -20);
+    centerText("13TH GUY", 64, "Brush Script MT", 1, 30);
+    centerText("Press enter key", 24, "Sans-serif", 1, 80);
+    cx.restore();
+    await waitForEnter();
 
+    setState(GameState.Start);
+
+    drawInitialScreen("Press enter key to start the race!");
     await waitForEnter();
 
     setState(GameState.Ready);
-
     window.requestAnimationFrame(gameLoop);
 };
