@@ -1,5 +1,5 @@
 import { canvas, cx } from "./graphics";
-import { initializeKeyboard, waitForEnter } from "./keyboard";
+import { initializeKeyboard, waitForAnyKey, waitForEnter } from "./keyboard";
 import { Level, State } from "./Level";
 import { simpleTrack } from "./tracks";
 
@@ -235,9 +235,9 @@ export const start = async (): Promise<void> => {
     cx.fill();
     centerText("don't be the", 24, "Brush Script MT", 1, -20);
     centerText("13TH GUY", 64, "Brush Script MT", 1, 30);
-    centerText("Press enter key", 24, "Sans-serif", 1, 80);
+    centerText("Press any key", 24, "Sans-serif", 1, 80);
     cx.restore();
-    await waitForEnter();
+    await waitForAnyKey();
 
     setState(GameState.Start);
     drawInitialScreen("Press enter key to start the race!");

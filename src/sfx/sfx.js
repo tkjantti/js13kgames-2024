@@ -85,19 +85,21 @@ const FadeOut = (tune, vol = 0) => {
 };
 
 const FadeIn = (tune, vol = 1) => {
-    tune.play();
-    var currentVolume = tune.volume;
-    if (tune.volume < vol) {
-        var fadeOutInterval = setInterval(function () {
-            currentVolume = (parseFloat(currentVolume) + 0.1).toFixed(1);
-            if (currentVolume < vol) {
-                tune.volume = currentVolume;
-            } else {
-                tune.volume = vol;
-                clearInterval(fadeOutInterval);
-            }
-        }, 100);
-    }
+    setTimeout(() => {
+        tune.play();
+        var currentVolume = tune.volume;
+        if (tune.volume < vol) {
+            var fadeOutInterval = setInterval(function () {
+                currentVolume = (parseFloat(currentVolume) + 0.1).toFixed(1);
+                if (currentVolume < vol) {
+                    tune.volume = currentVolume;
+                } else {
+                    tune.volume = vol;
+                    clearInterval(fadeOutInterval);
+                }
+            }, 100);
+        }
+    }, 200);
 };
 
 const FadeOutIn = (tune1, tune2) => {
@@ -110,7 +112,10 @@ const FadeOutIn = (tune1, tune2) => {
             tune1.volume = 0;
             if (currentVolume === 0) tune1.pause();
             clearInterval(fadeOutInterval1);
-            FadeIn(tune2, 1);
+
+            setTimeout(() => {
+                FadeIn(tune2, 1);
+            }, 500);
         }
     }, 100);
 };
@@ -153,8 +158,12 @@ export const playTune = (tune) => {
 
 export const stopTune = (tune) => {
     switch (tune) {
-        case SFX_MAIN: {
+        case SFX_RACE: {
             FadeOut(raceTune);
+            break;
+        }
+        case SFX_START: {
+            FadeOut(startTune);
             break;
         }
     }
