@@ -7,7 +7,7 @@ import {
     initialize,
     playTune,
     SFX_START,
-    SFX_MAIN,
+    SFX_RACE,
     SFX_FINISHED,
     // Ignore lint errors from JS import
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -52,9 +52,9 @@ const setState = (state: GameState): void => {
         case GameState.Ready:
             level = new Level(simpleTrack);
             radius = maxRadius;
+            playTune(SFX_RACE);
             break;
         case GameState.Running:
-            playTune(SFX_MAIN);
             break;
         case GameState.GameOver:
             radius = 1;
@@ -240,7 +240,6 @@ export const start = async (): Promise<void> => {
     await waitForEnter();
 
     setState(GameState.Start);
-
     drawInitialScreen("Press enter key to start the race!");
     await waitForEnter();
 
