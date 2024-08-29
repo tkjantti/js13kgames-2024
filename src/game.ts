@@ -101,6 +101,7 @@ const centerText = (
     alpha = 1,
     yAdjust = 0,
 ) => {
+    cx.save();
     cx.globalAlpha = alpha > 0 ? alpha : 0;
     cx.fillStyle = "white";
     cx.font = fontSize + "px " + fontName;
@@ -110,7 +111,7 @@ const centerText = (
         (canvas.width - textWidth) / 2,
         canvas.height / 2 + yAdjust,
     );
-    cx.globalAlpha = 1;
+    cx.restore();
 };
 
 const draw = (t: number, dt: number): void => {
@@ -202,7 +203,6 @@ const drawInitialScreen = (text: string): void => {
     cx.fillStyle = "rgb(20, 20, 50)";
     cx.rect(0, 0, canvas.width, canvas.height);
     cx.fill();
-    cx.restore();
 
     cx.save();
     cx.translate(canvas.width / 4, canvas.height / 2.5);
@@ -224,9 +224,7 @@ const drawInitialScreen = (text: string): void => {
 
 export const start = async (): Promise<void> => {
     initializeKeyboard();
-    cx.restore();
     centerText("Loading...", 24, "Sans-serif", 1, 80);
-    cx.restore();
     await initialize();
 
     cx.save();
