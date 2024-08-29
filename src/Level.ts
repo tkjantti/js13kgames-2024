@@ -82,10 +82,19 @@ export class Level implements Area {
         this.width = this.track.width + 2 * BANK_WIDTH;
         this.height = this.track.height + 2 * BANK_HEIGHT;
 
-        this.player = new Character(START_POSITION);
+        this.player = new Character(0, START_POSITION);
         this.characters.push(this.player);
         this.camera.follow(this.player);
         this.resetZoom();
+
+        const aiCharacter = new Character(1, { x: -10, y: TRACK_START_Y - 10 });
+        this.characters.push(aiCharacter);
+
+        const aiCharacter2 = new Character(2, { x: 10, y: TRACK_START_Y - 10 });
+        this.characters.push(aiCharacter2);
+
+        const aiCharacter3 = new Character(3, { x: 0, y: TRACK_START_Y - 15 });
+        this.characters.push(aiCharacter3);
     }
 
     resetZoom() {
