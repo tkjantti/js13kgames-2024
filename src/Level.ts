@@ -132,6 +132,8 @@ export class Level implements Area {
                     };
 
                     if (distance(centerC, centerO) < radiusC + radiusO) {
+                        playTune(SFX_BOUNCE);
+
                         const directionToOther = normalize(
                             subtract(centerO, centerC),
                         );
@@ -150,8 +152,6 @@ export class Level implements Area {
 
                         c.velocity = updatedVelocity;
                         c.move(movementDirection);
-
-                        playTune(SFX_BOUNCE);
                     }
                 }
             }

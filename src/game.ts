@@ -1,5 +1,5 @@
 import { canvas, cx } from "./graphics";
-import { initializeKeyboard, waitForEnter } from "./keyboard";
+import { initializeKeyboard, waitForAnyKey, waitForEnter } from "./keyboard";
 import { Level, State } from "./Level";
 import { simpleTrack } from "./tracks";
 
@@ -7,7 +7,7 @@ import {
     initialize,
     playTune,
     SFX_START,
-    SFX_MAIN,
+    SFX_RACE,
     SFX_FINISHED,
     // Ignore lint errors from JS import
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -52,9 +52,9 @@ const setState = (state: GameState): void => {
         case GameState.Ready:
             level = new Level(simpleTrack);
             radius = maxRadius;
+            playTune(SFX_RACE);
             break;
         case GameState.Running:
-            playTune(SFX_MAIN);
             break;
         case GameState.GameOver:
             radius = 1;
@@ -233,12 +233,11 @@ export const start = async (): Promise<void> => {
     cx.fill();
     centerText("don't be the", 24, "Brush Script MT", 1, -20);
     centerText("13TH GUY", 64, "Brush Script MT", 1, 30);
-    centerText("Press enter key", 24, "Sans-serif", 1, 80);
+    centerText("Press any key", 24, "Sans-serif", 1, 80);
     cx.restore();
-    await waitForEnter();
+    await waitForAnyKey();
 
     setState(GameState.Start);
-
     drawInitialScreen("Press enter key to start the race!");
     await waitForEnter();
 

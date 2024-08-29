@@ -23,15 +23,16 @@
  * SOFTWARE.
  */
 
-import { song, bounceSfx } from "./sfxData.js";
+import { song1, song2, bounceSfx } from "./sfxData.js";
 import CPlayer from "./musicplayer.js";
 
-export const SFX_START = "main";
-export const SFX_MAIN = "main";
+export const SFX_START = "start";
+export const SFX_RACE = "race";
 export const SFX_BOUNCE = "bounce";
 export const SFX_FINISHED = "finished";
 
-const mainTune = document.createElement("audio");
+const startTune = document.createElement("audio");
+const raceTune = document.createElement("audio");
 const bounceFx = document.createElement("audio");
 
 export const initMusicPlayer = (audioTrack, tune, isLooped) => {
@@ -61,7 +62,8 @@ export const initMusicPlayer = (audioTrack, tune, isLooped) => {
 
 export const initialize = () => {
     return Promise.all([
-        initMusicPlayer(mainTune, song, true),
+        initMusicPlayer(startTune, song1, true),
+        initMusicPlayer(raceTune, song2, true),
         initMusicPlayer(bounceFx, bounceSfx, false),
     ]);
 };
@@ -83,34 +85,54 @@ const FadeOut = (tune, vol = 0) => {
 };
 
 const FadeIn = (tune, vol = 1) => {
-    tune.play();
-    var currentVolume = tune.volume;
-    if (tune.volume < vol) {
-        var fadeOutInterval = setInterval(function () {
-            currentVolume = (parseFloat(currentVolume) + 0.1).toFixed(1);
-            if (currentVolume < vol) {
-                tune.volume = currentVolume;
-            } else {
-                tune.volume = vol;
-                clearInterval(fadeOutInterval);
-            }
-        }, 100);
-    }
+    setTimeout(() => {
+        tune.play();
+        var currentVolume = tune.volume;
+        if (tune.volume < vol) {
+            var fadeOutInterval = setInterval(function () {
+                currentVolume = (parseFloat(currentVolume) + 0.1).toFixed(1);
+                if (currentVolume < vol) {
+                    tune.volume = currentVolume;
+                } else {
+                    tune.volume = vol;
+                    clearInterval(fadeOutInterval);
+                }
+            }, 100);
+        }
+    }, 200);
+};
+
+const FadeOutIn = (tune1, tune2) => {
+    var currentVolume = tune1.volume;
+    var fadeOutInterval1 = setInterval(function () {
+        currentVolume = (parseFloat(currentVolume) - 0.1).toFixed(1);
+        if (currentVolume > 0) {
+            tune1.volume = currentVolume;
+        } else {
+            tune1.volume = 0;
+            if (currentVolume === 0) tune1.pause();
+            clearInterval(fadeOutInterval1);
+
+            setTimeout(() => {
+                FadeIn(tune2, 1);
+            }, 500);
+        }
+    }, 100);
 };
 
 export const playTune = (tune) => {
     switch (tune) {
-        case SFX_MAIN: {
-            FadeIn(mainTune, 0.5);
+        case SFX_RACE: {
+            FadeOutIn(startTune, raceTune);
             break;
         }
         case SFX_FINISHED: {
-            FadeOut(mainTune, 0.1);
+            FadeOutIn(raceTune, startTune);
             break;
         }
         case SFX_START: {
-            mainTune.volume = 0;
-            var promise = mainTune.play();
+            startTune.volume = 0;
+            var promise = startTune.play();
             if (promise !== undefined) {
                 promise
                     .then(() => {
@@ -121,8 +143,8 @@ export const playTune = (tune) => {
                         // Autoplay was prevented.
                     });
             }
-            FadeOut(mainTune);
-            mainTune.currentTime = 0;
+            FadeIn(startTune);
+            startTune.currentTime = 0;
             break;
         }
         //SFX
@@ -136,8 +158,12 @@ export const playTune = (tune) => {
 
 export const stopTune = (tune) => {
     switch (tune) {
-        case SFX_MAIN: {
-            FadeOut(mainTune);
+        case SFX_RACE: {
+            FadeOut(raceTune);
+            break;
+        }
+        case SFX_START: {
+            FadeOut(startTune);
             break;
         }
     }
