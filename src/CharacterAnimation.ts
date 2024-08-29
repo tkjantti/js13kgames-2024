@@ -29,6 +29,7 @@ export enum CharacterAnimation {
     Still,
     Walk,
     Run,
+    Fall,
 }
 
 export enum CharacterFacingDirection {
@@ -60,19 +61,21 @@ export function renderCharacter(
     animation: CharacterAnimation,
 ): void {
     let period = 0;
-    let angle1 = 0;
-    let angle2 = 0;
+    let leg1Angle = 0;
+    let leg2Angle = 0;
+    let arm1Angle = 0;
+    let arm2Angle = 0;
     let bouncing = 0;
 
     switch (animation) {
         case CharacterAnimation.Walk:
             period = 800;
             bouncing = easeInOutSine(triangle(period / 2, t)) * 0.02 * h;
-            angle1 =
+            leg1Angle = arm2Angle =
                 -Math.PI / 8 +
                 easeInOutQuad(triangle(period, t)) * (Math.PI / 4);
 
-            angle2 =
+            leg2Angle = arm1Angle =
                 -Math.PI / 8 +
                 easeInOutQuad(triangle(period, t + period / 2)) * (Math.PI / 4);
             break;
@@ -80,15 +83,35 @@ export function renderCharacter(
             period = 1600;
             bouncing =
                 easeInOutSine(triangle(period / 2, t) + period / 2) * 0.1 * h;
-            angle1 =
+            leg1Angle = arm2Angle =
                 (-Math.PI * 3) / 8 +
                 easeInOutQuad(triangle(period, t)) * 3 * (Math.PI / 4);
 
-            angle2 =
+            leg2Angle = arm1Angle =
                 (-Math.PI * 3) / 8 +
                 easeInOutQuad(triangle(period, t + period / 2)) *
                     3 *
                     (Math.PI / 4);
+            break;
+        case CharacterAnimation.Fall:
+            period = 3200;
+            bouncing = easeInOutSine(triangle(period / 2, t)) * 0.02 * h;
+            leg1Angle =
+                -Math.PI * (3 / 8) +
+                easeInOutQuad(triangle(period, t)) * (Math.PI * (3 / 4));
+
+            leg2Angle =
+                -Math.PI * (3 / 8) +
+                easeInOutQuad(triangle(period, t + period / 2)) *
+                    (Math.PI * (3 / 4));
+
+            arm1Angle =
+                -Math.PI * (8 / 8) +
+                easeInOutQuad(triangle(period, t + period / 2)) * (Math.PI / 4);
+
+            arm2Angle =
+                -Math.PI * (8 / 8) +
+                easeInOutQuad(triangle(period, t)) * (Math.PI / 4);
             break;
     }
 
@@ -128,7 +151,7 @@ export function renderCharacter(
                 cx.strokeStyle = ArmColorDarker;
                 cx.lineWidth = armWidth;
                 cx.translate(0.5 * w, 0.4 * h);
-                cx.rotate(angle2);
+                cx.rotate(arm1Angle);
                 cx.rotate((10 * Math.PI) / 180);
                 cx.beginPath();
                 cx.moveTo(0, 0);
@@ -146,7 +169,7 @@ export function renderCharacter(
                 cx.strokeStyle = LegColorDarker;
                 cx.lineWidth = limbWidth;
                 cx.translate(0.5 * w, 0.7 * h);
-                cx.rotate(angle1);
+                cx.rotate(leg1Angle);
                 cx.beginPath();
                 cx.moveTo(0, 0);
                 cx.quadraticCurveTo(
@@ -163,7 +186,7 @@ export function renderCharacter(
                 cx.strokeStyle = LegColor;
                 cx.lineWidth = limbWidth;
                 cx.translate(0.5 * w, 0.7 * h);
-                cx.rotate(angle2);
+                cx.rotate(leg2Angle);
                 cx.beginPath();
                 cx.moveTo(0, 0);
                 cx.quadraticCurveTo(
@@ -200,7 +223,7 @@ export function renderCharacter(
                 cx.strokeStyle = ArmColor;
                 cx.lineWidth = armWidth;
                 cx.translate(0.5 * w, 0.4 * h);
-                cx.rotate(angle1);
+                cx.rotate(arm2Angle);
                 cx.beginPath();
                 cx.moveTo(0, 0);
                 cx.quadraticCurveTo(
@@ -220,7 +243,7 @@ export function renderCharacter(
             cx.strokeStyle = LegColorDarker;
             cx.lineWidth = limbWidth;
             cx.translate(0.35 * w, 0.7 * h);
-            cx.scale(1, Math.cos(angle1 + Math.PI / 8));
+            cx.scale(1, Math.cos(leg1Angle + Math.PI / 8));
             cx.beginPath();
             cx.moveTo(0, 0);
             cx.quadraticCurveTo(-legLength / 8, legLength / 2, 0, legLength);
@@ -232,7 +255,7 @@ export function renderCharacter(
             cx.strokeStyle = LegColor;
             cx.lineWidth = limbWidth;
             cx.translate(0.7 * w, 0.7 * h);
-            cx.scale(1, Math.cos(angle2 + Math.PI / 8));
+            cx.scale(1, Math.cos(leg2Angle + Math.PI / 8));
             cx.beginPath();
             cx.moveTo(0, 0);
             cx.quadraticCurveTo(legLength / 8, legLength / 2, 0, legLength);
@@ -245,7 +268,7 @@ export function renderCharacter(
             cx.strokeStyle = ArmColor;
             cx.lineWidth = armWidth;
             cx.translate(0.4 * w, 0.35 * h);
-            cx.scale(1, Math.cos(angle2 + Math.PI / 8));
+            cx.scale(1, Math.cos(arm1Angle + Math.PI / 8));
             cx.beginPath();
             cx.moveTo(0, 0);
             cx.quadraticCurveTo(-armLength / 4, armLength / 2, 0, armLength);
@@ -258,7 +281,7 @@ export function renderCharacter(
             cx.strokeStyle = ArmColor;
             cx.lineWidth = armWidth;
             cx.translate(0.6 * w, 0.4 * h);
-            cx.scale(1, Math.cos(angle1 + Math.PI / 8));
+            cx.scale(1, Math.cos(arm2Angle + Math.PI / 8));
             cx.beginPath();
             cx.moveTo(0, 0);
             cx.quadraticCurveTo(armLength / 4, armLength / 2, 0, armLength);
@@ -293,8 +316,8 @@ export function renderCharacter(
             cx.strokeStyle = LegColorDarker;
             cx.lineWidth = limbWidth;
             cx.translate(0.35 * w, 0.7 * h);
-            cx.rotate(angle2 / 4);
-            cx.scale(1, Math.cos(angle1 + Math.PI / 8));
+            cx.rotate(leg2Angle / 4);
+            cx.scale(1, Math.cos(leg1Angle + Math.PI / 8));
             cx.beginPath();
             cx.moveTo(0, 0);
             cx.quadraticCurveTo(-legLength / 8, legLength / 2, 0, legLength);
@@ -306,8 +329,8 @@ export function renderCharacter(
             cx.strokeStyle = LegColor;
             cx.lineWidth = limbWidth;
             cx.translate(0.65 * w, 0.7 * h);
-            cx.rotate(angle2 / 4);
-            cx.scale(1, Math.cos(angle2 + Math.PI / 8));
+            cx.rotate(leg2Angle / 4);
+            cx.scale(1, Math.cos(leg2Angle + Math.PI / 8));
             cx.beginPath();
             cx.moveTo(0, 0);
             cx.quadraticCurveTo(legLength / 8, legLength / 2, 0, legLength);
@@ -319,8 +342,8 @@ export function renderCharacter(
             cx.strokeStyle = ArmColor;
             cx.lineWidth = armWidth;
             cx.translate(0.2 * w, 0.33 * h);
-            cx.rotate(angle2 / 2);
-            cx.scale(1, Math.cos(angle2 + Math.PI / 8));
+            cx.rotate(arm2Angle / 2);
+            cx.scale(1, Math.cos(arm2Angle + Math.PI / 8));
             cx.beginPath();
             cx.moveTo(0, 0);
             cx.quadraticCurveTo(-armLength / 4, armLength / 2, 0, armLength);
@@ -332,8 +355,8 @@ export function renderCharacter(
             cx.strokeStyle = ArmColor;
             cx.lineWidth = armWidth;
             cx.translate(0.8 * w, 0.33 * h);
-            cx.rotate(angle2 / 2);
-            cx.scale(1, Math.cos(angle1 + Math.PI / 8));
+            cx.rotate(arm2Angle / 2);
+            cx.scale(1, Math.cos(arm2Angle + Math.PI / 8));
             cx.beginPath();
             cx.moveTo(0, 0);
             cx.quadraticCurveTo(armLength / 4, armLength / 2, 0, armLength);
@@ -368,8 +391,8 @@ export function renderCharacter(
             cx.strokeStyle = LegColor;
             cx.lineWidth = limbWidth;
             cx.translate(0.65 * w, 0.7 * h);
-            cx.rotate(angle2 / 4);
-            cx.scale(1, Math.cos(angle2 + Math.PI / 8));
+            cx.rotate(leg2Angle / 4);
+            cx.scale(1, Math.cos(leg2Angle + Math.PI / 8));
             cx.beginPath();
             cx.moveTo(0, 0);
             cx.quadraticCurveTo(legLength / 8, legLength / 2, 0, legLength);
@@ -381,8 +404,8 @@ export function renderCharacter(
             cx.strokeStyle = LegColorDarker;
             cx.lineWidth = limbWidth;
             cx.translate(0.35 * w, 0.7 * h);
-            cx.rotate(angle2 / 4);
-            cx.scale(1, Math.cos(angle1 + Math.PI / 8));
+            cx.rotate(leg2Angle / 4);
+            cx.scale(1, Math.cos(leg1Angle + Math.PI / 8));
             cx.beginPath();
             cx.moveTo(0, 0);
             cx.quadraticCurveTo(-legLength / 8, legLength / 2, 0, legLength);
@@ -394,8 +417,8 @@ export function renderCharacter(
             cx.strokeStyle = ArmColor;
             cx.lineWidth = armWidth;
             cx.translate(0.8 * w, 0.35 * h);
-            cx.rotate(angle2 / 2);
-            cx.scale(1, Math.cos(angle1 + Math.PI / 8));
+            cx.rotate(arm2Angle / 2);
+            cx.scale(1, Math.cos(arm2Angle + Math.PI / 8));
             cx.beginPath();
             cx.moveTo(0, 0);
             cx.quadraticCurveTo(armLength / 4, armLength / 2, 0, armLength);
@@ -407,8 +430,8 @@ export function renderCharacter(
             cx.strokeStyle = ArmColor;
             cx.lineWidth = armWidth;
             cx.translate(0.2 * w, 0.35 * h);
-            cx.rotate(angle2 / 2);
-            cx.scale(1, Math.cos(angle2 + Math.PI / 8));
+            cx.rotate(arm2Angle / 2);
+            cx.scale(1, Math.cos(arm2Angle + Math.PI / 8));
             cx.beginPath();
             cx.moveTo(0, 0);
             cx.quadraticCurveTo(-armLength / 4, armLength / 2, 0, armLength);

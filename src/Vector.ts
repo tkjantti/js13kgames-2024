@@ -23,9 +23,11 @@
  */
 
 export interface Vector {
-    x: number;
-    y: number;
+    readonly x: number;
+    readonly y: number;
 }
+
+export const ZERO_VECTOR = { x: 0, y: 0 };
 
 export function isZero(a: Vector): boolean {
     return a.x === 0 && a.y === 0;

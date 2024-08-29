@@ -31,3 +31,10 @@ export interface Area extends Dimensions {
     readonly x: number;
     readonly y: number;
 }
+
+export function overlap(a: Area, b: Area): boolean {
+    const horizontally = b.x <= a.x + a.width && a.x <= b.x + b.width;
+    const vertically = b.y <= a.y + a.height && a.y <= b.y + b.height;
+
+    return horizontally && vertically;
+}

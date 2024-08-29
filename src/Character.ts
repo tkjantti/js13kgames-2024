@@ -30,10 +30,10 @@ import {
 import { GameObject } from "./GameObject";
 import { cx } from "./graphics";
 import { mirrorHorizontally } from "./rendering";
-import { isZero, Vector } from "./Vector";
+import { isZero, Vector, ZERO_VECTOR } from "./Vector";
 
 export class Character implements GameObject {
-    private direction: Vector = { x: 0, y: 0 };
+    private direction: Vector = ZERO_VECTOR;
     private latestDirection: Vector = { x: 0, y: -1 };
 
     x: number;
@@ -41,7 +41,9 @@ export class Character implements GameObject {
     width = 1;
     height = 1;
 
-    velocity: Vector = { x: 0, y: 0 };
+    velocity: Vector = ZERO_VECTOR;
+
+    fallStartTime: number | undefined;
 
     constructor(position: Vector) {
         this.x = position.x;
@@ -57,15 +59,17 @@ export class Character implements GameObject {
         this.y += this.velocity.y;
     }
 
-    // eslint-disable-next-line
-    update(_t: number, _dt: number): void {}
+    drop(position: Vector): void {
+        this.x = position.x;
+        this.y = position.y;
+        this.direction = ZERO_VECTOR;
+        this.latestDirection = { x: 0, y: -1 };
+        this.velocity = ZERO_VECTOR;
+        this.fallStartTime = undefined;
+    }
 
     // eslint-disable-next-line
     draw(t: number, _: number): void {
-        const animation: CharacterAnimation = isZero(this.direction)
-            ? CharacterAnimation.Still
-            : CharacterAnimation.Walk;
-
         const direction: CharacterFacingDirection =
             this.latestDirection.y !== 0
                 ? this.latestDirection.x === 0
@@ -96,7 +100,8 @@ export class Character implements GameObject {
             mirrorHorizontally(cx, this.width);
         }
 
-        const animationTime = isZero(this.direction) ? 0 : t;
+        const animationTime =
+            isZero(this.direction) && this.fallStartTime == null ? 0 : t;
 
         renderCharacter(
             cx,
@@ -104,8 +109,20 @@ export class Character implements GameObject {
             renderHeight,
             animationTime,
             direction,
-            animation,
+            this.getAnimation(),
         );
         cx.restore();
+    }
+
+    private getAnimation(): CharacterAnimation {
+        if (this.fallStartTime != null) {
+            return CharacterAnimation.Fall;
+        }
+
+        if (!isZero(this.direction)) {
+            return CharacterAnimation.Walk;
+        }
+
+        return CharacterAnimation.Still;
     }
 }

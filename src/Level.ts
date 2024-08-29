@@ -28,18 +28,10 @@ import { Character } from "./Character";
 import { GameObject } from "./GameObject";
 import { canvas, cx } from "./graphics";
 import { getKeys } from "./keyboard";
-import { getMovementVelocity } from "./physics";
+import { calculateCollision, getMovementVelocity } from "./physics";
 import { Track } from "./Track";
 import { TT } from "./TrackElement";
-import {
-    add,
-    distance,
-    dotProduct,
-    multiply,
-    normalize,
-    subtract,
-    Vector,
-} from "./Vector";
+import { normalize, Vector, ZERO_VECTOR } from "./Vector";
 import {
     playTune,
     SFX_BOUNCE,
@@ -57,7 +49,9 @@ const BANK_WIDTH = 10;
 // track.
 const BANK_HEIGHT = 40;
 
-const OBSTACLE_BOUNCE_FACTOR = 15;
+const START_POSITION: Vector = { x: 0, y: TRACK_START_Y - 10 };
+
+const FALL_TIME: number = 500;
 
 export enum State {
     RUNNING,
@@ -88,7 +82,7 @@ export class Level implements Area {
         this.width = this.track.width + 2 * BANK_WIDTH;
         this.height = this.track.height + 2 * BANK_HEIGHT;
 
-        this.player = new Character({ x: 0, y: TRACK_START_Y - 10 });
+        this.player = new Character(START_POSITION);
         this.characters.push(this.player);
         this.camera.follow(this.player);
         this.resetZoom();
@@ -105,58 +99,37 @@ export class Level implements Area {
         for (let i = 0; i < this.characters.length; i++) {
             const c = this.characters[i];
 
-            const movementDirection =
-                c === this.player ? this.getPlayerMovement() : { x: 0, y: 0 };
+            const range = this.track.getBetween(c.y, c.y + c.height);
+            const { minI, maxI } = range;
 
-            c.velocity = getMovementVelocity(c, movementDirection, dt);
+            let movementDirection: Vector = ZERO_VECTOR;
 
-            c.move(movementDirection);
+            if (c.fallStartTime != null && t - c.fallStartTime > FALL_TIME) {
+                c.drop(START_POSITION);
+            } else if (
+                c.fallStartTime == null &&
+                !this.track.isOnPlatform(range, c)
+            ) {
+                c.fallStartTime = t;
+            } else {
+                movementDirection =
+                    c === this.player ? this.getPlayerMovement() : ZERO_VECTOR;
 
-            const { minI, maxI } = this.track.getBetween(c.y, c.y + c.height);
+                c.velocity = getMovementVelocity(c, movementDirection, dt);
+            }
 
             for (let ei = minI; ei <= maxI; ei++) {
                 const element = this.track.get(ei);
                 for (let oi = 0; oi < element.objects.length; oi++) {
                     const o = element.objects[oi];
 
-                    const radiusC = c.width / 2;
-                    const radiusO = o.width / 2;
-
-                    const centerC: Vector = {
-                        x: c.x + c.width / 2,
-                        y: c.y + c.height / 2,
-                    };
-                    const centerO: Vector = {
-                        x: o.x + o.width / 2,
-                        y: o.y + o.height / 2,
-                    };
-
-                    if (distance(centerC, centerO) < radiusC + radiusO) {
+                    if (calculateCollision(c, o)) {
                         playTune(SFX_BOUNCE);
-
-                        const directionToOther = normalize(
-                            subtract(centerO, centerC),
-                        );
-                        const speedToOther = dotProduct(
-                            c.velocity,
-                            directionToOther,
-                        );
-                        const bouncingVelocity = multiply(
-                            directionToOther,
-                            -speedToOther * OBSTACLE_BOUNCE_FACTOR,
-                        );
-                        const updatedVelocity = add(
-                            c.velocity,
-                            bouncingVelocity,
-                        );
-
-                        c.velocity = updatedVelocity;
-                        c.move(movementDirection);
                     }
                 }
             }
 
-            c.update(t, dt);
+            c.move(movementDirection);
         }
     }
 
@@ -172,7 +145,7 @@ export class Level implements Area {
         const dy = up ? -1 : down ? 1 : 0;
 
         if (dx === 0 && dy === 0) {
-            return { x: 0, y: 0 };
+            return ZERO_VECTOR;
         }
 
         return normalize({

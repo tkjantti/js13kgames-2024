@@ -24,7 +24,7 @@
 
 import { GameObject } from "./GameObject";
 import { cx } from "./graphics";
-import { Vector } from "./Vector";
+import { Vector, ZERO_VECTOR } from "./Vector";
 
 export class Obstacle implements GameObject {
     static WIDTH = 10;
@@ -35,7 +35,7 @@ export class Obstacle implements GameObject {
     width: number = Obstacle.WIDTH;
     height: number = Obstacle.HEIGHT;
 
-    velocity: Vector = { x: 0, y: 0 };
+    velocity: Vector = ZERO_VECTOR;
 
     constructor(position: Vector) {
         this.x = position.x;
