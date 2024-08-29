@@ -1,5 +1,5 @@
 import { canvas, cx } from "./graphics";
-import { initializeKeyboard, waitForEnter } from "./keyboard";
+import { initializeKeyboard, waitForAnyKey, waitForEnter } from "./keyboard";
 import { Level, State } from "./Level";
 import { simpleTrack } from "./tracks";
 
@@ -7,12 +7,17 @@ import {
     initialize,
     playTune,
     SFX_START,
-    SFX_MAIN,
+    SFX_RACE,
     SFX_FINISHED,
     // Ignore lint errors from JS import
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
 } from "./sfx/sfx.js";
+import {
+    CharacterAnimation,
+    CharacterFacingDirection,
+    renderCharacter,
+} from "./CharacterAnimation.js";
 
 const TIME_STEP = 1000 / 60;
 const MAX_FRAME = TIME_STEP * 5;
@@ -25,6 +30,7 @@ const maxRadius = Math.max(screen.width, screen.height) / 1.5;
 
 enum GameState {
     Init,
+    Start,
     Ready,
     Running,
     GameOver,
@@ -40,13 +46,15 @@ const setState = (state: GameState): void => {
     gameState = state;
 
     switch (state) {
+        case GameState.Start:
+            playTune(SFX_START);
+            break;
         case GameState.Ready:
             level = new Level(simpleTrack);
             radius = maxRadius;
-            playTune(SFX_START);
+            playTune(SFX_RACE);
             break;
         case GameState.Running:
-            playTune(SFX_MAIN);
             break;
         case GameState.GameOver:
             radius = 1;
@@ -93,6 +101,7 @@ const centerText = (
     alpha = 1,
     yAdjust = 0,
 ) => {
+    cx.save();
     cx.globalAlpha = alpha > 0 ? alpha : 0;
     cx.fillStyle = "white";
     cx.font = fontSize + "px " + fontName;
@@ -102,7 +111,7 @@ const centerText = (
         (canvas.width - textWidth) / 2,
         canvas.height / 2 + yAdjust,
     );
-    cx.globalAlpha = 1;
+    cx.restore();
 };
 
 const draw = (t: number, dt: number): void => {
@@ -195,6 +204,18 @@ const drawInitialScreen = (text: string): void => {
     cx.rect(0, 0, canvas.width, canvas.height);
     cx.fill();
 
+    cx.save();
+    cx.translate(canvas.width / 4, canvas.height / 2.5);
+    renderCharacter(
+        cx,
+        canvas.height / 6,
+        canvas.height / 2,
+        0,
+        CharacterFacingDirection.Backward,
+        CharacterAnimation.Still,
+    );
+    cx.restore();
+
     centerText("don't be the", 24, "Brush Script MT", 1, -20);
     centerText("13TH GUY", 64, "Brush Script MT", 1, 30);
     centerText(text, 24, "Sans-serif", 1, 80);
@@ -203,14 +224,23 @@ const drawInitialScreen = (text: string): void => {
 
 export const start = async (): Promise<void> => {
     initializeKeyboard();
-    drawInitialScreen("Loading...");
+    centerText("Loading...", 24, "Sans-serif", 1, 80);
     await initialize();
 
-    drawInitialScreen("Press enter key to start the race!");
+    cx.save();
+    cx.fillStyle = "rgb(20, 20, 50)";
+    cx.rect(0, 0, canvas.width, canvas.height);
+    cx.fill();
+    centerText("don't be the", 24, "Brush Script MT", 1, -20);
+    centerText("13TH GUY", 64, "Brush Script MT", 1, 30);
+    centerText("Press any key", 24, "Sans-serif", 1, 80);
+    cx.restore();
+    await waitForAnyKey();
 
+    setState(GameState.Start);
+    drawInitialScreen("Press enter key to start the race!");
     await waitForEnter();
 
     setState(GameState.Ready);
-
     window.requestAnimationFrame(gameLoop);
 };
