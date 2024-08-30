@@ -62,5 +62,5 @@ export const simpleTrack: readonly TT[] = [
     TT.FullWidth,
     TT.FullWidth,
     TT.FullWidth,
-    TT.FullWidth,
+    TT.Finish,
 ];

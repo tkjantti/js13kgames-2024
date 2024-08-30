@@ -109,7 +109,20 @@ export class Level implements Area {
     update(t: number, dt: number): void {
         this.camera.update();
 
-        // Calculate movement for characters.
+        this.calculateMovement(t, dt);
+
+        this.checkCollisions();
+
+        for (let ci = 0; ci < this.characters.length; ci++) {
+            const c = this.characters[ci];
+
+            c.move();
+        }
+
+        this.checkGameState();
+    }
+
+    private calculateMovement(t: number, dt: number): void {
         for (let i = 0; i < this.characters.length; i++) {
             const c = this.characters[i];
 
@@ -134,7 +147,9 @@ export class Level implements Area {
                 c.velocity = getMovementVelocity(c, movementDirection, dt);
             }
         }
+    }
 
+    private checkCollisions(): void {
         // Calculate collisions to other characters.
         for (let ci = 0; ci < this.characters.length; ci++) {
             const c = this.characters[ci];
@@ -167,12 +182,15 @@ export class Level implements Area {
                 }
             }
         }
+    }
 
-        // Finally, move the characters according to their velocies.
+    private checkGameState(): void {
         for (let ci = 0; ci < this.characters.length; ci++) {
             const c = this.characters[ci];
 
-            c.move();
+            if (c.y < this.track.finishY) {
+                this.state = State.FINISHED;
+            }
         }
     }
 
@@ -219,7 +237,7 @@ export class Level implements Area {
             const element = this.track.get(e);
 
             const surfaces = element.surfaces;
-            cx.fillStyle = "rgb(70,50,70)";
+            cx.fillStyle = element.color;
 
             for (let i = 0; i < surfaces.length; i++) {
                 const surface = surfaces[i];
