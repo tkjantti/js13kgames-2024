@@ -28,7 +28,11 @@ import { Character } from "./Character";
 import { GameObject } from "./GameObject";
 import { canvas, cx } from "./graphics";
 import { getKeys } from "./keyboard";
-import { calculateCollision, getMovementVelocity } from "./physics";
+import {
+    calculateCollisionBetweenCharacters,
+    calculateCollisionToObstacle,
+    getMovementVelocity,
+} from "./physics";
 import { Track } from "./Track";
 import { TT } from "./TrackElement";
 import { normalize, Vector, ZERO_VECTOR } from "./Vector";
@@ -105,11 +109,11 @@ export class Level implements Area {
     update(t: number, dt: number): void {
         this.camera.update();
 
+        // Calculate movement for characters.
         for (let i = 0; i < this.characters.length; i++) {
             const c = this.characters[i];
 
             const range = this.track.getBetween(c.y, c.y + c.height);
-            const { minI, maxI } = range;
 
             let movementDirection: Vector = ZERO_VECTOR;
 
@@ -124,21 +128,49 @@ export class Level implements Area {
                 movementDirection =
                     c === this.player ? this.getPlayerMovement() : ZERO_VECTOR;
 
+                c.setDirection(movementDirection);
                 c.velocity = getMovementVelocity(c, movementDirection, dt);
             }
+        }
+
+        // Calculate collisions to other characters.
+        for (let ci = 0; ci < this.characters.length; ci++) {
+            const c = this.characters[ci];
+
+            for (let oi = 0; oi < this.characters.length; oi++) {
+                if (oi === ci) continue;
+                const other = this.characters[oi];
+
+                if (calculateCollisionBetweenCharacters(c, other)) {
+                    playTune(SFX_BOUNCE);
+                }
+            }
+        }
+
+        // The obstacles shall have the final word on collision detection.
+        for (let ci = 0; ci < this.characters.length; ci++) {
+            const c = this.characters[ci];
+
+            const range = this.track.getBetween(c.y, c.y + c.height);
+            const { minI, maxI } = range;
 
             for (let ei = minI; ei <= maxI; ei++) {
                 const element = this.track.get(ei);
                 for (let oi = 0; oi < element.objects.length; oi++) {
                     const o = element.objects[oi];
 
-                    if (calculateCollision(c, o)) {
+                    if (calculateCollisionToObstacle(c, o)) {
                         playTune(SFX_BOUNCE);
                     }
                 }
             }
+        }
 
-            c.move(movementDirection);
+        // Finally, move the characters according to their velocies.
+        for (let ci = 0; ci < this.characters.length; ci++) {
+            const c = this.characters[ci];
+
+            c.move();
         }
     }
 

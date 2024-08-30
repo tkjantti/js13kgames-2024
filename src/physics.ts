@@ -36,7 +36,14 @@ import {
 } from "./Vector";
 import { GameObject } from "./GameObject";
 
-const CHARACTER_MAX_SPEED = 0.2;
+/*
+ * The maximum speed that an object can reach. The limit ensures that
+ * any inaccuracies in collision detection won't make the objects go
+ * too fast.
+ */
+const MAX_SPEED = 1;
+
+const CHARACTER_MAX_RUN_SPEED = 0.2;
 const CHARACTER_RUN_ACCELERATION = 0.001;
 const CHARACTER_STOP_ACCELERATION = 0.001;
 
@@ -61,44 +68,96 @@ export function getMovementVelocity(
 
     const changeOfSpeed = Math.min(
         CHARACTER_RUN_ACCELERATION * dt,
-        CHARACTER_MAX_SPEED,
+        CHARACTER_MAX_RUN_SPEED,
     );
     const movement = multiply(direction, changeOfSpeed);
     let newVelocity = add(c.velocity, movement);
 
-    if (length(newVelocity) > CHARACTER_MAX_SPEED) {
-        newVelocity = multiply(normalize(newVelocity), CHARACTER_MAX_SPEED);
+    if (length(newVelocity) > CHARACTER_MAX_RUN_SPEED) {
+        newVelocity = multiply(normalize(newVelocity), CHARACTER_MAX_RUN_SPEED);
     }
 
     return newVelocity;
 }
 
-export function calculateCollision(
-    c: GameObject,
+export function calculateCollisionToObstacle(
+    a: GameObject,
     obstacle: GameObject,
 ): boolean {
-    const radiusC = c.width / 2;
+    const radiusA = a.width / 2;
     const radiusObstacle = obstacle.width / 2;
 
-    const centerC: Vector = {
-        x: c.x + c.width / 2,
-        y: c.y + c.height / 2,
+    const centerA: Vector = {
+        x: a.x + a.width / 2,
+        y: a.y + a.height / 2,
     };
+    const centerANext = add(centerA, a.velocity);
     const centerObstacle: Vector = {
         x: obstacle.x + obstacle.width / 2,
         y: obstacle.y + obstacle.height / 2,
     };
 
-    if (distance(centerC, centerObstacle) < radiusC + radiusObstacle) {
-        const directionToOther = normalize(subtract(centerObstacle, centerC));
-        const speedToOther = dotProduct(c.velocity, directionToOther);
+    if (distance(centerANext, centerObstacle) < radiusA + radiusObstacle) {
+        const directionToOther = normalize(subtract(centerObstacle, centerA));
+        const speedToOther = dotProduct(a.velocity, directionToOther);
         const bouncingVelocity = multiply(
             directionToOther,
             -speedToOther * OBSTACLE_BOUNCE_FACTOR,
         );
-        const updatedVelocity = add(c.velocity, bouncingVelocity);
 
-        c.velocity = updatedVelocity;
+        let aNew = add(a.velocity, bouncingVelocity);
+        if (length(aNew) > MAX_SPEED) {
+            aNew = multiply(normalize(aNew), MAX_SPEED);
+        }
+
+        a.velocity = aNew;
+        return true;
+    }
+
+    return false;
+}
+
+export function calculateCollisionBetweenCharacters(
+    a: GameObject,
+    b: GameObject,
+): boolean {
+    const radiusA = a.width / 2;
+    const radiusB = b.width / 2;
+
+    const centerA: Vector = {
+        x: a.x + a.width / 2,
+        y: a.y + a.height / 2,
+    };
+    const centerB: Vector = {
+        x: b.x + b.width / 2,
+        y: b.y + b.height / 2,
+    };
+
+    const centerANext = add(centerA, a.velocity);
+    const centerBNext = add(centerB, b.velocity);
+
+    if (distance(centerANext, centerBNext) < radiusA + radiusB) {
+        const directionAToB = normalize(subtract(centerB, centerA));
+        const directionBToA = multiply(directionAToB, -1);
+
+        const speedAToB = dotProduct(a.velocity, directionAToB);
+        const speedBToA = dotProduct(b.velocity, directionBToA);
+
+        const velocityAToB = multiply(directionAToB, speedAToB);
+        const velocityBToA = multiply(directionBToA, speedBToA);
+
+        let aNew = add(a.velocity, velocityBToA);
+        if (length(aNew) > MAX_SPEED) {
+            aNew = multiply(normalize(aNew), MAX_SPEED);
+        }
+        a.velocity = aNew;
+
+        let bNew = add(b.velocity, velocityAToB);
+        if (length(bNew) > MAX_SPEED) {
+            bNew = multiply(normalize(bNew), MAX_SPEED);
+        }
+        b.velocity = bNew;
+
         return true;
     }
 

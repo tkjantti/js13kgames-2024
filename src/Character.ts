@@ -57,11 +57,14 @@ export class Character implements GameObject {
         this.color = 0 <= id && id < colors.length ? colors[id] : "black";
     }
 
-    move(direction: Vector): void {
+    setDirection(direction: Vector): void {
         this.direction = direction;
         if (!isZero(direction)) {
             this.latestDirection = direction;
         }
+    }
+
+    move(): void {
         this.x += this.velocity.x;
         this.y += this.velocity.y;
     }
