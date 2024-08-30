@@ -43,6 +43,7 @@ export enum TT { // "Track template"
     VeryNarrow,
     DualPassage,
     FullWidthWithObstacleAtCenter,
+    FullWidthWithTwoObstacles,
 }
 
 // An element is one horizontal slice of the track. A track is
@@ -145,6 +146,26 @@ export function createTrack(
                 objects = [
                     new Obstacle({
                         x: -Obstacle.WIDTH / 2,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                ];
+                break;
+            case TT.FullWidthWithTwoObstacles:
+                surfaces = [
+                    {
+                        x: -FULL_WIDTH / 2,
+                        y,
+                        width: FULL_WIDTH,
+                        height: ELEMENT_HEIGHT,
+                    },
+                ];
+                objects = [
+                    new Obstacle({
+                        x: LEFTMOST_EDGE + VERY_NARROW_WIDTH,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                    new Obstacle({
+                        x: RIGHTMOST_EDGE - VERY_NARROW_WIDTH - Obstacle.WIDTH,
                         y: centerY - Obstacle.HEIGHT / 2,
                     }),
                 ];
