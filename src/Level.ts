@@ -126,7 +126,9 @@ export class Level implements Area {
                 c.fallStartTime = t;
             } else {
                 movementDirection =
-                    c === this.player ? this.getPlayerMovement() : ZERO_VECTOR;
+                    c === this.player
+                        ? this.getPlayerMovement()
+                        : { x: 0, y: -1 };
 
                 c.setDirection(movementDirection);
                 c.velocity = getMovementVelocity(c, movementDirection, dt);
