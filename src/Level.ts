@@ -28,7 +28,11 @@ import { Character } from "./Character";
 import { GameObject } from "./GameObject";
 import { canvas, cx } from "./graphics";
 import { getKeys } from "./keyboard";
-import { calculateCollision, getMovementVelocity } from "./physics";
+import {
+    calculateCollisionBetweenCharacters,
+    calculateCollisionToObstacle,
+    getMovementVelocity,
+} from "./physics";
 import { Track } from "./Track";
 import { TT } from "./TrackElement";
 import { normalize, Vector, ZERO_VECTOR } from "./Vector";
@@ -82,10 +86,19 @@ export class Level implements Area {
         this.width = this.track.width + 2 * BANK_WIDTH;
         this.height = this.track.height + 2 * BANK_HEIGHT;
 
-        this.player = new Character(START_POSITION);
+        this.player = new Character(0, START_POSITION);
         this.characters.push(this.player);
         this.camera.follow(this.player);
         this.resetZoom();
+
+        const aiCharacter = new Character(1, { x: -10, y: TRACK_START_Y - 10 });
+        this.characters.push(aiCharacter);
+
+        const aiCharacter2 = new Character(2, { x: 10, y: TRACK_START_Y - 10 });
+        this.characters.push(aiCharacter2);
+
+        const aiCharacter3 = new Character(3, { x: 0, y: TRACK_START_Y - 15 });
+        this.characters.push(aiCharacter3);
     }
 
     resetZoom() {
@@ -96,11 +109,24 @@ export class Level implements Area {
     update(t: number, dt: number): void {
         this.camera.update();
 
+        this.calculateMovement(t, dt);
+
+        this.checkCollisions();
+
+        for (let ci = 0; ci < this.characters.length; ci++) {
+            const c = this.characters[ci];
+
+            c.move();
+        }
+
+        this.checkGameState();
+    }
+
+    private calculateMovement(t: number, dt: number): void {
         for (let i = 0; i < this.characters.length; i++) {
             const c = this.characters[i];
 
             const range = this.track.getBetween(c.y, c.y + c.height);
-            const { minI, maxI } = range;
 
             let movementDirection: Vector = ZERO_VECTOR;
 
@@ -113,23 +139,58 @@ export class Level implements Area {
                 c.fallStartTime = t;
             } else {
                 movementDirection =
-                    c === this.player ? this.getPlayerMovement() : ZERO_VECTOR;
+                    c === this.player
+                        ? this.getPlayerMovement()
+                        : { x: 0, y: -1 };
 
+                c.setDirection(movementDirection);
                 c.velocity = getMovementVelocity(c, movementDirection, dt);
             }
+        }
+    }
+
+    private checkCollisions(): void {
+        // Calculate collisions to other characters.
+        for (let ci = 0; ci < this.characters.length; ci++) {
+            const c = this.characters[ci];
+
+            for (let oi = 0; oi < this.characters.length; oi++) {
+                if (oi === ci) continue;
+                const other = this.characters[oi];
+
+                if (calculateCollisionBetweenCharacters(c, other)) {
+                    playTune(SFX_BOUNCE);
+                }
+            }
+        }
+
+        // The obstacles shall have the final word on collision detection.
+        for (let ci = 0; ci < this.characters.length; ci++) {
+            const c = this.characters[ci];
+
+            const range = this.track.getBetween(c.y, c.y + c.height);
+            const { minI, maxI } = range;
 
             for (let ei = minI; ei <= maxI; ei++) {
                 const element = this.track.get(ei);
                 for (let oi = 0; oi < element.objects.length; oi++) {
                     const o = element.objects[oi];
 
-                    if (calculateCollision(c, o)) {
+                    if (calculateCollisionToObstacle(c, o)) {
                         playTune(SFX_BOUNCE);
                     }
                 }
             }
+        }
+    }
 
-            c.move(movementDirection);
+    private checkGameState(): void {
+        for (let ci = 0; ci < this.characters.length; ci++) {
+            const c = this.characters[ci];
+
+            if (c.y < this.track.finishY) {
+                this.state = State.FINISHED;
+            }
         }
     }
 
@@ -176,7 +237,7 @@ export class Level implements Area {
             const element = this.track.get(e);
 
             const surfaces = element.surfaces;
-            cx.fillStyle = "rgb(70,50,70)";
+            cx.fillStyle = element.color;
 
             for (let i = 0; i < surfaces.length; i++) {
                 const surface = surfaces[i];

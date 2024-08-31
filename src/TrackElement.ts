@@ -44,18 +44,39 @@ export enum TT { // "Track template"
     DualPassage,
     FullWidthWithObstacleAtCenter,
     FullWidthWithObstacles,
+    Finish,
+}
+
+export enum TrackElementType {
+    Normal,
+    Finish,
 }
 
 // An element is one horizontal slice of the track. A track is
 // composed by laying down several elements one after the other.
 export class TrackElement {
+    readonly type: TrackElementType;
     readonly surfaces: readonly Area[];
     readonly height: number;
     readonly minX: number;
     readonly maxX: number;
     readonly objects: readonly GameObject[];
 
-    constructor(surfaces: readonly Area[], objects: readonly GameObject[]) {
+    get color(): string {
+        switch (this.type) {
+            case TrackElementType.Finish:
+                return "green";
+            default:
+                return "rgb(70,50,70)";
+        }
+    }
+
+    constructor(
+        type: TrackElementType,
+        surfaces: readonly Area[],
+        objects: readonly GameObject[],
+    ) {
+        this.type = type;
         this.surfaces = surfaces;
         this.objects = objects;
         this.height = ELEMENT_HEIGHT;
@@ -71,6 +92,8 @@ export function createTrack(
     return templates.map((t, i) => {
         const y = startY - ELEMENT_HEIGHT * (i + 1);
         const centerY = y + ELEMENT_HEIGHT / 2;
+
+        let eType = TrackElementType.Normal;
         let surfaces: Area[] = [];
         let objects: GameObject[] = [];
 
@@ -182,11 +205,22 @@ export function createTrack(
                     }),
                 ];
                 break;
+            case TT.Finish:
+                eType = TrackElementType.Finish;
+                surfaces = [
+                    {
+                        x: -FULL_WIDTH / 2,
+                        y,
+                        width: FULL_WIDTH,
+                        height: ELEMENT_HEIGHT,
+                    },
+                ];
+                break;
 
             default:
                 break;
         }
 
-        return new TrackElement(surfaces, objects);
+        return new TrackElement(eType, surfaces, objects);
     });
 }

@@ -40,8 +40,6 @@ export enum CharacterFacingDirection {
     BackwardRight,
 }
 
-const color = "rgb(200,200,200)";
-
 const faceColor = "rgb(200,150,150)";
 const eyeColor = "rgb(230,230,230)";
 const pupilColor = "rgb(30,0,0)";
@@ -54,6 +52,7 @@ const ArmColorDarker = "rgb(120,120,200)";
 
 export function renderCharacter(
     cx: CanvasRenderingContext2D,
+    color: string,
     w: number,
     h: number,
     t: number,

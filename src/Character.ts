@@ -32,9 +32,15 @@ import { cx } from "./graphics";
 import { mirrorHorizontally } from "./rendering";
 import { isZero, Vector, ZERO_VECTOR } from "./Vector";
 
+const colors: string[] = ["blue", "red", "green", "yellow", "orange"];
+
+export const playerColor = colors[0];
+
 export class Character implements GameObject {
     private direction: Vector = ZERO_VECTOR;
     private latestDirection: Vector = { x: 0, y: -1 };
+
+    private color: string;
 
     x: number;
     y: number;
@@ -45,16 +51,20 @@ export class Character implements GameObject {
 
     fallStartTime: number | undefined;
 
-    constructor(position: Vector) {
+    constructor(id: number, position: Vector) {
         this.x = position.x;
         this.y = position.y;
+        this.color = 0 <= id && id < colors.length ? colors[id] : "black";
     }
 
-    move(direction: Vector): void {
+    setDirection(direction: Vector): void {
         this.direction = direction;
         if (!isZero(direction)) {
             this.latestDirection = direction;
         }
+    }
+
+    move(): void {
         this.x += this.velocity.x;
         this.y += this.velocity.y;
     }
@@ -105,6 +115,7 @@ export class Character implements GameObject {
 
         renderCharacter(
             cx,
+            this.color,
             this.width,
             renderHeight,
             animationTime,

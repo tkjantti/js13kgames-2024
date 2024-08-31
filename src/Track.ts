@@ -34,12 +34,16 @@ export class Track {
     private elements: TrackElement[] = [];
     private startY: number;
 
+    finishY: number;
+
     width: number;
     height: number;
 
     constructor(templates: readonly TT[], startY: number) {
         this.elements = createTrack(templates, startY);
         this.startY = startY;
+        this.finishY =
+            this.startY - (this.elements.length - 1) * ELEMENT_HEIGHT;
 
         const minX = Math.min(...this.elements.map((e) => e.minX));
         const maxX = Math.max(...this.elements.map((e) => e.maxX));
