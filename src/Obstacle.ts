@@ -28,7 +28,7 @@ import { Vector, ZERO_VECTOR } from "./Vector";
 
 export class Obstacle implements GameObject {
     static WIDTH = 10;
-    static HEIGHT = 10;
+    static HEIGHT = 8;
 
     x: number;
     y: number;
@@ -52,14 +52,27 @@ export class Obstacle implements GameObject {
         // cx.lineWidth = 0.1;
         // cx.strokeRect(0, 0, this.width, this.height);
 
-        cx.fillStyle = "rgb(255, 100, 100)";
+        const bodyGradient = cx.createLinearGradient(
+            0,
+            0,
+            this.width,
+            this.height,
+        );
+        bodyGradient.addColorStop(0, "rgb(255, 110, 110)");
+        bodyGradient.addColorStop(1, "rgb(255, 60, 60)");
+
+        cx.fillStyle = bodyGradient;
         cx.beginPath();
         cx.arc(this.width / 2, this.height / 2, this.width / 2, 0, 2 * Math.PI);
         cx.fill();
 
         cx.fillRect(0, -this.height / 2, this.width, this.height);
 
-        cx.fillStyle = "rgb(255, 150, 150)";
+        const gradient = cx.createLinearGradient(0, 0, this.width, this.height);
+        gradient.addColorStop(0, "rgb(255, 140, 140)");
+        gradient.addColorStop(1, "rgb(255, 80, 80)");
+        cx.fillStyle = gradient;
+
         cx.beginPath();
         cx.arc(
             this.width / 2,
@@ -69,6 +82,10 @@ export class Obstacle implements GameObject {
             2 * Math.PI,
         );
         cx.fill();
+
+        cx.strokeStyle = "rgb(200, 70, 70)";
+        cx.lineWidth = this.width / 100; // Adjust the width of the outline as needed
+        cx.stroke();
 
         cx.restore();
     }

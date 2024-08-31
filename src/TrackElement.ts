@@ -26,7 +26,7 @@ import { Area } from "./Area";
 import { GameObject } from "./GameObject";
 import { Obstacle } from "./Obstacle";
 
-export const ELEMENT_HEIGHT = 20;
+export const ELEMENT_HEIGHT = 16;
 
 const FULL_WIDTH = 80;
 const NORMAL_WIDTH = 60;
@@ -43,6 +43,7 @@ export enum TT { // "Track template"
     VeryNarrow,
     DualPassage,
     FullWidthWithObstacleAtCenter,
+    FullWidthWithObstacles,
 }
 
 // An element is one horizontal slice of the track. A track is
@@ -145,6 +146,38 @@ export function createTrack(
                 objects = [
                     new Obstacle({
                         x: -Obstacle.WIDTH / 2,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                ];
+                break;
+            case TT.FullWidthWithObstacles:
+                surfaces = [
+                    {
+                        x: -FULL_WIDTH / 2,
+                        y,
+                        width: FULL_WIDTH,
+                        height: ELEMENT_HEIGHT,
+                    },
+                ];
+                objects = [
+                    new Obstacle({
+                        x: -Obstacle.WIDTH * 2,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                    new Obstacle({
+                        x: -Obstacle.WIDTH * 3.5,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                    new Obstacle({
+                        x: -Obstacle.WIDTH / 2,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                    new Obstacle({
+                        x: Obstacle.WIDTH,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                    new Obstacle({
+                        x: Obstacle.WIDTH * 2.5,
                         y: centerY - Obstacle.HEIGHT / 2,
                     }),
                 ];

@@ -129,6 +129,9 @@ export class Camera {
             x = this.level.x + this.level.width - viewAreaWidth / 2;
         }
 
+        // Characted should be 1/4 height from bottom
+        y -= viewAreaHeight / 4;
+
         // Keep camera within level in y-direction.
         if (y - viewAreaHeight / 2 < this.level.y) {
             y = this.level.y + viewAreaHeight / 2;

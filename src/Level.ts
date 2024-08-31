@@ -204,6 +204,17 @@ export class Level implements Area {
             c.draw(t, dt);
         }
 
+        // Gradient shadow overlay
+        cx.restore();
+
+        const gradient = cx.createLinearGradient(0, 0, 0, canvas.height);
+        gradient.addColorStop(0, "rgba(0, 0, 0, 0.6)");
+        gradient.addColorStop(0.75, "rgba(0, 0, 0, 0)");
+        gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+        cx.fillStyle = gradient;
+        cx.fillRect(0, 0, canvas.width, canvas.height);
+
         cx.restore(); // End camera - Drawing no longer in level coordinates
     }
 }
