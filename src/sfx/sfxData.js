@@ -81,10 +81,10 @@ export const song1 = {
                 3, // LFO_FREQ
                 1, // LFO_FX_FREQ
                 1, // FX_FILTER
-                23, // FX_FREQ
+                0, // FX_FREQ
                 167, // FX_RESONANCE
                 0, // FX_DIST
-                32, // FX_DRIVE
+                20, // FX_DRIVE
                 125, // FX_PAN_AMT
                 6, // FX_PAN_FREQ
                 25, // FX_DELAY_AMT
@@ -237,6 +237,40 @@ export const song1 = {
                     ],
                     f: [],
                 },
+                {
+                    n: [
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        98,
+                        ,
+                        98,
+                        ,
+                        98,
+                        ,
+                        98,
+                        ,
+                        98,
+                        ,
+                        98,
+                        ,
+                        98,
+                    ],
+                    f: [],
+                },
                 { n: [], f: [] },
                 { n: [], f: [] },
                 { n: [], f: [] },
@@ -258,9 +292,76 @@ export const song1 = {
                 { n: [], f: [] },
                 { n: [], f: [] },
                 { n: [], f: [] },
-                { n: [], f: [] },
-                { n: [], f: [] },
-                { n: [], f: [] },
+                {
+                    n: [
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                    ],
+                    f: [],
+                },
+                {
+                    n: [
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                    ],
+                    f: [],
+                },
                 {
                     n: [
                         105,
@@ -333,7 +434,7 @@ export const song1 = {
                 0, // FX_DELAY_TIME
             ],
             // Patterns
-            p: [1, 1, 1, 1, 1, 1, 1, 1],
+            p: [1, 1, 1, 1, 1, 1, 1, 2],
             // Columns
             c: [
                 {
@@ -373,13 +474,238 @@ export const song1 = {
                     ],
                     f: [],
                 },
+                {
+                    n: [
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                    ],
+                    f: [],
+                },
+            ],
+        },
+        {
+            // Instrument 3
+            i: [
+                3, // OSC1_WAVEFORM
+                0, // OSC1_VOL
+                128, // OSC1_SEMI
+                0, // OSC1_XENV
+                3, // OSC2_WAVEFORM
+                68, // OSC2_VOL
+                128, // OSC2_SEMI
+                0, // OSC2_DETUNE
+                64, // OSC2_XENV
+                85, // NOISE_VOL
+                4, // ENV_ATTACK
+                4, // ENV_SUSTAIN
+                53, // ENV_RELEASE
+                68, // ENV_EXP_DECAY
+                0, // ARP_CHORD
+                0, // ARP_SPEED
+                1, // LFO_WAVEFORM
+                55, // LFO_AMT
+                4, // LFO_FREQ
+                0, // LFO_FX_FREQ
+                2, // FX_FILTER
+                67, // FX_FREQ
+                115, // FX_RESONANCE
+                124, // FX_DIST
+                190, // FX_DRIVE
+                67, // FX_PAN_AMT
+                6, // FX_PAN_FREQ
+                39, // FX_DELAY_AMT
+                1, // FX_DELAY_TIME
+            ],
+            // Patterns
+            p: [],
+            // Columns
+            c: [],
+        },
+        {
+            // Instrument 4
+            i: [
+                1, // OSC1_WAVEFORM
+                128, // OSC1_VOL
+                128, // OSC1_SEMI
+                0, // OSC1_XENV
+                1, // OSC2_WAVEFORM
+                130, // OSC2_VOL
+                116, // OSC2_SEMI
+                9, // OSC2_DETUNE
+                0, // OSC2_XENV
+                0, // NOISE_VOL
+                128, // ENV_ATTACK
+                22, // ENV_SUSTAIN
+                159, // ENV_RELEASE
+                0, // ENV_EXP_DECAY
+                203, // ARP_CHORD
+                2, // ARP_SPEED
+                0, // LFO_WAVEFORM
+                69, // LFO_AMT
+                3, // LFO_FREQ
+                1, // LFO_FX_FREQ
+                1, // FX_FILTER
+                23, // FX_FREQ
+                167, // FX_RESONANCE
+                0, // FX_DIST
+                32, // FX_DRIVE
+                192, // FX_PAN_AMT
+                6, // FX_PAN_FREQ
+                25, // FX_DELAY_AMT
+                3, // FX_DELAY_TIME
+            ],
+            // Patterns
+            p: [],
+            // Columns
+            c: [],
+        },
+        {
+            // Instrument 5
+            i: [
+                0, // OSC1_WAVEFORM
+                214, // OSC1_VOL
+                104, // OSC1_SEMI
+                64, // OSC1_XENV
+                0, // OSC2_WAVEFORM
+                204, // OSC2_VOL
+                104, // OSC2_SEMI
+                0, // OSC2_DETUNE
+                64, // OSC2_XENV
+                56, // NOISE_VOL
+                7, // ENV_ATTACK
+                40, // ENV_SUSTAIN
+                93, // ENV_RELEASE
+                51, // ENV_EXP_DECAY
+                0, // ARP_CHORD
+                0, // ARP_SPEED
+                0, // LFO_WAVEFORM
+                231, // LFO_AMT
+                6, // LFO_FREQ
+                0, // LFO_FX_FREQ
+                3, // FX_FILTER
+                143, // FX_FREQ
+                15, // FX_RESONANCE
+                0, // FX_DIST
+                16, // FX_DRIVE
+                0, // FX_PAN_AMT
+                4, // FX_PAN_FREQ
+                0, // FX_DELAY_AMT
+                6, // FX_DELAY_TIME
+            ],
+            // Patterns
+            p: [1],
+            // Columns
+            c: [{ n: [147], f: [] }],
+        },
+        {
+            // Instrument 6
+            i: [
+                0, // OSC1_WAVEFORM
+                0, // OSC1_VOL
+                128, // OSC1_SEMI
+                0, // OSC1_XENV
+                0, // OSC2_WAVEFORM
+                0, // OSC2_VOL
+                128, // OSC2_SEMI
+                0, // OSC2_DETUNE
+                0, // OSC2_XENV
+                63, // NOISE_VOL
+                0, // ENV_ATTACK
+                1, // ENV_SUSTAIN
+                59, // ENV_RELEASE
+                0, // ENV_EXP_DECAY
+                0, // ARP_CHORD
+                0, // ARP_SPEED
+                0, // LFO_WAVEFORM
+                0, // LFO_AMT
+                0, // LFO_FREQ
+                0, // LFO_FX_FREQ
+                1, // FX_FILTER
+                193, // FX_FREQ
+                171, // FX_RESONANCE
+                0, // FX_DIST
+                29, // FX_DRIVE
+                39, // FX_PAN_AMT
+                3, // FX_PAN_FREQ
+                88, // FX_DELAY_AMT
+                3, // FX_DELAY_TIME
+            ],
+            // Patterns
+            p: [],
+            // Columns
+            c: [],
+        },
+        {
+            // Instrument 7
+            i: [
+                0, // OSC1_WAVEFORM
+                214, // OSC1_VOL
+                104, // OSC1_SEMI
+                64, // OSC1_XENV
+                0, // OSC2_WAVEFORM
+                204, // OSC2_VOL
+                104, // OSC2_SEMI
+                0, // OSC2_DETUNE
+                64, // OSC2_XENV
+                124, // NOISE_VOL
+                96, // ENV_ATTACK
+                40, // ENV_SUSTAIN
+                0, // ENV_RELEASE
+                0, // ENV_EXP_DECAY
+                0, // ARP_CHORD
+                0, // ARP_SPEED
+                0, // LFO_WAVEFORM
+                231, // LFO_AMT
+                6, // LFO_FREQ
+                0, // LFO_FX_FREQ
+                3, // FX_FILTER
+                143, // FX_FREQ
+                15, // FX_RESONANCE
+                0, // FX_DIST
+                16, // FX_DRIVE
+                0, // FX_PAN_AMT
+                4, // FX_PAN_FREQ
+                0, // FX_DELAY_AMT
+                6, // FX_DELAY_TIME
+            ],
+            // Patterns
+            p: [, , , , , , , 1],
+            // Columns
+            c: [
+                {
+                    n: [, , , , , , , , , , , , , , , , , , , , , , , , 135],
+                    f: [],
+                },
             ],
         },
     ],
     rowLen: 4725, // In sample lengths
     patternLen: 32, // Rows per pattern
     endPattern: 7, // End pattern
-    numChannels: 3, // Number of channels
+    numChannels: 8, // Number of channels
 };
 
 export const song2 = {
@@ -408,10 +734,10 @@ export const song2 = {
                 3, // LFO_FREQ
                 1, // LFO_FX_FREQ
                 1, // FX_FILTER
-                23, // FX_FREQ
+                0, // FX_FREQ
                 167, // FX_RESONANCE
                 0, // FX_DIST
-                32, // FX_DRIVE
+                20, // FX_DRIVE
                 125, // FX_PAN_AMT
                 6, // FX_PAN_FREQ
                 25, // FX_DELAY_AMT
@@ -456,7 +782,10 @@ export const song2 = {
                 2, // FX_DELAY_TIME
             ],
             // Patterns
-            p: [27, 1, 27, 2, 27, 1, 27, 2, 27, 1, 27, 2],
+            p: [
+                25, 27, 1, 27, 2, 27, 1, 27, 2, 27, 1, 27, 2, 27, 1, 27, 2, 27,
+                1, 27, 3, 26, 26, 26,
+            ],
             // Columns
             c: [
                 {
@@ -531,6 +860,40 @@ export const song2 = {
                     ],
                     f: [],
                 },
+                {
+                    n: [
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        98,
+                        ,
+                        98,
+                        ,
+                        98,
+                        ,
+                        98,
+                        ,
+                        98,
+                        ,
+                        98,
+                        ,
+                        98,
+                    ],
+                    f: [],
+                },
                 { n: [], f: [] },
                 { n: [], f: [] },
                 { n: [], f: [] },
@@ -552,9 +915,76 @@ export const song2 = {
                 { n: [], f: [] },
                 { n: [], f: [] },
                 { n: [], f: [] },
-                { n: [], f: [] },
-                { n: [], f: [] },
-                { n: [], f: [] },
+                {
+                    n: [
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                    ],
+                    f: [],
+                },
+                {
+                    n: [
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                        ,
+                        101,
+                    ],
+                    f: [],
+                },
                 {
                     n: [
                         105,
@@ -627,7 +1057,32 @@ export const song2 = {
                 0, // FX_DELAY_TIME
             ],
             // Patterns
-            p: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            p: [
+                2,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                1,
+                1,
+                ,
+                1,
+                1,
+                1,
+            ],
             // Columns
             c: [
                 {
@@ -667,6 +1122,36 @@ export const song2 = {
                     ],
                     f: [],
                 },
+                {
+                    n: [
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                        ,
+                        135,
+                    ],
+                    f: [],
+                },
             ],
         },
         {
@@ -680,8 +1165,8 @@ export const song2 = {
                 68, // OSC2_VOL
                 128, // OSC2_SEMI
                 0, // OSC2_DETUNE
-                255, // OSC2_XENV
-                218, // NOISE_VOL
+                64, // OSC2_XENV
+                85, // NOISE_VOL
                 4, // ENV_ATTACK
                 4, // ENV_SUSTAIN
                 53, // ENV_RELEASE
@@ -703,7 +1188,7 @@ export const song2 = {
                 1, // FX_DELAY_TIME
             ],
             // Patterns
-            p: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            p: [, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             // Columns
             c: [
                 {
@@ -778,18 +1263,225 @@ export const song2 = {
                 3, // FX_DELAY_TIME
             ],
             // Patterns
-            p: [1, 2, 4, 3, 1, 2, 4, 3, 1, 2, 4, 3],
+            p: [
+                5,
+                1,
+                2,
+                4,
+                3,
+                1,
+                2,
+                4,
+                3,
+                1,
+                2,
+                4,
+                3,
+                1,
+                2,
+                4,
+                3,
+                1,
+                2,
+                4,
+                3,
+                5,
+                ,
+                5,
+            ],
             // Columns
             c: [
                 { n: [129], f: [] },
                 { n: [134, , , , , , , , , , , , , , , , 137], f: [] },
                 { n: [137, , , , , , , , , , , , , , , , 134], f: [] },
                 { n: [141], f: [] },
+                { n: [113], f: [] },
+            ],
+        },
+        {
+            // Instrument 5
+            i: [
+                0, // OSC1_WAVEFORM
+                214, // OSC1_VOL
+                104, // OSC1_SEMI
+                64, // OSC1_XENV
+                0, // OSC2_WAVEFORM
+                204, // OSC2_VOL
+                104, // OSC2_SEMI
+                0, // OSC2_DETUNE
+                64, // OSC2_XENV
+                56, // NOISE_VOL
+                7, // ENV_ATTACK
+                40, // ENV_SUSTAIN
+                93, // ENV_RELEASE
+                51, // ENV_EXP_DECAY
+                0, // ARP_CHORD
+                0, // ARP_SPEED
+                0, // LFO_WAVEFORM
+                231, // LFO_AMT
+                6, // LFO_FREQ
+                0, // LFO_FX_FREQ
+                3, // FX_FILTER
+                143, // FX_FREQ
+                15, // FX_RESONANCE
+                0, // FX_DIST
+                16, // FX_DRIVE
+                0, // FX_PAN_AMT
+                4, // FX_PAN_FREQ
+                0, // FX_DELAY_AMT
+                6, // FX_DELAY_TIME
+            ],
+            // Patterns
+            p: [, 1, , , , 1, , , , 1, , , , 1, , , , 1, , , , 1],
+            // Columns
+            c: [{ n: [147], f: [] }],
+        },
+        {
+            // Instrument 6
+            i: [
+                0, // OSC1_WAVEFORM
+                0, // OSC1_VOL
+                128, // OSC1_SEMI
+                0, // OSC1_XENV
+                0, // OSC2_WAVEFORM
+                0, // OSC2_VOL
+                128, // OSC2_SEMI
+                0, // OSC2_DETUNE
+                0, // OSC2_XENV
+                63, // NOISE_VOL
+                0, // ENV_ATTACK
+                1, // ENV_SUSTAIN
+                59, // ENV_RELEASE
+                0, // ENV_EXP_DECAY
+                0, // ARP_CHORD
+                0, // ARP_SPEED
+                0, // LFO_WAVEFORM
+                0, // LFO_AMT
+                0, // LFO_FREQ
+                0, // LFO_FX_FREQ
+                1, // FX_FILTER
+                193, // FX_FREQ
+                171, // FX_RESONANCE
+                0, // FX_DIST
+                29, // FX_DRIVE
+                39, // FX_PAN_AMT
+                3, // FX_PAN_FREQ
+                88, // FX_DELAY_AMT
+                3, // FX_DELAY_TIME
+            ],
+            // Patterns
+            p: [
+                ,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                ,
+                1,
+                1,
+                1,
+            ],
+            // Columns
+            c: [
+                {
+                    n: [
+                        ,
+                        ,
+                        149,
+                        ,
+                        ,
+                        ,
+                        149,
+                        ,
+                        ,
+                        ,
+                        149,
+                        ,
+                        ,
+                        ,
+                        149,
+                        ,
+                        ,
+                        ,
+                        149,
+                        ,
+                        ,
+                        ,
+                        149,
+                        ,
+                        ,
+                        ,
+                        149,
+                        ,
+                        ,
+                        ,
+                        149,
+                    ],
+                    f: [],
+                },
+            ],
+        },
+        {
+            // Instrument 7
+            i: [
+                0, // OSC1_WAVEFORM
+                214, // OSC1_VOL
+                104, // OSC1_SEMI
+                64, // OSC1_XENV
+                0, // OSC2_WAVEFORM
+                204, // OSC2_VOL
+                104, // OSC2_SEMI
+                0, // OSC2_DETUNE
+                64, // OSC2_XENV
+                124, // NOISE_VOL
+                96, // ENV_ATTACK
+                40, // ENV_SUSTAIN
+                0, // ENV_RELEASE
+                0, // ENV_EXP_DECAY
+                0, // ARP_CHORD
+                0, // ARP_SPEED
+                0, // LFO_WAVEFORM
+                231, // LFO_AMT
+                6, // LFO_FREQ
+                0, // LFO_FX_FREQ
+                3, // FX_FILTER
+                143, // FX_FREQ
+                15, // FX_RESONANCE
+                0, // FX_DIST
+                16, // FX_DRIVE
+                0, // FX_PAN_AMT
+                4, // FX_PAN_FREQ
+                0, // FX_DELAY_AMT
+                6, // FX_DELAY_TIME
+            ],
+            // Patterns
+            p: [1, , , , 1, , , , 1, , , , 1, , , , 1],
+            // Columns
+            c: [
+                {
+                    n: [, , , , , , , , , , , , , , , , , , , , , , , , 135],
+                    f: [],
+                },
             ],
         },
     ],
     rowLen: 4725, // In sample lengths
     patternLen: 32, // Rows per pattern
-    endPattern: 11, // End pattern
-    numChannels: 5, // Number of channels
+    endPattern: 23, // End pattern
+    numChannels: 8, // Number of channels
 };

@@ -77,7 +77,7 @@ const FadeOut = (tune, vol = 0) => {
                 tune.volume = currentVolume;
             } else {
                 tune.volume = vol;
-                if (vol === 0) tune.pause();
+                tune.pause();
                 clearInterval(fadeOutInterval);
             }
         }, 100);
