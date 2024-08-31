@@ -243,6 +243,9 @@ export const start = async (): Promise<void> => {
     drawInitialScreen("Press enter key to start the race!");
     await waitForEnter();
 
-    setState(GameState.Ready);
-    window.requestAnimationFrame(gameLoop);
+    // Pause a little to allow music fade in fully before fading it out if user is too fast to press enter
+    setTimeout(() => {
+        setState(GameState.Ready);
+        window.requestAnimationFrame(gameLoop);
+    }, 500);
 };
