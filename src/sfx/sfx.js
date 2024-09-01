@@ -120,13 +120,15 @@ const FadeOutIn = (tune1, tune2) => {
     }, 100);
 };
 
-export const playTune = (tune) => {
+export const playTune = (tune, vol = 1) => {
     switch (tune) {
         case SFX_RACE: {
+            raceTune.currentTime = 0;
             FadeOutIn(startTune, raceTune);
             break;
         }
         case SFX_FINISHED: {
+            startTune.currentTime = 0;
             FadeOutIn(raceTune, startTune);
             break;
         }
@@ -149,8 +151,11 @@ export const playTune = (tune) => {
         }
         //SFX
         case SFX_BOUNCE: {
-            bounceFx.currentTime = 0;
-            bounceFx.play();
+            // Prevent too fast bounches making crackling sounds, wait to sound to be played first
+            if (bounceFx.paused) {
+                bounceFx.volume = vol;
+                bounceFx.play();
+            }
             break;
         }
     }
