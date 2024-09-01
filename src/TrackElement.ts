@@ -22,9 +22,11 @@
  * SOFTWARE.
  */
 
-import { Area } from "./Area";
+import { Area, Dimensions, overlap } from "./Area";
+import { Vector } from "./Vector";
 import { GameObject } from "./GameObject";
 import { Obstacle } from "./Obstacle";
+import { randomMinMax } from "./random";
 
 export const ELEMENT_HEIGHT = 16;
 
@@ -50,6 +52,11 @@ export enum TT { // "Track template"
 export enum TrackElementType {
     Normal,
     Finish,
+}
+
+export enum YPosition {
+    Random,
+    CenterVertically,
 }
 
 // An element is one horizontal slice of the track. A track is
@@ -82,6 +89,54 @@ export class TrackElement {
         this.height = ELEMENT_HEIGHT;
         this.minX = Math.min(...this.surfaces.map((s) => s.x));
         this.maxX = Math.max(...this.surfaces.map((s) => s.x + s.width));
+    }
+
+    findEmptySpot(
+        c: Dimensions,
+        otherObjects: GameObject[],
+        yPosition: YPosition = YPosition.Random,
+        xMin: number = LEFTMOST_EDGE,
+        xMax: number = RIGHTMOST_EDGE,
+    ): Vector | null {
+        const top = this.surfaces[0].y;
+
+        const margin = c.width * 0.5;
+        const withMargin: Dimensions = {
+            width: c.width + 2 * margin,
+            height: c.height + 2 * margin,
+        };
+
+        for (let iRandom = 0; iRandom < 50; iRandom++) {
+            const x = randomMinMax(xMin, xMax - withMargin.width);
+            const y =
+                top +
+                (yPosition == YPosition.CenterVertically
+                    ? ELEMENT_HEIGHT / 2 - withMargin.height / 2
+                    : randomMinMax(0, ELEMENT_HEIGHT - withMargin.height));
+
+            const spotWithMargin: Area = {
+                x,
+                y,
+                width: withMargin.width,
+                height: withMargin.height,
+            };
+
+            if (!this.surfaces.some((s) => overlap(s, spotWithMargin))) {
+                continue;
+            }
+
+            if (this.objects.some((o) => overlap(o, spotWithMargin))) {
+                continue;
+            }
+
+            if (otherObjects.some((o) => overlap(o, spotWithMargin))) {
+                continue;
+            }
+
+            return { x: x + margin, y: y + margin };
+        }
+
+        return null;
     }
 }
 

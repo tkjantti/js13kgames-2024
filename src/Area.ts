@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+import { Vector } from "./Vector";
+
 export interface Dimensions {
     readonly width: number;
     readonly height: number;
@@ -30,6 +32,13 @@ export interface Dimensions {
 export interface Area extends Dimensions {
     readonly x: number;
     readonly y: number;
+}
+
+export function getCenter(area: Area): Vector {
+    return {
+        x: area.x + area.width / 2,
+        y: area.y + area.height / 2,
+    };
 }
 
 export function overlap(a: Area, b: Area): boolean {

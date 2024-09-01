@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+import { Ai } from "./Ai";
+import { Dimensions } from "./Area";
 import {
     CharacterAnimation,
     CharacterFacingDirection,
@@ -29,14 +31,23 @@ import {
 } from "./CharacterAnimation";
 import { GameObject } from "./GameObject";
 import { cx } from "./graphics";
+import { getKeys } from "./keyboard";
 import { mirrorHorizontally } from "./rendering";
-import { isZero, Vector, ZERO_VECTOR } from "./Vector";
+import { Track } from "./Track";
+import { isZero, normalize, Vector, ZERO_VECTOR } from "./Vector";
 
 const colors: string[] = ["blue", "red", "green", "yellow", "orange"];
 
 export const playerColor = colors[0];
 
+export const CHARACTER_DIMENSIONS: Readonly<Dimensions> = {
+    width: 1,
+    height: 1,
+};
+
 export class Character implements GameObject {
+    private ai: Ai | null;
+
     private direction: Vector = ZERO_VECTOR;
     private latestDirection: Vector = { x: 0, y: -1 };
 
@@ -44,8 +55,8 @@ export class Character implements GameObject {
 
     x: number;
     y: number;
-    width = 1;
-    height = 1;
+    width = CHARACTER_DIMENSIONS.width;
+    height = CHARACTER_DIMENSIONS.height;
 
     velocity: Vector = ZERO_VECTOR;
 
@@ -54,6 +65,7 @@ export class Character implements GameObject {
     constructor(id: number, position: Vector) {
         this.x = position.x;
         this.y = position.y;
+        this.ai = id === 0 ? null : new Ai(this);
         this.color = 0 <= id && id < colors.length ? colors[id] : "black";
     }
 
@@ -62,6 +74,32 @@ export class Character implements GameObject {
         if (!isZero(direction)) {
             this.latestDirection = direction;
         }
+    }
+
+    getMovement(track: Track): Vector {
+        if (!this.ai) {
+            // Player
+            const keys = getKeys();
+
+            const left = keys.ArrowLeft || keys.KeyA;
+            const right = keys.ArrowRight || keys.KeyD;
+            const up = keys.ArrowUp || keys.KeyW;
+            const down = keys.ArrowDown || keys.KeyS;
+
+            const dx = left ? -1 : right ? 1 : 0;
+            const dy = up ? -1 : down ? 1 : 0;
+
+            if (dx === 0 && dy === 0) {
+                return ZERO_VECTOR;
+            }
+
+            return normalize({
+                x: dx,
+                y: dy,
+            });
+        }
+
+        return this.ai.getMovement(track);
     }
 
     move(): void {
@@ -76,6 +114,7 @@ export class Character implements GameObject {
         this.latestDirection = { x: 0, y: -1 };
         this.velocity = ZERO_VECTOR;
         this.fallStartTime = undefined;
+        this.ai?.reset();
     }
 
     // eslint-disable-next-line
@@ -99,6 +138,13 @@ export class Character implements GameObject {
         // cx.lineWidth = 0.1;
         // cx.strokeRect(this.x, this.y, this.width, this.height);
         // cx.restore();
+
+        // Debug target
+        // if (this.ai && this.ai.target) {
+        //     const target = this.ai.target;
+        //     cx.fillStyle = this.color;
+        //     cx.fillRect(target.x - 2, target.y - 2, 4, 4);
+        // }
 
         // Different render height than actual height, for pseudo-3d effect.
         const renderHeight = this.height * 3;
