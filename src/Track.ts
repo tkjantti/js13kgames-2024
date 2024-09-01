@@ -24,6 +24,7 @@
 
 import { Area, overlap } from "./Area";
 import { createTrack, ELEMENT_HEIGHT, TrackElement, TT } from "./TrackElement";
+import { Vector } from "./Vector";
 
 export interface IndexRange {
     minI: number;
@@ -68,6 +69,21 @@ export class Track {
             minI: Math.max(countOfElementsToBottomY - 1, 0),
             maxI: Math.min(countOfElementsToTopY, this.elements.length) - 1,
         };
+    }
+
+    getNextElement(position: Vector): TrackElement | null {
+        for (let i = 0; i < this.elements.length; i++) {
+            const top = this.startY - (i + 1) * ELEMENT_HEIGHT;
+            const bottom = this.startY - i * ELEMENT_HEIGHT;
+
+            if (top <= position.y && position.y < bottom) {
+                return i < this.elements.length - 1
+                    ? this.elements[i + 1]
+                    : null;
+            }
+        }
+
+        return null;
     }
 
     isOnPlatform(range: IndexRange, area: Area): boolean {

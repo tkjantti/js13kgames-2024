@@ -22,9 +22,10 @@
  * SOFTWARE.
  */
 
+import { Area } from "./Area";
 import { Vector } from "./Vector";
 
-export interface GameObject {
+export interface GameObject extends Area {
     x: number;
     y: number;
     width: number;

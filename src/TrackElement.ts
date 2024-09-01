@@ -54,6 +54,11 @@ export enum TrackElementType {
     Finish,
 }
 
+export enum YPosition {
+    Random,
+    CenterVertically,
+}
+
 // An element is one horizontal slice of the track. A track is
 // composed by laying down several elements one after the other.
 export class TrackElement {
@@ -86,46 +91,52 @@ export class TrackElement {
         this.maxX = Math.max(...this.surfaces.map((s) => s.x + s.width));
     }
 
-    findEmptySpot(c: Dimensions, otherObjects: GameObject[]): Vector {
-        // NOTE: This method assumes that this element has only one surface.
+    findEmptySpot(
+        c: Dimensions,
+        otherObjects: GameObject[],
+        yPosition: YPosition = YPosition.Random,
+        xMin: number = LEFTMOST_EDGE,
+        xMax: number = RIGHTMOST_EDGE,
+    ): Vector | null {
         const top = this.surfaces[0].y;
 
-        const margin = c.width * 1;
+        const margin = c.width * 0.5;
         const withMargin: Dimensions = {
             width: c.width + 2 * margin,
             height: c.height + 2 * margin,
         };
 
-        for (let iRandom = 0; iRandom < 100; iRandom++) {
-            const x = randomMinMax(this.minX, this.maxX - withMargin.width);
-            const y = top + randomMinMax(0, ELEMENT_HEIGHT - withMargin.height);
-            const temp: Area = {
+        for (let iRandom = 0; iRandom < 50; iRandom++) {
+            const x = randomMinMax(xMin, xMax - withMargin.width);
+            const y =
+                top +
+                (yPosition == YPosition.CenterVertically
+                    ? ELEMENT_HEIGHT / 2 - withMargin.height / 2
+                    : randomMinMax(0, ELEMENT_HEIGHT - withMargin.height));
+
+            const spotWithMargin: Area = {
                 x,
                 y,
                 width: withMargin.width,
                 height: withMargin.height,
             };
 
-            for (let i = 0; i < this.objects.length; i++) {
-                const o = this.objects[i];
-
-                if (overlap(temp, o)) {
-                    continue;
-                }
+            if (!this.surfaces.some((s) => overlap(s, spotWithMargin))) {
+                continue;
             }
 
-            for (let i = 0; i < otherObjects.length; i++) {
-                const o = otherObjects[i];
+            if (this.objects.some((o) => overlap(o, spotWithMargin))) {
+                continue;
+            }
 
-                if (overlap(temp, o)) {
-                    continue;
-                }
+            if (otherObjects.some((o) => overlap(o, spotWithMargin))) {
+                continue;
             }
 
             return { x: x + margin, y: y + margin };
         }
 
-        return { x: this.minX, y: top };
+        return null;
     }
 }
 
