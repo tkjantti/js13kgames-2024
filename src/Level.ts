@@ -159,7 +159,11 @@ export class Level implements Area {
                 const other = this.characters[oi];
 
                 if (calculateCollisionBetweenCharacters(c, other)) {
-                    playTune(SFX_BOUNCE);
+                    const yDistance = Math.abs(c.y - this.player.y);
+                    const volumeByDistance =
+                        ci === 0 ? 1 : 1 - Math.min(yDistance / 100, 1);
+                    if (volumeByDistance > 0)
+                        playTune(SFX_BOUNCE, volumeByDistance);
                 }
             }
         }
@@ -176,18 +180,13 @@ export class Level implements Area {
                 for (let oi = 0; oi < element.objects.length; oi++) {
                     const o = element.objects[oi];
 
-                    // Basic check if sound should be played
+                    // Basic distance check if sound should be played
                     if (calculateCollisionToObstacle(c, o)) {
-                        const volumeneByDistance =
-                            ci === 0
-                                ? 1
-                                : 1 -
-                                  (this.characters[0].y - 100) /
-                                      (element.objects[oi].y + 100) +
-                                  0.5;
-                        console.info(volumeneByDistance);
-                        if (volumeneByDistance > 0 && volumeneByDistance <= 1)
-                            playTune(SFX_BOUNCE, volumeneByDistance);
+                        const yDistance = Math.abs(o.y - this.player.y);
+                        const volumeByDistance =
+                            ci === 0 ? 1 : 1 - Math.min(yDistance / 100, 1);
+                        if (volumeByDistance > 0)
+                            playTune(SFX_BOUNCE, volumeByDistance);
                     }
                 }
             }

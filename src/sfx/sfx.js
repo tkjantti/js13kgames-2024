@@ -151,11 +151,8 @@ export const playTune = (tune, vol = 1) => {
         }
         //SFX
         case SFX_BOUNCE: {
-            // Prevent too fast bounches making crackling sounds, wait to sound to be played first
-            if (bounceFx.paused) {
-                bounceFx.volume = vol;
-                bounceFx.play();
-            }
+            bounceFx.volume = vol;
+            bounceFx.play();
             break;
         }
     }
