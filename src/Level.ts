@@ -24,7 +24,7 @@
 
 import { Area } from "./Area";
 import { Camera } from "./Camera";
-import { Character } from "./Character";
+import { Character, CHARACTER_DIMENSIONS } from "./Character";
 import { GameObject } from "./GameObject";
 import { canvas, cx } from "./graphics";
 import { getKeys } from "./keyboard";
@@ -52,8 +52,6 @@ const BANK_WIDTH = 10;
 // Length of empty area before the start and after the end of the
 // track.
 const BANK_HEIGHT = 40;
-
-const START_POSITION: Vector = { x: 0, y: TRACK_START_Y - 10 };
 
 const FALL_TIME: number = 500;
 
@@ -86,18 +84,18 @@ export class Level implements Area {
         this.width = this.track.width + 2 * BANK_WIDTH;
         this.height = this.track.height + 2 * BANK_HEIGHT;
 
-        this.player = new Character(0, START_POSITION);
+        this.player = new Character(0, this.findStartPosition());
         this.characters.push(this.player);
         this.camera.follow(this.player);
         this.resetZoom();
 
-        const aiCharacter = new Character(1, { x: -10, y: TRACK_START_Y - 10 });
+        const aiCharacter = new Character(1, this.findStartPosition());
         this.characters.push(aiCharacter);
 
-        const aiCharacter2 = new Character(2, { x: 10, y: TRACK_START_Y - 10 });
+        const aiCharacter2 = new Character(2, this.findStartPosition());
         this.characters.push(aiCharacter2);
 
-        const aiCharacter3 = new Character(3, { x: 0, y: TRACK_START_Y - 15 });
+        const aiCharacter3 = new Character(3, this.findStartPosition());
         this.characters.push(aiCharacter3);
     }
 
@@ -131,7 +129,10 @@ export class Level implements Area {
             let movementDirection: Vector = ZERO_VECTOR;
 
             if (c.fallStartTime != null && t - c.fallStartTime > FALL_TIME) {
-                c.drop(START_POSITION);
+                const dropPosition = this.track
+                    .get(0)
+                    .findEmptySpot(CHARACTER_DIMENSIONS, this.characters);
+                c.drop(dropPosition);
             } else if (
                 c.fallStartTime == null &&
                 !this.track.isOnPlatform(range, c)
@@ -213,6 +214,12 @@ export class Level implements Area {
             x: dx,
             y: dy,
         });
+    }
+
+    private findStartPosition(): Vector {
+        return this.track
+            .get(0)
+            .findEmptySpot(CHARACTER_DIMENSIONS, this.characters);
     }
 
     draw(t: number, dt: number): void {

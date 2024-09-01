@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+import { Dimensions } from "./Area";
 import {
     CharacterAnimation,
     CharacterFacingDirection,
@@ -36,6 +37,11 @@ const colors: string[] = ["blue", "red", "green", "yellow", "orange"];
 
 export const playerColor = colors[0];
 
+export const CHARACTER_DIMENSIONS: Readonly<Dimensions> = {
+    width: 1,
+    height: 1,
+};
+
 export class Character implements GameObject {
     private direction: Vector = ZERO_VECTOR;
     private latestDirection: Vector = { x: 0, y: -1 };
@@ -44,8 +50,8 @@ export class Character implements GameObject {
 
     x: number;
     y: number;
-    width = 1;
-    height = 1;
+    width = CHARACTER_DIMENSIONS.width;
+    height = CHARACTER_DIMENSIONS.height;
 
     velocity: Vector = ZERO_VECTOR;
 

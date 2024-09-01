@@ -35,3 +35,10 @@ export const random = (max = 1): number => {
 export const randomInt = (max: number): number => {
     return Math.floor(Math.random() * max);
 };
+
+/*
+ * Random number between [min, max).
+ */
+export const randomMinMax = (min: number, max: number): number => {
+    return Math.random() * (max - min) + min;
+};
