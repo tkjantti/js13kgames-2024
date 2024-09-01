@@ -48,7 +48,7 @@ export const bounceSfx = {
             c: [{ n: [147], f: [] }],
         },
     ],
-    rowLen: 5513, // In sample lengths
+    rowLen: 500, // In sample lengths
     patternLen: 32, // Rows per pattern
     endPattern: 0, // End pattern
     numChannels: 1, // Number of channels
