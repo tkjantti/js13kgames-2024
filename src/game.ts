@@ -142,6 +142,8 @@ const draw = (t: number, dt: number): void => {
                     "Brush Script MT",
                     radius / maxRadius,
                 );
+                applyGradient();
+
                 radius -= 10;
             }
 
@@ -162,6 +164,7 @@ const draw = (t: number, dt: number): void => {
                 radius / maxRadius,
             );
             centerText("Press enter", 24, "Sans-serif", 1, 80);
+            applyGradient();
 
             if (radius >= maxRadius) {
                 waitForEnter().then(() => setState(GameState.Ready));
@@ -182,6 +185,8 @@ const draw = (t: number, dt: number): void => {
             centerText("Race finished", 48, "Brush Script MT", 1, -20);
             centerText("READY FOR NEXT RACE", 48, "Brush Script MT", 1, 30);
 
+            applyGradient();
+
             if (radius >= maxRadius) {
                 centerText("Press enter", 32, "Sans-serif", 24, 100);
                 waitForEnter().then(() => setState(GameState.Ready));
@@ -198,6 +203,52 @@ const draw = (t: number, dt: number): void => {
 
 export const onCanvasSizeChanged = (): void => {
     level.resetZoom();
+};
+
+const applyCRTEffect = (): void => {
+    const imageData = cx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+    const width = canvas.width;
+    const height = canvas.height;
+
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            const index = (y * width + x) * 4;
+
+            // Apply scanlines
+            if (y % 2 === 0) {
+                data[index] *= 0.5; // Red
+                data[index + 1] *= 0.5; // Green
+                data[index + 2] *= 0.5; // Blue
+            }
+
+            // Apply noise
+            const noise = (Math.random() - 0.5) * 20;
+            data[index] += noise; // Red
+            data[index + 1] += noise; // Green
+            data[index + 2] += noise; // Blue
+        }
+    }
+
+    cx.putImageData(imageData, 0, 0);
+};
+
+const applyGradient = () => {
+    const width = canvas.width;
+    const height = canvas.height;
+    const gradient = cx.createRadialGradient(
+        width / 2,
+        height / 2,
+        0, // Inner circle
+        width / 2,
+        height / 2,
+        width / 2, // Outer circle
+    );
+    gradient.addColorStop(0, "rgba(255, 255, 255, 0.3)");
+    gradient.addColorStop(1, "rgba(0, 0, 0, 0.5)");
+
+    cx.fillStyle = gradient;
+    cx.fillRect(0, 0, width, height);
 };
 
 const drawInitialScreen = (text: string): void => {
@@ -223,6 +274,9 @@ const drawInitialScreen = (text: string): void => {
     centerText("13TH GUY", 64, "Brush Script MT", 1, 30);
     centerText(text, 24, "Sans-serif", 1, 80);
     cx.restore();
+
+    applyCRTEffect();
+    applyGradient();
 };
 
 export const start = async (): Promise<void> => {
@@ -238,6 +292,8 @@ export const start = async (): Promise<void> => {
     centerText("13TH GUY", 64, "Brush Script MT", 1, 30);
     centerText("Press any key", 24, "Sans-serif", 1, 80);
     cx.restore();
+    applyGradient();
+    applyCRTEffect();
     await waitForAnyKey();
 
     setState(GameState.Start);
