@@ -63,6 +63,7 @@ const setState = (state: GameState): void => {
             break;
         case GameState.GameFinished:
             radius = 1;
+            playTune(SFX_FINISHED);
             break;
         default:
             break;
@@ -178,11 +179,11 @@ const draw = (t: number, dt: number): void => {
             cx.fillStyle = "#CCCC40";
             cx.fill();
 
-            centerText("Race finised", 48, "Brush Script MT", 1, -20);
-            centerText("READY FOR NEXT RACE ", 48, "Brush Script MT", 1, 30);
-            centerText("Press enter", 32, "Sans-serif", 24, 100);
+            centerText("Race finished", 48, "Brush Script MT", 1, -20);
+            centerText("READY FOR NEXT RACE", 48, "Brush Script MT", 1, 30);
 
             if (radius >= maxRadius) {
+                centerText("Press enter", 32, "Sans-serif", 24, 100);
                 waitForEnter().then(() => setState(GameState.Ready));
             } else {
                 radius += 10;

@@ -163,7 +163,11 @@ export class Level implements Area {
                 const other = this.characters[oi];
 
                 if (calculateCollisionBetweenCharacters(c, other)) {
-                    playTune(SFX_BOUNCE);
+                    const yDistance = Math.abs(c.y - this.player.y);
+                    const volumeByDistance =
+                        ci === 0 ? 1 : 1 - Math.min(yDistance / 100, 1);
+                    if (volumeByDistance > 0)
+                        playTune(SFX_BOUNCE, volumeByDistance);
                 }
             }
         }
@@ -180,8 +184,13 @@ export class Level implements Area {
                 for (let oi = 0; oi < element.objects.length; oi++) {
                     const o = element.objects[oi];
 
+                    // Basic distance check if sound should be played
                     if (calculateCollisionToObstacle(c, o)) {
-                        playTune(SFX_BOUNCE);
+                        const yDistance = Math.abs(o.y - this.player.y);
+                        const volumeByDistance =
+                            ci === 0 ? 1 : 1 - Math.min(yDistance / 100, 1);
+                        if (volumeByDistance > 0)
+                            playTune(SFX_BOUNCE, volumeByDistance);
                     }
                 }
             }
@@ -192,7 +201,8 @@ export class Level implements Area {
         for (let ci = 0; ci < this.characters.length; ci++) {
             const c = this.characters[ci];
 
-            if (c.y < this.track.finishY) {
+            // If player character finishes (TODO: add time limit or how many can finish)
+            if (c.y < this.track.finishY && ci === 0) {
                 this.state = State.FINISHED;
             }
         }
