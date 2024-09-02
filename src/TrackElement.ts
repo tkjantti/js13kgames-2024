@@ -74,7 +74,7 @@ export class TrackElement {
             case TrackElementType.Finish:
                 return "green";
             default:
-                return "rgb(70,50,70)";
+                return "rgb(40,10,40)";
         }
     }
 

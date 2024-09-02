@@ -1,5 +1,10 @@
 import { canvas, cx } from "./graphics";
-import { initializeKeyboard, waitForAnyKey, waitForEnter } from "./keyboard";
+import {
+    initializeKeyboard,
+    sleep,
+    waitForAnyKey,
+    waitForEnter,
+} from "./keyboard";
 import { Level, State } from "./Level";
 import { simpleTrack } from "./tracks";
 
@@ -87,7 +92,7 @@ const update = (t: number, dt: number): void => {
             if (level.state === State.GAME_OVER) {
                 setState(GameState.GameOver);
             } else if (level.state === State.FINISHED) {
-                setState(GameState.GameFinished);
+                sleep(500).then(() => setState(GameState.GameFinished));
             }
             break;
         }
@@ -118,7 +123,7 @@ const centerText = (
 
 const draw = (t: number, dt: number): void => {
     cx.save();
-    cx.fillStyle = "rgb(10, 10, 30)";
+    cx.fillStyle = "rgb(0, 0, 10)";
     cx.fillRect(0, 0, canvas.width, canvas.height);
     level.draw(t, dt);
     cx.restore();
@@ -142,7 +147,6 @@ const draw = (t: number, dt: number): void => {
                     "Brush Script MT",
                     radius / maxRadius,
                 );
-                applyGradient();
 
                 radius -= 10;
             }
@@ -164,7 +168,6 @@ const draw = (t: number, dt: number): void => {
                 radius / maxRadius,
             );
             centerText("Press enter", 24, "Sans-serif", 1, 80);
-            applyGradient();
 
             if (radius >= maxRadius) {
                 waitForEnter().then(() => setState(GameState.Ready));
@@ -177,15 +180,14 @@ const draw = (t: number, dt: number): void => {
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
 
-            cx.beginPath();
-            cx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-            cx.fillStyle = "#CCCC40";
-            cx.fill();
-
-            centerText("Race finished", 48, "Brush Script MT", 1, -20);
-            centerText("READY FOR NEXT RACE", 48, "Brush Script MT", 1, 30);
-
-            applyGradient();
+            if (radius >= 50) {
+                cx.beginPath();
+                cx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                cx.fillStyle = "#CCCC40";
+                cx.fill();
+                centerText("Race finished", 48, "Brush Script MT", 1, -20);
+                centerText("READY FOR NEXT RACE", 48, "Brush Script MT", 1, 30);
+            }
 
             if (radius >= maxRadius) {
                 centerText("Press enter", 32, "Sans-serif", 24, 100);
@@ -198,6 +200,8 @@ const draw = (t: number, dt: number): void => {
         default:
             break;
     }
+    applyGradient();
+
     cx.restore();
 };
 
