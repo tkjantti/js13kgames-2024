@@ -133,12 +133,7 @@ export class Level implements Area {
             let movementDirection: Vector = ZERO_VECTOR;
 
             if (c.fallStartTime != null && t - c.fallStartTime > FALL_TIME) {
-                const dropPosition =
-                    this.track
-                        .get(0)
-                        .findEmptySpot(CHARACTER_DIMENSIONS, this.characters) ||
-                    DEFAULT_START_POSITION;
-                c.drop(dropPosition);
+                this.dropToLatestCheckpoint(c);
             } else if (
                 c.fallStartTime == null &&
                 !this.track.isOnPlatform(range, c)
@@ -201,6 +196,11 @@ export class Level implements Area {
         for (let ci = 0; ci < this.characters.length; ci++) {
             const c = this.characters[ci];
 
+            const checkpointIndex = this.track.findLatestCheckpoint(c.y);
+            if (checkpointIndex > c.latestCheckpointIndex) {
+                c.latestCheckpointIndex = checkpointIndex;
+            }
+
             // If player character finishes (TODO: add time limit or how many can finish)
             if (c.y < this.track.finishY && ci === 0) {
                 this.state = State.FINISHED;
@@ -215,6 +215,21 @@ export class Level implements Area {
                 .findEmptySpot(CHARACTER_DIMENSIONS, this.characters) ||
             DEFAULT_START_POSITION
         );
+    }
+
+    private dropToLatestCheckpoint(c: Character): void {
+        const checkpoint = this.track.getCheckpoint(c.latestCheckpointIndex);
+        const dropPosition = checkpoint.findEmptySpot(
+            CHARACTER_DIMENSIONS,
+            this.characters,
+        );
+
+        if (dropPosition == null) {
+            // No luck, wait for the next frame.
+            return;
+        }
+
+        c.drop(dropPosition);
     }
 
     draw(t: number, dt: number): void {

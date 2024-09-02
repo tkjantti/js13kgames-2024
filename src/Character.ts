@@ -62,6 +62,8 @@ export class Character implements GameObject {
 
     fallStartTime: number | undefined;
 
+    latestCheckpointIndex: number = 0;
+
     constructor(id: number, position: Vector) {
         this.x = position.x;
         this.y = position.y;

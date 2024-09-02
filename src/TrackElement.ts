@@ -46,11 +46,13 @@ export enum TT { // "Track template"
     DualPassage,
     FullWidthWithObstacleAtCenter,
     FullWidthWithObstacles,
+    Checkpoint,
     Finish,
 }
 
 export enum TrackElementType {
     Normal,
+    CheckPoint,
     Finish,
 }
 
@@ -62,6 +64,7 @@ export enum YPosition {
 // An element is one horizontal slice of the track. A track is
 // composed by laying down several elements one after the other.
 export class TrackElement {
+    readonly y: number;
     readonly type: TrackElementType;
     readonly surfaces: readonly Area[];
     readonly height: number;
@@ -71,18 +74,22 @@ export class TrackElement {
 
     get color(): string {
         switch (this.type) {
+            case TrackElementType.CheckPoint:
+                return "rgb(0, 150, 0)";
             case TrackElementType.Finish:
-                return "green";
+                return "rgb(0, 255, 0)";
             default:
                 return "rgb(70,50,70)";
         }
     }
 
     constructor(
+        y: number,
         type: TrackElementType,
         surfaces: readonly Area[],
         objects: readonly GameObject[],
     ) {
+        this.y = y;
         this.type = type;
         this.surfaces = surfaces;
         this.objects = objects;
@@ -98,8 +105,6 @@ export class TrackElement {
         xMin: number = LEFTMOST_EDGE,
         xMax: number = RIGHTMOST_EDGE,
     ): Vector | null {
-        const top = this.surfaces[0].y;
-
         const margin = c.width * 0.5;
         const withMargin: Dimensions = {
             width: c.width + 2 * margin,
@@ -109,7 +114,7 @@ export class TrackElement {
         for (let iRandom = 0; iRandom < 50; iRandom++) {
             const x = randomMinMax(xMin, xMax - withMargin.width);
             const y =
-                top +
+                this.y +
                 (yPosition == YPosition.CenterVertically
                     ? ELEMENT_HEIGHT / 2 - withMargin.height / 2
                     : randomMinMax(0, ELEMENT_HEIGHT - withMargin.height));
@@ -260,6 +265,17 @@ export function createTrack(
                     }),
                 ];
                 break;
+            case TT.Checkpoint:
+                eType = TrackElementType.CheckPoint;
+                surfaces = [
+                    {
+                        x: -FULL_WIDTH / 2,
+                        y,
+                        width: FULL_WIDTH,
+                        height: ELEMENT_HEIGHT,
+                    },
+                ];
+                break;
             case TT.Finish:
                 eType = TrackElementType.Finish;
                 surfaces = [
@@ -276,6 +292,6 @@ export function createTrack(
                 break;
         }
 
-        return new TrackElement(eType, surfaces, objects);
+        return new TrackElement(y, eType, surfaces, objects);
     });
 }
