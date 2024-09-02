@@ -44,8 +44,8 @@ const colors: string[] = ["blue", "red", "green", "yellow", "orange"];
 export const playerColor = colors[0];
 
 export const CHARACTER_DIMENSIONS: Readonly<Dimensions> = {
-    width: 1,
-    height: 1,
+    width: 2,
+    height: 2,
 };
 
 export class Character implements GameObject {
