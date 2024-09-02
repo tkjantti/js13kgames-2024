@@ -150,6 +150,7 @@ const draw = (t: number, dt: number): void => {
 
                 radius -= 10;
             }
+            applyGradient();
 
             break;
         }
@@ -174,6 +175,8 @@ const draw = (t: number, dt: number): void => {
             } else {
                 radius += 10;
             }
+            applyGradient();
+
             break;
         }
         case GameState.GameFinished: {
@@ -195,12 +198,16 @@ const draw = (t: number, dt: number): void => {
             } else {
                 radius += 10;
             }
+            applyGradient();
+
             break;
         }
-        default:
+        default: {
+            applyGradient(true);
+
             break;
+        }
     }
-    applyGradient();
 
     cx.restore();
 };
@@ -237,7 +244,7 @@ const applyCRTEffect = (): void => {
     cx.putImageData(imageData, 0, 0);
 };
 
-const applyGradient = () => {
+const applyGradient = (track = false) => {
     const width = canvas.width;
     const height = canvas.height;
     const gradient = cx.createRadialGradient(
@@ -248,8 +255,13 @@ const applyGradient = () => {
         height / 2,
         width / 2, // Outer circle
     );
-    gradient.addColorStop(0, "rgba(255, 255, 255, 0.3)");
-    gradient.addColorStop(1, "rgba(0, 0, 0, 0.5)");
+    if (track) {
+        gradient.addColorStop(0, "rgba(255, 255, 255, 0.1)");
+        gradient.addColorStop(1, "rgba(0, 0, 0, 0.2)");
+    } else {
+        gradient.addColorStop(0, "rgba(255, 255, 255, 0.3)");
+        gradient.addColorStop(1, "rgba(0, 0, 0, 0.5)");
+    }
 
     cx.fillStyle = gradient;
     cx.fillRect(0, 0, width, height);
