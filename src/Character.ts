@@ -29,12 +29,15 @@ import {
     CharacterFacingDirection,
     renderCharacter,
 } from "./CharacterAnimation";
+import { easeInQuad } from "./easings";
 import { GameObject } from "./GameObject";
 import { cx } from "./graphics";
 import { getKeys } from "./keyboard";
 import { mirrorHorizontally } from "./rendering";
 import { Track } from "./Track";
 import { isZero, normalize, Vector, ZERO_VECTOR } from "./Vector";
+
+export const FALL_TIME: number = 1000;
 
 const colors: string[] = ["blue", "red", "green", "yellow", "orange"];
 
@@ -156,6 +159,15 @@ export class Character implements GameObject {
 
         if (this.latestDirection.x < 0) {
             mirrorHorizontally(cx, this.width);
+        }
+
+        if (this.fallStartTime != null) {
+            // Draw smaller as the character falls down.
+            const sizeRatio =
+                1 - easeInQuad((t - this.fallStartTime) / FALL_TIME);
+            cx.translate(this.width / 2, renderHeight / 2);
+            cx.scale(sizeRatio, sizeRatio);
+            cx.translate(-this.width / 2, -renderHeight / 2);
         }
 
         const animationTime =

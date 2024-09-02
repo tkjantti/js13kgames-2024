@@ -24,7 +24,7 @@
 
 import { Area } from "./Area";
 import { Camera } from "./Camera";
-import { Character, CHARACTER_DIMENSIONS } from "./Character";
+import { Character, CHARACTER_DIMENSIONS, FALL_TIME } from "./Character";
 import { GameObject } from "./GameObject";
 import { canvas, cx } from "./graphics";
 import {
@@ -56,8 +56,6 @@ const BANK_WIDTH = 10;
 // Length of empty area before the start and after the end of the
 // track.
 const BANK_HEIGHT = 40;
-
-const FALL_TIME: number = 500;
 
 export enum State {
     RUNNING,
@@ -132,8 +130,12 @@ export class Level implements Area {
 
             let movementDirection: Vector = ZERO_VECTOR;
 
-            if (c.fallStartTime != null && t - c.fallStartTime > FALL_TIME) {
-                this.dropToLatestCheckpoint(c);
+            if (c.fallStartTime != null) {
+                // Can't move when falling.
+
+                if (t - c.fallStartTime > FALL_TIME) {
+                    this.dropToLatestCheckpoint(c);
+                }
             } else if (
                 c.fallStartTime == null &&
                 !this.track.isOnPlatform(range, c)
