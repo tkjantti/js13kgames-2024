@@ -24,7 +24,7 @@
 
 import { Area } from "./Area";
 import { Camera } from "./Camera";
-import { Character, CHARACTER_DIMENSIONS } from "./Character";
+import { Character, CHARACTER_DIMENSIONS, FALL_TIME } from "./Character";
 import { GameObject } from "./GameObject";
 import { canvas, cx } from "./graphics";
 import {
@@ -57,7 +57,7 @@ const BANK_WIDTH = 10;
 // track.
 const BANK_HEIGHT = 40;
 
-const FALL_TIME: number = 500;
+const CHARACTER_COUNT = 13;
 
 export enum State {
     RUNNING,
@@ -88,19 +88,27 @@ export class Level implements Area {
         this.width = this.track.width + 2 * BANK_WIDTH;
         this.height = this.track.height + 2 * BANK_HEIGHT;
 
-        this.player = new Character(0, this.findStartPosition());
+        const startElement = this.track.get(0);
+        const startPositionGap = startElement.width / CHARACTER_COUNT;
+        const startMargin = startPositionGap * 0.3;
+
+        const playerStartPosition = {
+            x: startElement.minX + startMargin,
+            y: startElement.y + 3,
+        };
+        this.player = new Character(0, playerStartPosition);
         this.characters.push(this.player);
         this.camera.follow(this.player);
         this.resetZoom();
 
-        const aiCharacter = new Character(1, this.findStartPosition());
-        this.characters.push(aiCharacter);
-
-        const aiCharacter2 = new Character(2, this.findStartPosition());
-        this.characters.push(aiCharacter2);
-
-        const aiCharacter3 = new Character(3, this.findStartPosition());
-        this.characters.push(aiCharacter3);
+        for (let i = 1; i < CHARACTER_COUNT; i++) {
+            const startPosition = {
+                x: startElement.minX + startMargin + i * startPositionGap,
+                y: startElement.y + 3,
+            };
+            const aiCharacter = new Character(i, startPosition);
+            this.characters.push(aiCharacter);
+        }
     }
 
     resetZoom() {
@@ -132,13 +140,12 @@ export class Level implements Area {
 
             let movementDirection: Vector = ZERO_VECTOR;
 
-            if (c.fallStartTime != null && t - c.fallStartTime > FALL_TIME) {
-                const dropPosition =
-                    this.track
-                        .get(0)
-                        .findEmptySpot(CHARACTER_DIMENSIONS, this.characters) ||
-                    DEFAULT_START_POSITION;
-                c.drop(dropPosition);
+            if (c.fallStartTime != null) {
+                // Can't move when falling.
+
+                if (t - c.fallStartTime > FALL_TIME) {
+                    this.dropToLatestCheckpoint(c);
+                }
             } else if (
                 c.fallStartTime == null &&
                 !this.track.isOnPlatform(range, c)
@@ -201,6 +208,11 @@ export class Level implements Area {
         for (let ci = 0; ci < this.characters.length; ci++) {
             const c = this.characters[ci];
 
+            const checkpointIndex = this.track.findLatestCheckpoint(c.y);
+            if (checkpointIndex > c.latestCheckpointIndex) {
+                c.latestCheckpointIndex = checkpointIndex;
+            }
+
             // If player character finishes (TODO: add time limit or how many can finish)
             if (c.y < this.track.finishY && ci === 0) {
                 this.state = State.FINISHED;
@@ -215,6 +227,21 @@ export class Level implements Area {
                 .findEmptySpot(CHARACTER_DIMENSIONS, this.characters) ||
             DEFAULT_START_POSITION
         );
+    }
+
+    private dropToLatestCheckpoint(c: Character): void {
+        const checkpoint = this.track.getCheckpoint(c.latestCheckpointIndex);
+        const dropPosition = checkpoint.findEmptySpot(
+            CHARACTER_DIMENSIONS,
+            this.characters,
+        );
+
+        if (dropPosition == null) {
+            // No luck, wait for the next frame.
+            return;
+        }
+
+        c.drop(dropPosition);
     }
 
     draw(t: number, dt: number): void {

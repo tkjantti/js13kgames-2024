@@ -23,7 +23,13 @@
  */
 
 import { Area, overlap } from "./Area";
-import { createTrack, ELEMENT_HEIGHT, TrackElement, TT } from "./TrackElement";
+import {
+    createTrack,
+    ELEMENT_HEIGHT,
+    TrackElement,
+    TrackElementType,
+    TT,
+} from "./TrackElement";
 import { Vector } from "./Vector";
 
 export interface IndexRange {
@@ -31,9 +37,15 @@ export interface IndexRange {
     maxI: number;
 }
 
+interface Checkpoint {
+    element: TrackElement;
+    y: number;
+}
+
 export class Track {
     private elements: TrackElement[] = [];
     private startY: number;
+    private checkpoints: Checkpoint[];
 
     finishY: number;
 
@@ -51,10 +63,33 @@ export class Track {
 
         this.width = maxX - minX;
         this.height = this.elements.length * ELEMENT_HEIGHT;
+
+        this.checkpoints = this.elements
+            // Include start element in checkpoints
+            .filter((e, i) => e.type === TrackElementType.CheckPoint || i === 0)
+            .map((e) => ({
+                y: e.y + e.height,
+                element: e,
+            }));
     }
 
     get(i: number): TrackElement {
         return this.elements[i];
+    }
+
+    getCheckpoint(checkpointIndex: number): TrackElement {
+        return this.checkpoints[checkpointIndex].element;
+    }
+
+    findLatestCheckpoint(y: number): number {
+        for (let i = this.checkpoints.length - 1; i >= 0; i--) {
+            const checkpoint = this.checkpoints[i];
+            if (y < checkpoint.y + checkpoint.element.height) {
+                return i;
+            }
+        }
+
+        return 0;
     }
 
     getBetween(topY: number, bottomY: number): IndexRange {
