@@ -67,6 +67,7 @@ export class TrackElement {
     readonly y: number;
     readonly type: TrackElementType;
     readonly surfaces: readonly Area[];
+    readonly width: number;
     readonly height: number;
     readonly minX: number;
     readonly maxX: number;
@@ -93,9 +94,10 @@ export class TrackElement {
         this.type = type;
         this.surfaces = surfaces;
         this.objects = objects;
-        this.height = ELEMENT_HEIGHT;
         this.minX = Math.min(...this.surfaces.map((s) => s.x));
         this.maxX = Math.max(...this.surfaces.map((s) => s.x + s.width));
+        this.width = this.maxX - this.minX;
+        this.height = ELEMENT_HEIGHT;
     }
 
     findEmptySpot(

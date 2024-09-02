@@ -39,7 +39,21 @@ import { isZero, normalize, Vector, ZERO_VECTOR } from "./Vector";
 
 export const FALL_TIME: number = 1000;
 
-const colors: string[] = ["blue", "red", "green", "yellow", "orange"];
+const colors: string[] = [
+    "blue",
+    "red",
+    "green",
+    "yellow",
+    "orange",
+    "tomato",
+    "gray",
+    "slateblue",
+    "violet",
+    "dodgerblue",
+    "darkcyan",
+    "darkmagenta",
+    "darkseagreen",
+];
 
 export const playerColor = colors[0];
 

@@ -57,6 +57,8 @@ const BANK_WIDTH = 10;
 // track.
 const BANK_HEIGHT = 40;
 
+const CHARACTER_COUNT = 13;
+
 export enum State {
     RUNNING,
     GAME_OVER,
@@ -86,19 +88,27 @@ export class Level implements Area {
         this.width = this.track.width + 2 * BANK_WIDTH;
         this.height = this.track.height + 2 * BANK_HEIGHT;
 
-        this.player = new Character(0, this.findStartPosition());
+        const startElement = this.track.get(0);
+        const startPositionGap = startElement.width / CHARACTER_COUNT;
+        const startMargin = startPositionGap * 0.3;
+
+        const playerStartPosition = {
+            x: startElement.minX + startMargin,
+            y: startElement.y + 3,
+        };
+        this.player = new Character(0, playerStartPosition);
         this.characters.push(this.player);
         this.camera.follow(this.player);
         this.resetZoom();
 
-        const aiCharacter = new Character(1, this.findStartPosition());
-        this.characters.push(aiCharacter);
-
-        const aiCharacter2 = new Character(2, this.findStartPosition());
-        this.characters.push(aiCharacter2);
-
-        const aiCharacter3 = new Character(3, this.findStartPosition());
-        this.characters.push(aiCharacter3);
+        for (let i = 1; i < CHARACTER_COUNT; i++) {
+            const startPosition = {
+                x: startElement.minX + startMargin + i * startPositionGap,
+                y: startElement.y + 3,
+            };
+            const aiCharacter = new Character(i, startPosition);
+            this.characters.push(aiCharacter);
+        }
     }
 
     resetZoom() {
