@@ -473,7 +473,6 @@ export function renderCharacter(
         direction === CharacterFacingDirection.BackwardRight
     ) {
         cx.save();
-        cx.shadowOffsetX = 0;
         cx.shadowOffsetY = 0;
         cx.shadowBlur = 0;
         // Face

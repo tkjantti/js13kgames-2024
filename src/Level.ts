@@ -262,7 +262,6 @@ export class Level implements Area {
             viewArea.y + viewArea.height,
         );
 
-        cx.shadowOffsetX = 0;
         cx.shadowColor = "rgba(40, 10, 40, 0.7)";
 
         for (let e = maxI; e >= minI; e--) {
