@@ -262,6 +262,9 @@ export class Level implements Area {
             viewArea.y + viewArea.height,
         );
 
+        cx.shadowOffsetX = 0;
+        cx.shadowColor = "rgba(40, 10, 40, 0.7)";
+
         for (let e = maxI; e >= minI; e--) {
             const element = this.track.get(e);
 
@@ -270,6 +273,7 @@ export class Level implements Area {
 
             for (let i = 0; i < surfaces.length; i++) {
                 const surface = surfaces[i];
+                cx.shadowOffsetY = surface.height * 10;
                 cx.fillRect(
                     surface.x,
                     surface.y,
@@ -298,8 +302,8 @@ export class Level implements Area {
         cx.restore();
 
         const gradient = cx.createLinearGradient(0, 0, 0, canvas.height);
-        gradient.addColorStop(0, "rgba(0, 0, 0, 0.6)");
-        gradient.addColorStop(0.75, "rgba(0, 0, 0, 0)");
+        gradient.addColorStop(0, "rgba(0, 0, 0, 1)");
+        gradient.addColorStop(0.1, "rgba(0, 0, 0, 0.8)");
         gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
 
         cx.fillStyle = gradient;

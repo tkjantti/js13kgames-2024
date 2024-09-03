@@ -142,10 +142,9 @@ export function renderCharacter(
     cx.lineJoin = "round";
     cx.lineCap = "round";
 
-    cx.shadowOffsetX = 10;
-    cx.shadowOffsetY = 10;
+    cx.shadowOffsetY = 20;
     cx.shadowBlur = 10;
-    cx.shadowColor = "rgba(0, 0, 0, 0.5)"; // Shadow color
+    cx.shadowColor = "rgba(0, 0, 0, 0.5)";
 
     switch (direction) {
         case CharacterFacingDirection.Right:
