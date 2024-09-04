@@ -142,7 +142,7 @@ const draw = (t: number, dt: number): void => {
                 cx.fillStyle = "#105000";
                 cx.fill();
                 centerText(
-                    "GO! But do not be the 13th!",
+                    "GO! Avoid to be the 13th!",
                     64,
                     "Impact",
                     radius / maxRadius,
@@ -162,7 +162,7 @@ const draw = (t: number, dt: number): void => {
             cx.arc(centerX, centerY, radius, 0, Math.PI * 2);
             cx.fillStyle = "#802010";
             cx.fill();
-            centerText("Try again!!", 64, "Impact", radius / maxRadius);
+            centerText("TERMINATED!", 64, "Impact", radius / maxRadius);
             centerText("Press enter", 24, "Sans-serif", 1, 80);
 
             if (radius >= maxRadius) {
