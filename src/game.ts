@@ -144,7 +144,7 @@ const draw = (t: number, dt: number): void => {
                 centerText(
                     "GO! But do not be the 13th!",
                     64,
-                    "Brush Script MT",
+                    "Impact",
                     radius / maxRadius,
                 );
 
@@ -162,12 +162,7 @@ const draw = (t: number, dt: number): void => {
             cx.arc(centerX, centerY, radius, 0, Math.PI * 2);
             cx.fillStyle = "#802010";
             cx.fill();
-            centerText(
-                "Try again!!",
-                64,
-                "Brush Script MT",
-                radius / maxRadius,
-            );
+            centerText("Try again!!", 64, "Impact", radius / maxRadius);
             centerText("Press enter", 24, "Sans-serif", 1, 80);
 
             if (radius >= maxRadius) {
@@ -188,8 +183,8 @@ const draw = (t: number, dt: number): void => {
                 cx.arc(centerX, centerY, radius, 0, Math.PI * 2);
                 cx.fillStyle = "#CCCC40";
                 cx.fill();
-                centerText("Race finished", 48, "Brush Script MT", 1, -20);
-                centerText("READY FOR NEXT RACE", 48, "Brush Script MT", 1, 30);
+                centerText("Race finished", 48, "Impact", 1, -20);
+                centerText("READY FOR NEXT RACE", 48, "Sans-serif", 1, 30);
             }
 
             if (radius >= maxRadius) {
@@ -286,8 +281,8 @@ const drawInitialScreen = (text: string): void => {
     );
     cx.restore();
 
-    centerText("don't be the", 24, "Brush Script MT", 1, -20);
-    centerText("13TH GUY", 64, "Brush Script MT", 1, 30);
+    centerText("don't be the", 24, "Impact", 1, -30);
+    centerText("13TH GUY", 64, "Impact", 1, 30);
     centerText(text, 24, "Sans-serif", 1, 80);
     cx.restore();
 
@@ -304,8 +299,8 @@ export const start = async (): Promise<void> => {
     cx.fillStyle = "rgb(20, 20, 50)";
     cx.rect(0, 0, canvas.width, canvas.height);
     cx.fill();
-    centerText("don't be the", 24, "Brush Script MT", 1, -20);
-    centerText("13TH GUY", 64, "Brush Script MT", 1, 30);
+    centerText("don't be the", 24, "Impact", 1, -30);
+    centerText("13TH GUY", 64, "Impact", 1, 30);
     centerText("Press any key", 24, "Sans-serif", 1, 80);
     cx.restore();
     applyGradient();

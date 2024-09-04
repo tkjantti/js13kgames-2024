@@ -322,7 +322,7 @@ export class Level implements Area {
         cx.scale(this.camera.zoom, this.camera.zoom);
         cx.translate(-this.camera.x, -this.camera.y);
 
-        cx.font = "1.5px Brush Script MT";
+        cx.font = "1px Sans-serif";
 
         characters.forEach((char, index) => {
             const text = `${index + 1}. ${char.ai ? "AI" : "Player"}`;
@@ -337,7 +337,7 @@ export class Level implements Area {
 
             cx.fillText(
                 text,
-                char.x - canvas.width / 1000,
+                char.x - canvas.width / (char.ai ? 5000 : 2000),
                 char.y - char.height * 2.5,
             );
         });
