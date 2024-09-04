@@ -39,6 +39,14 @@ export function distance(a: Vector, b: Vector): number {
     return Math.sqrt(dx * dx + dy * dy);
 }
 
+export function distanceX(a: Vector, b: Vector): number {
+    return Math.abs(a.x - b.x);
+}
+
+export function distanceY(a: Vector, b: Vector): number {
+    return Math.abs(a.y - b.y);
+}
+
 export function length(a: Vector): number {
     return Math.sqrt(a.x * a.x + a.y * a.y);
 }
