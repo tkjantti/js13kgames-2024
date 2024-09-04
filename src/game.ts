@@ -141,13 +141,22 @@ const draw = (t: number, dt: number): void => {
                 cx.arc(centerX, centerY, radius, 0, Math.PI * 2);
                 cx.fillStyle = "#105000";
                 cx.fill();
-                centerText(
-                    "GO! Avoid to be the 13th!",
-                    64,
-                    "Impact",
-                    radius / maxRadius,
-                );
+                centerText("GO!", 64, "Impact", radius / maxRadius);
 
+                centerText(
+                    "Avoid to be the 13th:",
+                    40,
+                    "Sans serif",
+                    radius / maxRadius,
+                    60,
+                );
+                centerText(
+                    "in any checkpoint, when falling down or in the finish line.",
+                    40,
+                    "Sans serif",
+                    radius / maxRadius,
+                    96,
+                );
                 radius -= 10;
             }
             applyGradient();

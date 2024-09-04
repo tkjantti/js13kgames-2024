@@ -211,6 +211,12 @@ export class Level implements Area {
             const checkpointIndex = this.track.findLatestCheckpoint(c.y);
             if (checkpointIndex > c.latestCheckpointIndex) {
                 c.latestCheckpointIndex = checkpointIndex;
+                //  13th character will be terminated if it falls
+                if (c.rank === 13) {
+                    c.terminated = true;
+                    if (!c.ai) this.state = State.GAME_OVER;
+                    return;
+                }
             }
 
             // If player character finishes (TODO: add time limit or how many can finish)
@@ -233,6 +239,13 @@ export class Level implements Area {
 
     private dropToLatestCheckpoint(c: Character): void {
         const checkpoint = this.track.getCheckpoint(c.latestCheckpointIndex);
+
+        //  13th character will be terminated if it falls
+        if (!c.ai && c.rank === 13) {
+            this.state = State.GAME_OVER;
+            return;
+        }
+
         const dropPosition = checkpoint.findEmptySpot(
             CHARACTER_DIMENSIONS,
             this.characters,
@@ -346,7 +359,7 @@ export class Level implements Area {
             }
             const text = `${char.rank}. ${char.ai ? "AI" : "Player"}`;
             cx.fillStyle =
-                char.rank === 13
+                char.rank === 13 || char.terminated
                     ? "red"
                     : char.rank === 1
                       ? "lightgreen"
