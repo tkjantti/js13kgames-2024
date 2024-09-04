@@ -219,8 +219,10 @@ export class Level implements Area {
                 }
             }
 
-            // If player character finishes (TODO: add time limit or how many can finish)
-            if (c.y < this.track.finishY * 0.9935) {
+            // If player character finishes
+            // TODO: add time limit or how many can finish if needed
+            // TODO: Check better if finished without magic number
+            if (c.y < this.track.finishY * 0.994) {
                 c.finished = true;
                 if (ci === 0 && c.rank === 13) this.state = State.GAME_OVER;
                 else if (ci === 0) this.state = State.FINISHED;
