@@ -57,7 +57,7 @@ const BANK_WIDTH = 10;
 // track.
 const BANK_HEIGHT = 40;
 
-const CHARACTER_COUNT = 13;
+const CHARACTER_COUNT = 20;
 
 export enum State {
     RUNNING,
@@ -262,7 +262,7 @@ export class Level implements Area {
             viewArea.y + viewArea.height,
         );
 
-        cx.shadowColor = "rgba(40, 10, 40, 0.7)";
+        cx.shadowColor = "rgba(40, 10, 40, 0.6)";
 
         for (let e = maxI; e >= minI; e--) {
             const element = this.track.get(e);
