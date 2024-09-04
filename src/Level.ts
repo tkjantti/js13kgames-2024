@@ -355,7 +355,7 @@ export class Level implements Area {
 
             cx.fillText(
                 text,
-                char.x - canvas.width / (char.ai ? 5000 : 2000),
+                char.x * (char.ai ? 1.01 : 1.025),
                 char.y - char.height * 2.5,
             );
         });
