@@ -308,6 +308,40 @@ export class Level implements Area {
         cx.fillStyle = gradient;
         cx.fillRect(0, 0, canvas.width, canvas.height);
 
+        // Extract characters from objectsToDraw
+        const characters = objectsToDraw.filter(
+            (obj) => obj instanceof Character,
+        );
+
+        // Sort characters based on their Y coordinate
+        characters.sort((a, b) => a.y + a.height / 2 - (b.y + b.height / 2));
+
+        // Draw the order number and character name
+        cx.save();
+        cx.translate(canvas.width / 2, canvas.height / 2);
+        cx.scale(this.camera.zoom, this.camera.zoom);
+        cx.translate(-this.camera.x, -this.camera.y);
+
+        cx.font = "1.5px Brush Script MT";
+
+        characters.forEach((char, index) => {
+            const text = `${index + 1}. ${char.ai ? "AI" : "Player"}`;
+            cx.fillStyle =
+                index === 12
+                    ? "red"
+                    : index === 0
+                      ? "green"
+                      : char.ai
+                        ? "white"
+                        : "yellow";
+
+            cx.fillText(
+                text,
+                char.x - canvas.width / 1000,
+                char.y - char.height * 2.5,
+            );
+        });
+
         cx.restore(); // End camera - Drawing no longer in level coordinates
     }
 }

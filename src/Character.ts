@@ -63,7 +63,7 @@ export const CHARACTER_DIMENSIONS: Readonly<Dimensions> = {
 };
 
 export class Character implements GameObject {
-    private ai: Ai | null;
+    public ai: Ai | null;
 
     private direction: Vector = ZERO_VECTOR;
     private latestDirection: Vector = { x: 0, y: -1 };
