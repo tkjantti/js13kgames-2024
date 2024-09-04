@@ -166,7 +166,7 @@ const draw = (t: number, dt: number): void => {
             centerText("Press enter", 24, "Sans-serif", 1, 80);
 
             if (radius >= maxRadius) {
-                waitForEnter().then(() => setState(GameState.Ready));
+                waitForEnter().then(() => setState(GameState.Ready)); // TODO: Go to start screen intead
             } else {
                 radius += 10;
             }
