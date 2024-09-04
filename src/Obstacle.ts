@@ -28,7 +28,7 @@ import { Vector, ZERO_VECTOR } from "./Vector";
 
 export class Obstacle implements GameObject {
     static WIDTH = 10;
-    static HEIGHT = 8;
+    static HEIGHT = 4;
 
     x: number;
     y: number;
@@ -61,9 +61,18 @@ export class Obstacle implements GameObject {
         bodyGradient.addColorStop(0, "rgb(255, 110, 110)");
         bodyGradient.addColorStop(1, "rgb(255, 60, 60)");
 
+        // Bottom ellipse
         cx.fillStyle = bodyGradient;
         cx.beginPath();
-        cx.arc(this.width / 2, this.height / 2, this.width / 2, 0, 2 * Math.PI);
+        cx.ellipse(
+            this.width / 2,
+            this.height / 2,
+            this.width / 2,
+            this.height / 2,
+            0,
+            0,
+            2 * Math.PI,
+        );
         cx.shadowOffsetY = this.height * 8;
         cx.shadowBlur = this.height;
         cx.shadowColor = "rgba(0, 0, 0, 0.1)";
@@ -71,17 +80,20 @@ export class Obstacle implements GameObject {
 
         cx.shadowOffsetY = 0;
         cx.shadowBlur = 0;
-        cx.fillRect(0, -this.height / 2, this.width, this.height);
+        cx.fillRect(0, -this.height * 2, this.width, this.height * 2.5);
         const gradient = cx.createLinearGradient(0, 0, this.width, this.height);
         gradient.addColorStop(0, "rgb(255, 140, 140)");
         gradient.addColorStop(1, "rgb(255, 80, 80)");
         cx.fillStyle = gradient;
 
+        // Top ellipse
         cx.beginPath();
-        cx.arc(
+        cx.ellipse(
             this.width / 2,
-            -this.height / 2,
+            -this.height * 2,
             this.width / 2,
+            this.height / 2,
+            0,
             0,
             2 * Math.PI,
         );

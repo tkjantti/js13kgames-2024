@@ -25,6 +25,8 @@
 import {
     add,
     distance,
+    distanceX,
+    distanceY,
     dotProduct,
     isZero,
     length,
@@ -47,7 +49,7 @@ const CHARACTER_MAX_RUN_SPEED = 0.1;
 const CHARACTER_RUN_ACCELERATION = 0.001;
 const CHARACTER_STOP_ACCELERATION = 0.001;
 
-const OBSTACLE_BOUNCE_FACTOR = 15;
+const OBSTACLE_BOUNCE_FACTOR = 200;
 
 export function getMovementVelocity(
     c: GameObject,
@@ -84,8 +86,10 @@ export function calculateCollisionToObstacle(
     a: GameObject,
     obstacle: GameObject,
 ): boolean {
-    const radiusA = a.width / 2;
-    const radiusObstacle = obstacle.width / 2;
+    const radiusX = a.width / 2;
+    const radiusY = a.height / 2;
+    const radiusObstacleX = obstacle.width / 2;
+    const radiusObstacleY = obstacle.height / 3.5;
 
     const centerA: Vector = {
         x: a.x + a.width / 2,
@@ -97,7 +101,11 @@ export function calculateCollisionToObstacle(
         y: obstacle.y + obstacle.height / 2,
     };
 
-    if (distance(centerANext, centerObstacle) < radiusA + radiusObstacle) {
+    // TODO: Elliptical distance calculation
+    if (
+        distanceX(centerANext, centerObstacle) < radiusX + radiusObstacleX &&
+        distanceY(centerANext, centerObstacle) < radiusY + radiusObstacleY
+    ) {
         const directionToOther = normalize(subtract(centerObstacle, centerA));
         const speedToOther = dotProduct(a.velocity, directionToOther);
         const bouncingVelocity = multiply(

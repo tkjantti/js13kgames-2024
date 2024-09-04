@@ -57,7 +57,7 @@ const BANK_WIDTH = 10;
 // track.
 const BANK_HEIGHT = 40;
 
-const CHARACTER_COUNT = 13;
+const CHARACTER_COUNT = 20;
 
 export enum State {
     RUNNING,
@@ -70,7 +70,7 @@ export class Level implements Area {
 
     private track: Track;
 
-    private characters: Character[] = [];
+    public characters: Character[] = [];
     private player: Character;
 
     readonly x;
@@ -211,11 +211,21 @@ export class Level implements Area {
             const checkpointIndex = this.track.findLatestCheckpoint(c.y);
             if (checkpointIndex > c.latestCheckpointIndex) {
                 c.latestCheckpointIndex = checkpointIndex;
+                //  13th character will be terminated if it falls
+                if (c.rank === 13) {
+                    c.terminated = true;
+                    if (!c.ai) this.state = State.GAME_OVER;
+                    return;
+                }
             }
 
-            // If player character finishes (TODO: add time limit or how many can finish)
-            if (c.y < this.track.finishY && ci === 0) {
-                this.state = State.FINISHED;
+            // If player character finishes
+            // TODO: add time limit or how many can finish if needed
+            // TODO: Check better if finished without magic number
+            if (c.y < this.track.finishY * 0.994) {
+                c.finished = true;
+                if (ci === 0 && c.rank === 13) this.state = State.GAME_OVER;
+                else if (ci === 0) this.state = State.FINISHED;
             }
         }
     }
@@ -231,6 +241,14 @@ export class Level implements Area {
 
     private dropToLatestCheckpoint(c: Character): void {
         const checkpoint = this.track.getCheckpoint(c.latestCheckpointIndex);
+
+        //  13th character will be terminated if it falls
+        if (c.rank === 13) {
+            c.terminated = true;
+            if (!c.ai) this.state = State.GAME_OVER;
+            return;
+        }
+
         const dropPosition = checkpoint.findEmptySpot(
             CHARACTER_DIMENSIONS,
             this.characters,
@@ -262,7 +280,7 @@ export class Level implements Area {
             viewArea.y + viewArea.height,
         );
 
-        cx.shadowColor = "rgba(40, 10, 40, 0.7)";
+        cx.shadowColor = "rgba(40, 10, 40, 0.6)";
 
         for (let e = maxI; e >= minI; e--) {
             const element = this.track.get(e);
@@ -307,6 +325,57 @@ export class Level implements Area {
 
         cx.fillStyle = gradient;
         cx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Extract characters from objectsToDraw
+        const characters = objectsToDraw.filter(
+            (obj) => obj instanceof Character,
+        );
+
+        // Separate finished and unfinished characters
+        const finishedCharacters = characters.filter((char) => char.finished);
+        const unfinishedCharacters = characters.filter(
+            (char) => !char.finished,
+        );
+
+        // Sort unfinished characters based on their Y coordinate
+        unfinishedCharacters.sort(
+            (a, b) => a.y + a.height / 2 - (b.y + b.height / 2),
+        );
+
+        // Merge finished and sorted unfinished characters
+        const sortedCharacters = [
+            ...finishedCharacters,
+            ...unfinishedCharacters,
+        ];
+
+        // Draw the order number and character name
+        cx.save();
+        cx.translate(canvas.width / 2, canvas.height / 2);
+        cx.scale(this.camera.zoom, this.camera.zoom);
+        cx.translate(-this.camera.x, -this.camera.y);
+
+        cx.font = "1px Sans-serif";
+
+        sortedCharacters.forEach((char, index) => {
+            if (!char.finished) {
+                char.rank = index + 1;
+            }
+            const text = `${char.rank}`;
+            cx.fillStyle =
+                char.rank === 13 || char.terminated
+                    ? "red"
+                    : char.rank === 1
+                      ? "lightgreen"
+                      : char.ai
+                        ? "white"
+                        : "yellow";
+
+            cx.fillText(
+                text,
+                char.x + char.width / 4,
+                char.y - char.height * 2.5,
+            );
+        });
 
         cx.restore(); // End camera - Drawing no longer in level coordinates
     }

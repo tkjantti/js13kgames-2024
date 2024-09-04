@@ -40,10 +40,10 @@ import { isZero, normalize, Vector, ZERO_VECTOR } from "./Vector";
 export const FALL_TIME: number = 1000;
 
 const colors: string[] = [
-    "blue",
+    "yellow",
     "red",
     "green",
-    "yellow",
+    "blue",
     "orange",
     "tomato",
     "gray",
@@ -53,6 +53,13 @@ const colors: string[] = [
     "darkcyan",
     "darkmagenta",
     "darkseagreen",
+    "darkslategray",
+    "darkturquoise",
+    "deepskyblue",
+    "dimgray",
+    "firebrick",
+    "forestgreen",
+    "fuchsia",
 ];
 
 export const playerColor = colors[0];
@@ -63,7 +70,10 @@ export const CHARACTER_DIMENSIONS: Readonly<Dimensions> = {
 };
 
 export class Character implements GameObject {
-    private ai: Ai | null;
+    ai: Ai | null;
+    rank: number = 0;
+    finished: boolean = false;
+    terminated: boolean = false;
 
     private direction: Vector = ZERO_VECTOR;
     private latestDirection: Vector = { x: 0, y: -1 };
@@ -122,8 +132,12 @@ export class Character implements GameObject {
     }
 
     move(): void {
-        this.x += this.velocity.x;
-        this.y += this.velocity.y;
+        if (!this.terminated && !this.finished) {
+            this.x += this.velocity.x;
+            this.y += this.velocity.y;
+        } else {
+            this.direction = ZERO_VECTOR;
+        }
     }
 
     drop(position: Vector): void {
