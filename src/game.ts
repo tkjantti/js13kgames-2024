@@ -187,8 +187,9 @@ const draw = (t: number, dt: number): void => {
                 cx.fillStyle = "#CCCC40";
                 cx.fill();
                 centerText(
-                    "Race finished. You where number " +
-                        level.characters[0].rank,
+                    "Race finished. You were number " +
+                        level.characters[0].rank +
+                        ".",
                     48,
                     "Impact",
                     1,
@@ -279,7 +280,7 @@ const drawInitialScreen = (text: string): void => {
     cx.fill();
 
     cx.save();
-    cx.translate(canvas.width / 4, canvas.height / 2.5);
+    cx.translate(canvas.width / 8, canvas.height / 2.5);
     renderCharacter(
         cx,
         playerColor,
@@ -294,6 +295,21 @@ const drawInitialScreen = (text: string): void => {
     centerText("don't be the", 24, "Impact", 1, -30);
     centerText("13TH GUY", 64, "Impact", 1, 30);
     centerText(text, 24, "Sans-serif", 1, 80);
+    centerText("Keys: WASD or arrows", 24, "Sans-serif", 1, 140);
+    centerText(
+        "Avoid being the 13th in any situations",
+        24,
+        "Sans-serif",
+        1,
+        170,
+    );
+    centerText(
+        "or you will be eventually terminated!",
+        24,
+        "Sans-serif",
+        1,
+        200,
+    );
     cx.restore();
 
     applyCRTEffect();
@@ -302,19 +318,32 @@ const drawInitialScreen = (text: string): void => {
 
 export const start = async (): Promise<void> => {
     initializeKeyboard();
-    centerText("Loading...", 24, "Sans-serif", 1, 80);
-    await initialize();
 
     cx.save();
+    cx.filter = "grayscale(1) brightness(0.6)";
     cx.fillStyle = "rgb(20, 20, 50)";
     cx.rect(0, 0, canvas.width, canvas.height);
     cx.fill();
+    cx.save();
+    cx.translate(canvas.width / 8, canvas.height / 2.5);
+    renderCharacter(
+        cx,
+        playerColor,
+        canvas.height / 6,
+        canvas.height / 2,
+        0,
+        CharacterFacingDirection.Backward,
+        CharacterAnimation.Still,
+    );
+    cx.restore();
     centerText("don't be the", 24, "Impact", 1, -30);
     centerText("13TH GUY", 64, "Impact", 1, 30);
-    centerText("Press any key", 24, "Sans-serif", 1, 80);
-    cx.restore();
     applyGradient();
     applyCRTEffect();
+    await initialize().then(() =>
+        centerText("Press any key", 24, "Sans-serif", 1, 80),
+    );
+    cx.restore();
     await waitForAnyKey();
 
     setState(GameState.Start);
