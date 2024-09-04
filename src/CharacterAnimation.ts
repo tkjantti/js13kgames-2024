@@ -142,6 +142,10 @@ export function renderCharacter(
     cx.lineJoin = "round";
     cx.lineCap = "round";
 
+    cx.shadowOffsetY = 20;
+    cx.shadowBlur = 10;
+    cx.shadowColor = "rgba(0, 0, 0, 0.5)";
+
     switch (direction) {
         case CharacterFacingDirection.Right:
             {
@@ -469,7 +473,8 @@ export function renderCharacter(
         direction === CharacterFacingDirection.BackwardRight
     ) {
         cx.save();
-
+        cx.shadowOffsetY = 0;
+        cx.shadowBlur = 0;
         // Face
         cx.fillStyle = faceColor;
         const faceWidth = headWidth - faceMargin;

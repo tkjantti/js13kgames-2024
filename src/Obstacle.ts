@@ -64,10 +64,14 @@ export class Obstacle implements GameObject {
         cx.fillStyle = bodyGradient;
         cx.beginPath();
         cx.arc(this.width / 2, this.height / 2, this.width / 2, 0, 2 * Math.PI);
+        cx.shadowOffsetY = this.height * 8;
+        cx.shadowBlur = this.height;
+        cx.shadowColor = "rgba(0, 0, 0, 0.1)";
         cx.fill();
 
+        cx.shadowOffsetY = 0;
+        cx.shadowBlur = 0;
         cx.fillRect(0, -this.height / 2, this.width, this.height);
-
         const gradient = cx.createLinearGradient(0, 0, this.width, this.height);
         gradient.addColorStop(0, "rgb(255, 140, 140)");
         gradient.addColorStop(1, "rgb(255, 80, 80)");
