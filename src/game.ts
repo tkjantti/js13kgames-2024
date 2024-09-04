@@ -164,7 +164,7 @@ const draw = (t: number, dt: number): void => {
             cx.arc(centerX, centerY, radius, 0, Math.PI * 2);
             cx.fillStyle = "#802010";
             cx.fill();
-            centerText("TERMINATED!", 64, "Impact", radius / maxRadius);
+            centerText("ELIMINATED!", 64, "Impact", radius / maxRadius);
             centerText("You were the 13th guy.", 24, "Sans-serif", 1, 80);
             centerText("Press enter", 24, "Sans-serif", 1, 120);
 
@@ -304,7 +304,7 @@ const drawInitialScreen = (text: string): void => {
         170,
     );
     centerText(
-        "or you will be eventually terminated!",
+        "or you will be eventually eliminated!",
         24,
         "Sans-serif",
         1,
