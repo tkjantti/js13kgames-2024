@@ -241,8 +241,9 @@ export class Level implements Area {
         const checkpoint = this.track.getCheckpoint(c.latestCheckpointIndex);
 
         //  13th character will be terminated if it falls
-        if (!c.ai && c.rank === 13) {
-            this.state = State.GAME_OVER;
+        if (c.rank === 13) {
+            c.terminated = true;
+            if (!c.ai) this.state = State.GAME_OVER;
             return;
         }
 
