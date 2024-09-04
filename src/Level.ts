@@ -70,7 +70,7 @@ export class Level implements Area {
 
     private track: Track;
 
-    private characters: Character[] = [];
+    public characters: Character[] = [];
     private player: Character;
 
     readonly x;
@@ -214,8 +214,9 @@ export class Level implements Area {
             }
 
             // If player character finishes (TODO: add time limit or how many can finish)
-            if (c.y < this.track.finishY && ci === 0) {
-                this.state = State.FINISHED;
+            if (c.y < this.track.finishY) {
+                c.finished = true;
+                if (ci === 0) this.state = State.FINISHED;
             }
         }
     }
@@ -313,8 +314,22 @@ export class Level implements Area {
             (obj) => obj instanceof Character,
         );
 
-        // Sort characters based on their Y coordinate
-        characters.sort((a, b) => a.y + a.height / 2 - (b.y + b.height / 2));
+        // Separate finished and unfinished characters
+        const finishedCharacters = characters.filter((char) => char.finished);
+        const unfinishedCharacters = characters.filter(
+            (char) => !char.finished,
+        );
+
+        // Sort unfinished characters based on their Y coordinate
+        unfinishedCharacters.sort(
+            (a, b) => a.y + a.height / 2 - (b.y + b.height / 2),
+        );
+
+        // Merge finished and sorted unfinished characters
+        const sortedCharacters = [
+            ...finishedCharacters,
+            ...unfinishedCharacters,
+        ];
 
         // Draw the order number and character name
         cx.save();
@@ -324,13 +339,16 @@ export class Level implements Area {
 
         cx.font = "1px Sans-serif";
 
-        characters.forEach((char, index) => {
-            const text = `${index + 1}. ${char.ai ? "AI" : "Player"}`;
+        sortedCharacters.forEach((char, index) => {
+            if (!char.finished) {
+                char.rank = index + 1;
+            }
+            const text = `${char.rank}. ${char.ai ? "AI" : "Player"}`;
             cx.fillStyle =
-                index === 12
+                char.rank === 13
                     ? "red"
-                    : index === 0
-                      ? "green"
+                    : char.rank === 1
+                      ? "lightgreen"
                       : char.ai
                         ? "white"
                         : "yellow";

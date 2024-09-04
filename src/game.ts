@@ -183,7 +183,14 @@ const draw = (t: number, dt: number): void => {
                 cx.arc(centerX, centerY, radius, 0, Math.PI * 2);
                 cx.fillStyle = "#CCCC40";
                 cx.fill();
-                centerText("Race finished", 48, "Impact", 1, -20);
+                centerText(
+                    "Race finished. You where number " +
+                        level.characters[0].rank,
+                    48,
+                    "Impact",
+                    1,
+                    -20,
+                );
                 centerText("READY FOR NEXT RACE", 48, "Sans-serif", 1, 30);
             }
 
