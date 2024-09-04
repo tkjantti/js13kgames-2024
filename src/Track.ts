@@ -84,7 +84,7 @@ export class Track {
     findLatestCheckpoint(y: number): number {
         for (let i = this.checkpoints.length - 1; i >= 0; i--) {
             const checkpoint = this.checkpoints[i];
-            if (y < checkpoint.y + checkpoint.element.height) {
+            if (y < checkpoint.y - checkpoint.element.height * 0.15) {
                 return i;
             }
         }
