@@ -49,7 +49,7 @@ const CHARACTER_MAX_RUN_SPEED = 0.1;
 const CHARACTER_RUN_ACCELERATION = 0.001;
 const CHARACTER_STOP_ACCELERATION = 0.001;
 
-const OBSTACLE_BOUNCE_FACTOR = 15;
+const OBSTACLE_BOUNCE_FACTOR = 200;
 
 export function getMovementVelocity(
     c: GameObject,
