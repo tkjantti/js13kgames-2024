@@ -358,7 +358,7 @@ export class Level implements Area {
             if (!char.finished) {
                 char.rank = index + 1;
             }
-            const text = `${char.rank}. ${char.ai ? "AI" : "Player"}`;
+            const text = `${char.rank}`;
             cx.fillStyle =
                 char.rank === 13 || char.terminated
                     ? "red"
@@ -370,7 +370,7 @@ export class Level implements Area {
 
             cx.fillText(
                 text,
-                char.x * (char.ai ? 1.01 : 1.025),
+                char.x + char.width / 4,
                 char.y - char.height * 2.5,
             );
         });
