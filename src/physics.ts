@@ -101,6 +101,7 @@ export function calculateCollisionToObstacle(
         y: obstacle.y + obstacle.height / 2,
     };
 
+    // TODO: Elliptical distance calculation
     if (
         distanceX(centerANext, centerObstacle) < radiusX + radiusObstacleX &&
         distanceY(centerANext, centerObstacle) < radiusY + radiusObstacleY

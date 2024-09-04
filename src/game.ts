@@ -144,18 +144,11 @@ const draw = (t: number, dt: number): void => {
                 centerText("GO!", 64, "Impact", radius / maxRadius);
 
                 centerText(
-                    "Avoid to be the 13th:",
+                    "Avoid to be the 13th!",
                     40,
                     "Sans serif",
                     radius / maxRadius,
                     60,
-                );
-                centerText(
-                    "in any checkpoint, when falling down or in the finish line.",
-                    40,
-                    "Sans serif",
-                    radius / maxRadius,
-                    96,
                 );
                 radius -= 10;
             }
@@ -172,7 +165,8 @@ const draw = (t: number, dt: number): void => {
             cx.fillStyle = "#802010";
             cx.fill();
             centerText("TERMINATED!", 64, "Impact", radius / maxRadius);
-            centerText("Press enter", 24, "Sans-serif", 1, 80);
+            centerText("You were the 13th guy.", 24, "Sans-serif", 1, 80);
+            centerText("Press enter", 24, "Sans-serif", 1, 120);
 
             if (radius >= maxRadius) {
                 waitForEnter().then(() => setState(GameState.Ready)); // TODO: Go to start screen intead
