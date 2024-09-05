@@ -73,7 +73,7 @@ export class Character implements GameObject {
     ai: Ai | null;
     rank: number = 0;
     finished: boolean = false;
-    terminated: boolean = false;
+    eliminated: boolean = false;
 
     private direction: Vector = ZERO_VECTOR;
     private latestDirection: Vector = { x: 0, y: -1 };
@@ -132,7 +132,7 @@ export class Character implements GameObject {
     }
 
     move(): void {
-        if (!this.terminated && !this.finished) {
+        if (!this.eliminated && !this.finished) {
             this.x += this.velocity.x;
             this.y += this.velocity.y;
         } else {
