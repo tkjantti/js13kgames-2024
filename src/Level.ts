@@ -340,8 +340,6 @@ export class Level implements Area {
         cx.scale(this.camera.zoom, this.camera.zoom);
         cx.translate(-this.camera.x, -this.camera.y);
 
-        cx.font = "1px Sans-serif";
-
         sortedCharacters.forEach((char, index) => {
             if (!char.finished) {
                 char.rank = index + 1;
@@ -356,9 +354,14 @@ export class Level implements Area {
                         ? "white"
                         : "yellow";
 
+            cx.font = !char.ai
+                ? "1.4px Sans-serif"
+                : char.eliminated
+                  ? "1.2px Sans-serif"
+                  : "1px Sans-serif";
             cx.fillText(
-                text,
-                char.x + char.width / 4,
+                char.eliminated ? "13 " + String.fromCharCode(10013) : text,
+                char.x + char.width / (!char.ai ? 8 : char.eliminated ? 6 : 4),
                 char.y - char.height * 2.5,
             );
         });

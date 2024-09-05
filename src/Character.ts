@@ -37,7 +37,7 @@ import { mirrorHorizontally } from "./rendering";
 import { Track } from "./Track";
 import { isZero, normalize, Vector, ZERO_VECTOR } from "./Vector";
 
-export const FALL_TIME: number = 1000;
+export const FALL_TIME: number = 500;
 
 const colors: string[] = [
     "yellow",

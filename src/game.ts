@@ -295,7 +295,7 @@ const drawInitialScreen = (text: string): void => {
     centerText("don't be the", 24, "Impact", 1, -30);
     centerText("13TH GUY", 64, "Impact", 1, 30);
     centerText(text, 24, "Sans-serif", 1, 80);
-    centerText("Keys: WASD or arrows", 24, "Sans-serif", 1, 140);
+    centerText("Keys: W, A, S, D or arrows", 24, "Sans-serif", 1, 140);
     centerText(
         "Avoid being the 13th in any situations",
         24,
