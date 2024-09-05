@@ -31,8 +31,8 @@ const MAX_FRAME = TIME_STEP * 5;
 let lastTime = 0;
 
 // Randomize player character
-const randomWidhOffset = 1 + Math.random() * 0.5;
-const randomHeighOffset = 1 + Math.random() * 0.5;
+let randomWidhOffset = 1 + Math.random() * 0.6;
+let randomHeighOffset = 1 + Math.random() * 0.3;
 
 // Player zoom level for animation
 let z = 1;
@@ -186,6 +186,8 @@ const draw = (t: number, dt: number): void => {
 
             if (radius >= maxRadius) {
                 waitForEnter().then(() => {
+                    randomWidhOffset = 1 + Math.random() * 0.6;
+                    randomHeighOffset = 1 + Math.random() * 0.3;
                     startRace();
                 });
             } else {

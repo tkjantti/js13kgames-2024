@@ -473,8 +473,11 @@ export function renderCharacter(
         direction === CharacterFacingDirection.BackwardRight
     ) {
         cx.save();
-        cx.shadowOffsetY = 0;
+
+        cx.shadowColor = "rgba(0, 0, 0, 0.5)";
+        cx.shadowOffsetY = -10;
         cx.shadowBlur = 0;
+
         // Face
         cx.fillStyle = faceColor;
         const faceWidth = headWidth - faceMargin;
@@ -486,6 +489,8 @@ export function renderCharacter(
         cx.roundRect(faceX, faceY, faceWidth, faceHeight, faceRounding);
         cx.fill();
         cx.closePath();
+
+        cx.shadowOffsetY = 0;
 
         // Eyes
         const eyeRadius = 0.05 * headWidth;

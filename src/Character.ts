@@ -95,8 +95,8 @@ export class Character implements GameObject {
         id: number,
         position: Vector,
         track: Track,
-        wOffset = 1 + Math.random() * 0.5,
-        hOffset = 1 + Math.random() * 0.5,
+        wOffset = 1 + Math.random() * 0.6,
+        hOffset = 1 + Math.random() * 0.4,
     ) {
         this.x = position.x;
         this.y = position.y;
