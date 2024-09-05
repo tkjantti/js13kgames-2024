@@ -161,10 +161,12 @@ const draw = (t: number, dt: number): void => {
                     cx.fillStyle = "#105000";
                     cx.fill();
                 }
-                if (radius < maxRadius / 4) {
-                    centerText("Go!", 64, "Impact", 1);
+                if (radius < maxRadius / 8) {
+                    centerText("GO!", 64, "Impact", 1);
+                } else if (radius < maxRadius / 2) {
+                    centerText("Set...", 64, "Impact", 1);
                 } else {
-                    centerText("Ready!", 64, "Impact", 1);
+                    centerText("Ready...", 64, "Impact", 1);
                 }
                 radius -= 7;
             }
