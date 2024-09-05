@@ -91,10 +91,10 @@ export class Character implements GameObject {
 
     latestCheckpointIndex: number = 0;
 
-    constructor(id: number, position: Vector) {
+    constructor(id: number, position: Vector, track: Track) {
         this.x = position.x;
         this.y = position.y;
-        this.ai = id === 0 ? null : new Ai(this);
+        this.ai = id === 0 ? null : new Ai(this, track);
         this.color = 0 <= id && id < colors.length ? colors[id] : "black";
     }
 
@@ -105,7 +105,7 @@ export class Character implements GameObject {
         }
     }
 
-    getMovement(track: Track): Vector {
+    getMovement(): Vector {
         if (!this.ai) {
             // Player
             const keys = getKeys();
@@ -128,7 +128,7 @@ export class Character implements GameObject {
             });
         }
 
-        return this.ai.getMovement(track);
+        return this.ai.getMovement();
     }
 
     move(): void {
@@ -173,10 +173,16 @@ export class Character implements GameObject {
         // cx.restore();
 
         // Debug target
-        // if (this.ai && this.ai.target) {
-        //     const target = this.ai.target;
+        // if (this.ai?.target) {
+        //     cx.save();
         //     cx.fillStyle = this.color;
-        //     cx.fillRect(target.x - 2, target.y - 2, 4, 4);
+        //     cx.fillRect(
+        //         this.ai.target.x,
+        //         this.ai.target.y,
+        //         this.ai.target.width,
+        //         this.ai.target.height,
+        //     );
+        //     cx.restore();
         // }
 
         // Different render height than actual height, for pseudo-3d effect.

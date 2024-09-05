@@ -24,8 +24,10 @@
 
 import { Area, overlap } from "./Area";
 import {
+    BLOCK_WIDTH,
     createTrack,
     ELEMENT_HEIGHT,
+    LEFTMOST_EDGE,
     TrackElement,
     TrackElementType,
     TT,
@@ -42,18 +44,30 @@ interface Checkpoint {
     y: number;
 }
 
+export interface Block extends Area {
+    row: number;
+    col: number;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
 export class Track {
     private elements: TrackElement[] = [];
     private startY: number;
     private checkpoints: Checkpoint[];
 
-    finishY: number;
+    readonly finishY: number;
 
-    width: number;
-    height: number;
+    readonly elementCount: number;
+
+    readonly width: number;
+    readonly height: number;
 
     constructor(templates: readonly TT[], startY: number) {
         this.elements = createTrack(templates, startY);
+        this.elementCount = this.elements.length;
         this.startY = startY;
         this.finishY =
             this.startY - (this.elements.length - 1) * ELEMENT_HEIGHT;
@@ -75,6 +89,38 @@ export class Track {
 
     get(i: number): TrackElement {
         return this.elements[i];
+    }
+
+    isFree(row: number, col: number): boolean {
+        if (row < 0 || this.elements.length <= row) {
+            return false;
+        }
+        const element = this.elements[row];
+        return !!element.blocks[col];
+    }
+
+    getBlock(row: number, col: number): Block {
+        const element = this.elements[row];
+
+        return {
+            row,
+            col,
+            x: LEFTMOST_EDGE + col * BLOCK_WIDTH,
+            y: element.y,
+            width: BLOCK_WIDTH,
+            height: ELEMENT_HEIGHT,
+        };
+    }
+
+    getBlockAt(position: Vector): Block {
+        const elementCount = Math.floor(
+            Math.max(this.startY - position.y, 0) / ELEMENT_HEIGHT,
+        );
+
+        const row = Math.min(elementCount, this.elements.length - 1);
+        const col = Math.floor((position.x - LEFTMOST_EDGE) / BLOCK_WIDTH);
+
+        return this.getBlock(row, col);
     }
 
     getCheckpoint(checkpointIndex: number): TrackElement {
@@ -104,21 +150,6 @@ export class Track {
             minI: Math.max(countOfElementsToBottomY - 1, 0),
             maxI: Math.min(countOfElementsToTopY, this.elements.length) - 1,
         };
-    }
-
-    getNextElement(position: Vector): TrackElement | null {
-        for (let i = 0; i < this.elements.length; i++) {
-            const top = this.startY - (i + 1) * ELEMENT_HEIGHT;
-            const bottom = this.startY - i * ELEMENT_HEIGHT;
-
-            if (top <= position.y && position.y < bottom) {
-                return i < this.elements.length - 1
-                    ? this.elements[i + 1]
-                    : null;
-            }
-        }
-
-        return null;
     }
 
     isOnPlatform(range: IndexRange, area: Area): boolean {
