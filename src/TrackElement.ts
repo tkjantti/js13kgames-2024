@@ -28,15 +28,18 @@ import { GameObject } from "./GameObject";
 import { Obstacle } from "./Obstacle";
 import { randomMinMax } from "./random";
 
+export const BLOCK_WIDTH = 10;
+export const BLOCK_COUNT = 9;
+
 export const ELEMENT_HEIGHT = 16;
 
-const FULL_WIDTH = 80;
-const NORMAL_WIDTH = 60;
-const NARROW_WIDTH = 40;
-const VERY_NARROW_WIDTH = 20;
+const FULL_WIDTH = BLOCK_WIDTH * BLOCK_COUNT;
+const NORMAL_WIDTH = BLOCK_WIDTH * 7;
+const NARROW_WIDTH = BLOCK_WIDTH * 5;
+const VERY_NARROW_WIDTH = BLOCK_WIDTH * 3;
 
-const LEFTMOST_EDGE = -FULL_WIDTH / 2;
-const RIGHTMOST_EDGE = FULL_WIDTH / 2;
+export const LEFTMOST_EDGE = -FULL_WIDTH / 2;
+export const RIGHTMOST_EDGE = FULL_WIDTH / 2;
 
 export enum TT { // "Track template"
     FullWidth,
@@ -56,11 +59,6 @@ export enum TrackElementType {
     Finish,
 }
 
-export enum YPosition {
-    Random,
-    CenterVertically,
-}
-
 // An element is one horizontal slice of the track. A track is
 // composed by laying down several elements one after the other.
 export class TrackElement {
@@ -71,6 +69,7 @@ export class TrackElement {
     readonly height: number;
     readonly minX: number;
     readonly maxX: number;
+    readonly blocks: boolean[];
     readonly objects: readonly GameObject[];
 
     get color(): string {
@@ -98,15 +97,30 @@ export class TrackElement {
         this.maxX = Math.max(...this.surfaces.map((s) => s.x + s.width));
         this.width = this.maxX - this.minX;
         this.height = ELEMENT_HEIGHT;
+
+        const blocks = new Array(BLOCK_COUNT);
+        const margin = BLOCK_WIDTH * 0.1;
+
+        for (let i = 0; i < BLOCK_COUNT; i++) {
+            const x = LEFTMOST_EDGE + i * BLOCK_WIDTH;
+            const block: Area = {
+                x: x + margin,
+                y: y + margin,
+                width: BLOCK_WIDTH - 2 * margin,
+                height: ELEMENT_HEIGHT - 2 * margin,
+            };
+
+            const isVacant: boolean =
+                this.surfaces.some((s) => overlap(s, block)) &&
+                !this.objects.some((o) => overlap(o, block));
+
+            blocks[i] = isVacant;
+        }
+
+        this.blocks = blocks;
     }
 
-    findEmptySpot(
-        c: Dimensions,
-        otherObjects: GameObject[],
-        yPosition: YPosition = YPosition.Random,
-        xMin: number = LEFTMOST_EDGE,
-        xMax: number = RIGHTMOST_EDGE,
-    ): Vector | null {
+    findEmptySpot(c: Dimensions, otherObjects: GameObject[]): Vector | null {
         const margin = c.width * 0.5;
         const withMargin: Dimensions = {
             width: c.width + 2 * margin,
@@ -114,12 +128,9 @@ export class TrackElement {
         };
 
         for (let iRandom = 0; iRandom < 50; iRandom++) {
-            const x = randomMinMax(xMin, xMax - withMargin.width);
+            const x = randomMinMax(this.minX, this.maxX - withMargin.width);
             const y =
-                this.y +
-                (yPosition == YPosition.CenterVertically
-                    ? ELEMENT_HEIGHT / 2 - withMargin.height / 2
-                    : randomMinMax(0, ELEMENT_HEIGHT - withMargin.height));
+                this.y + randomMinMax(0, ELEMENT_HEIGHT - withMargin.height);
 
             const spotWithMargin: Area = {
                 x,
@@ -163,7 +174,7 @@ export function createTrack(
             case TT.FullWidth:
                 surfaces = [
                     {
-                        x: -FULL_WIDTH / 2,
+                        x: LEFTMOST_EDGE,
                         y,
                         width: FULL_WIDTH,
                         height: ELEMENT_HEIGHT,
@@ -173,7 +184,7 @@ export function createTrack(
             case TT.Basic:
                 surfaces = [
                     {
-                        x: -NORMAL_WIDTH / 2,
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 1,
                         y,
                         width: NORMAL_WIDTH,
                         height: ELEMENT_HEIGHT,
@@ -183,7 +194,7 @@ export function createTrack(
             case TT.Narrow:
                 surfaces = [
                     {
-                        x: -NARROW_WIDTH / 2,
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 2,
                         y,
                         width: NARROW_WIDTH,
                         height: ELEMENT_HEIGHT,
@@ -193,7 +204,7 @@ export function createTrack(
             case TT.VeryNarrow:
                 surfaces = [
                     {
-                        x: -VERY_NARROW_WIDTH / 2,
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 3,
                         y,
                         width: VERY_NARROW_WIDTH,
                         height: ELEMENT_HEIGHT,
@@ -203,18 +214,15 @@ export function createTrack(
             case TT.DualPassage:
                 surfaces = [
                     {
-                        x: LEFTMOST_EDGE + VERY_NARROW_WIDTH / 2,
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH,
                         y,
-                        width: VERY_NARROW_WIDTH,
+                        width: BLOCK_WIDTH * 2,
                         height: ELEMENT_HEIGHT,
                     },
                     {
-                        x:
-                            RIGHTMOST_EDGE -
-                            VERY_NARROW_WIDTH -
-                            VERY_NARROW_WIDTH / 2,
+                        x: RIGHTMOST_EDGE - BLOCK_WIDTH * 3,
                         y,
-                        width: VERY_NARROW_WIDTH,
+                        width: BLOCK_WIDTH * 2,
                         height: ELEMENT_HEIGHT,
                     },
                 ];
@@ -230,7 +238,7 @@ export function createTrack(
                 ];
                 objects = [
                     new Obstacle({
-                        x: -Obstacle.WIDTH / 2,
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 4,
                         y: centerY - Obstacle.HEIGHT / 2,
                     }),
                 ];
@@ -246,23 +254,19 @@ export function createTrack(
                 ];
                 objects = [
                     new Obstacle({
-                        x: -Obstacle.WIDTH * 2,
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH,
                         y: centerY - Obstacle.HEIGHT / 2,
                     }),
                     new Obstacle({
-                        x: -Obstacle.WIDTH * 3.5,
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 3,
                         y: centerY - Obstacle.HEIGHT / 2,
                     }),
                     new Obstacle({
-                        x: -Obstacle.WIDTH / 2,
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 5,
                         y: centerY - Obstacle.HEIGHT / 2,
                     }),
                     new Obstacle({
-                        x: Obstacle.WIDTH,
-                        y: centerY - Obstacle.HEIGHT / 2,
-                    }),
-                    new Obstacle({
-                        x: Obstacle.WIDTH * 2.5,
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 7,
                         y: centerY - Obstacle.HEIGHT / 2,
                     }),
                 ];

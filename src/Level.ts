@@ -45,11 +45,6 @@ import {
 
 const TRACK_START_Y = 400;
 
-const DEFAULT_START_POSITION: Vector = {
-    x: 0,
-    y: TRACK_START_Y - 10,
-};
-
 // Width of empty area on the left and right side of the track.
 const BANK_WIDTH = 10;
 
@@ -96,7 +91,7 @@ export class Level implements Area {
             x: startElement.minX + startMargin,
             y: startElement.y + 3,
         };
-        this.player = new Character(0, playerStartPosition);
+        this.player = new Character(0, playerStartPosition, this.track);
         this.characters.push(this.player);
         this.camera.follow(this.player);
         this.resetZoom();
@@ -106,7 +101,7 @@ export class Level implements Area {
                 x: startElement.minX + startMargin + i * startPositionGap,
                 y: startElement.y + 3,
             };
-            const aiCharacter = new Character(i, startPosition);
+            const aiCharacter = new Character(i, startPosition, this.track);
             this.characters.push(aiCharacter);
         }
     }
@@ -152,7 +147,7 @@ export class Level implements Area {
             ) {
                 c.fallStartTime = t;
             } else {
-                movementDirection = c.getMovement(this.track);
+                movementDirection = c.getMovement();
 
                 c.setDirection(movementDirection);
                 c.velocity = getMovementVelocity(c, movementDirection, dt);
@@ -228,15 +223,6 @@ export class Level implements Area {
                 else if (ci === 0) this.state = State.FINISHED;
             }
         }
-    }
-
-    private findStartPosition(): Vector {
-        return (
-            this.track
-                .get(0)
-                .findEmptySpot(CHARACTER_DIMENSIONS, this.characters) ||
-            DEFAULT_START_POSITION
-        );
     }
 
     private dropToLatestCheckpoint(c: Character): void {

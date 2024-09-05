@@ -24,85 +24,66 @@
 
 import { getCenter } from "./Area";
 import { GameObject } from "./GameObject";
-import { Track } from "./Track";
-import { YPosition } from "./TrackElement";
-import { normalize, subtract, Vector, ZERO_VECTOR } from "./Vector";
-
-const NARROWEST_SCAN_MARGIN = 5;
-const NARROW_SCAN_MARGIN = 15;
+import { random } from "./random";
+import { Block, Track } from "./Track";
+import { BLOCK_COUNT } from "./TrackElement";
+import { Vector, ZERO_VECTOR } from "./Vector";
 
 export class Ai {
     private host: GameObject;
-    private lastMovement: Vector = ZERO_VECTOR;
-    target: Vector | null = null;
+    private track: Track;
 
-    constructor(host: GameObject) {
+    target: Block | null = null;
+
+    constructor(host: GameObject, track: Track) {
         this.host = host;
+        this.track = track;
     }
 
     reset(): void {
         this.target = null;
-        this.lastMovement = ZERO_VECTOR;
     }
 
-    getMovement(track: Track): Vector {
+    getMovement(): Vector {
         const pos: Vector = getCenter(this.host);
+        const currentBlock = this.track.getBlockAt(pos);
 
-        if (
-            this.target != null &&
-            this.host.y > this.target.y + this.host.height * 3
-        ) {
-            return this.lastMovement;
+        if (this.target == null) {
+            const nextTarget = this.findNextTarget(currentBlock);
+
+            if (nextTarget == null) {
+                return ZERO_VECTOR;
+            }
+
+            this.target = nextTarget;
         }
 
-        const nextElement = track.getNextElement(this.host);
-
-        if (nextElement == null) {
+        if (this.host.x < this.target.x) {
+            return { x: 1, y: 0 };
+        } else if (
+            this.target.x + this.target.width <=
+            this.host.x + this.host.width
+        ) {
+            return { x: -1, y: 0 };
+        } else if (this.host.y > this.target.y) {
+            return { x: 0, y: -1 };
+        } else {
+            this.target = null;
             return ZERO_VECTOR;
         }
+    }
 
-        let targetSpot = nextElement.findEmptySpot(
-            this.host,
-            [],
-            YPosition.CenterVertically,
-            pos.x - NARROWEST_SCAN_MARGIN,
-            pos.y + NARROWEST_SCAN_MARGIN,
-        );
+    private findNextTarget(currentBlock: Block): Block | null {
+        for (let i = 0; i < BLOCK_COUNT - 1; i++) {
+            const diff = (random() < 0.5 ? -1 : 1) * i;
+            const row = currentBlock.row + 1;
+            const col = currentBlock.col + diff;
 
-        // No free spot found from narrow region, look wider.
-        if (targetSpot == null) {
-            targetSpot = nextElement.findEmptySpot(
-                this.host,
-                [],
-                YPosition.CenterVertically,
-                pos.x - NARROW_SCAN_MARGIN,
-                pos.y + NARROW_SCAN_MARGIN,
-            );
+            if (this.track.isFree(row, col)) {
+                return this.track.getBlock(row, col);
+            }
         }
 
-        // Still no free spot found, look even wider.
-        if (targetSpot == null) {
-            targetSpot = nextElement.findEmptySpot(
-                this.host,
-                [],
-                YPosition.CenterVertically,
-            );
-        }
-
-        if (targetSpot == null) {
-            // No free spot found at all, paralyze :(
-            return (this.lastMovement = ZERO_VECTOR);
-        }
-
-        const target: Vector = {
-            x: targetSpot.x + this.host.width / 2,
-            y: targetSpot.y + this.host.height / 2,
-        };
-
-        const direction = normalize(subtract(target, pos));
-
-        this.target = target;
-        this.lastMovement = direction;
-        return direction;
+        return null;
     }
 }
