@@ -24,7 +24,7 @@
 
 import "./style.css";
 import { canvas } from "./graphics";
-import { onCanvasSizeChanged, start } from "./game";
+import { onCanvasSizeChanged, init } from "./game";
 
 const resize = (): void => {
     canvas.width = window.innerWidth;
@@ -35,4 +35,4 @@ const resize = (): void => {
 window.addEventListener("resize", resize, false);
 resize();
 
-start();
+init();

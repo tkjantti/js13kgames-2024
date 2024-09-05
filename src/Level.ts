@@ -75,7 +75,11 @@ export class Level implements Area {
 
     state: State = State.RUNNING;
 
-    constructor(trackTemplate: readonly TT[]) {
+    constructor(
+        trackTemplate: readonly TT[],
+        playerWidthOffset: number,
+        playerHeightOffset: number,
+    ) {
         this.track = new Track(trackTemplate, TRACK_START_Y);
 
         this.x = 0 - this.track.width / 2 - BANK_WIDTH;
@@ -91,7 +95,13 @@ export class Level implements Area {
             x: startElement.minX + startMargin,
             y: startElement.y + 3,
         };
-        this.player = new Character(0, playerStartPosition, this.track);
+        this.player = new Character(
+            0,
+            playerStartPosition,
+            this.track,
+            playerWidthOffset,
+            playerHeightOffset,
+        );
         this.characters.push(this.player);
         this.camera.follow(this.player);
         this.resetZoom();
@@ -356,12 +366,18 @@ export class Level implements Area {
 
             cx.font = !char.ai
                 ? "1.4px Sans-serif"
-                : char.eliminated
+                : char.eliminated || char.rank === 13
                   ? "1.2px Sans-serif"
                   : "1px Sans-serif";
             cx.fillText(
                 char.eliminated ? "13 " + String.fromCharCode(10013) : text,
-                char.x + char.width / (!char.ai ? 8 : char.eliminated ? 6 : 4),
+                char.x +
+                    char.width /
+                        (!char.ai
+                            ? 8
+                            : char.eliminated || char.rank === 13
+                              ? 6
+                              : 4),
                 char.y - char.height * 2.5,
             );
         });

@@ -255,7 +255,7 @@ export function renderCharacter(
 
             // Leg (right)
             cx.save();
-            cx.strokeStyle = LegColorDarker;
+            cx.strokeStyle = LegColor;
             cx.lineWidth = limbWidth;
             cx.translate(0.7 * w, 0.7 * h);
             cx.scale(1, Math.cos(leg2Angle + Math.PI / 8));

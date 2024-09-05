@@ -82,8 +82,8 @@ export class Character implements GameObject {
 
     x: number;
     y: number;
-    width = CHARACTER_DIMENSIONS.width;
-    height = CHARACTER_DIMENSIONS.height;
+    width: number;
+    height: number;
 
     velocity: Vector = ZERO_VECTOR;
 
@@ -91,11 +91,19 @@ export class Character implements GameObject {
 
     latestCheckpointIndex: number = 0;
 
-    constructor(id: number, position: Vector, track: Track) {
+    constructor(
+        id: number,
+        position: Vector,
+        track: Track,
+        wOffset = 1 + Math.random() * 0.5,
+        hOffset = 1 + Math.random() * 0.5,
+    ) {
         this.x = position.x;
         this.y = position.y;
         this.ai = id === 0 ? null : new Ai(this, track);
         this.color = 0 <= id && id < colors.length ? colors[id] : "black";
+        this.width = CHARACTER_DIMENSIONS.width * wOffset;
+        this.height = CHARACTER_DIMENSIONS.height * hOffset;
     }
 
     setDirection(direction: Vector): void {
