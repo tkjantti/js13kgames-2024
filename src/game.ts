@@ -77,6 +77,8 @@ const setState = (state: GameState): void => {
             waitForEnter().then(() => startRace());
             break;
         case GameState.GameFinished:
+            playTune(SFX_FINISHED);
+            waitForEnter().then(() => setState(GameState.Ready));
             break;
         default:
             break;
@@ -100,7 +102,7 @@ const update = (t: number, dt: number): void => {
             if (level.state === State.GAME_OVER) {
                 setState(GameState.GameOver);
             } else if (level.state === State.FINISHED) {
-                sleep(1000).then(() => setState(GameState.GameFinished));
+                setState(GameState.GameFinished);
             }
             break;
         }
@@ -158,17 +160,35 @@ const draw = (t: number, dt: number): void => {
                 if (radius > 0) {
                     cx.beginPath();
                     cx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-                    cx.fillStyle = "#105000";
+                    cx.fillStyle =
+                        radius < maxRadius / 12
+                            ? "#105000"
+                            : radius < maxRadius / 4
+                              ? "#CCCC40"
+                              : "#802010";
                     cx.fill();
                 }
-                if (radius < maxRadius / 8) {
+                if (radius < maxRadius / 12) {
                     centerText("↑ GO!", 64, "Impact", 1);
-                } else if (radius < maxRadius / 1.5) {
+                } else if (radius < maxRadius / 4) {
                     centerText("Set...", 64, "Impact", 1);
                 } else {
                     centerText("Ready...", 64, "Impact", 1);
                 }
-                radius -= canvas.width / 200;
+
+                const duration = 10; // Duration in seconds
+                const totalFrames = duration * 60;
+                let frame = 0;
+
+                function updateRadius() {
+                    if (frame <= totalFrames && radius > 0) {
+                        radius = (canvas.width / 2) * (1 - frame / totalFrames);
+                        frame++;
+                        requestAnimationFrame(updateRadius);
+                    }
+                }
+
+                updateRadius();
             }
             applyGradient();
 
@@ -187,7 +207,7 @@ const draw = (t: number, dt: number): void => {
             centerText("Press ENTER", 24, "Sans-serif", 1, 120);
 
             if (radius < maxRadius) {
-                radius += canvas.width / 100;
+                radius += canvas.width / 400;
             }
             applyGradient();
 
@@ -216,9 +236,8 @@ const draw = (t: number, dt: number): void => {
 
             if (radius >= maxRadius) {
                 centerText("Press ENTER", 32, "Sans-serif", 24, 120);
-                waitForEnter().then(() => setState(GameState.Ready));
             } else {
-                radius += canvas.width / 100;
+                radius += canvas.width / 400;
             }
             applyGradient();
 
