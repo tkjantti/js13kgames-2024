@@ -30,13 +30,21 @@ const MAX_FRAME = TIME_STEP * 5;
 
 let lastTime = 0;
 
-let level = new Level(simpleTrack);
+// Randomize player character
+let randomWidhOffset = 1 + Math.random() * 0.6;
+let randomHeighOffset = 1 + Math.random() * 0.3;
+
+// Player zoom level for animation
+let z = 1;
+
+let level = new Level(simpleTrack, randomWidhOffset, randomHeighOffset);
 
 const maxRadius = Math.max(screen.width, screen.height) / 1.5;
 
 enum GameState {
     Init,
     Start,
+    Wait,
     Ready,
     Running,
     GameOver,
@@ -56,7 +64,7 @@ const setState = (state: GameState): void => {
             playTune(SFX_START);
             break;
         case GameState.Ready:
-            level = new Level(simpleTrack);
+            level = new Level(simpleTrack, randomWidhOffset, randomHeighOffset);
             radius = maxRadius;
             playTune(SFX_RACE);
             break;
@@ -130,6 +138,16 @@ const draw = (t: number, dt: number): void => {
 
     cx.save();
     switch (gameState) {
+        case GameState.Start: {
+            drawStartScreen(t++, false, 0);
+
+            break;
+        }
+        case GameState.Wait: {
+            drawStartScreen(t++, true, (z = z + 0.01));
+
+            break;
+        }
         case GameState.Ready: {
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
@@ -137,20 +155,20 @@ const draw = (t: number, dt: number): void => {
             if (radius <= 0) {
                 setState(GameState.Running);
             } else {
-                cx.beginPath();
-                cx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-                cx.fillStyle = "#105000";
-                cx.fill();
-                centerText("GO!", 64, "Impact", radius / maxRadius);
-
-                centerText(
-                    "Avoid to be the 13th!",
-                    40,
-                    "Sans serif",
-                    radius / maxRadius,
-                    60,
-                );
-                radius -= 10;
+                if (radius > 0) {
+                    cx.beginPath();
+                    cx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                    cx.fillStyle = "#105000";
+                    cx.fill();
+                }
+                if (radius < maxRadius / 8) {
+                    centerText("GO!", 64, "Impact", 1);
+                } else if (radius < maxRadius / 2) {
+                    centerText("Set...", 64, "Impact", 1);
+                } else {
+                    centerText("Ready...", 64, "Impact", 1);
+                }
+                radius -= 7;
             }
             applyGradient();
 
@@ -169,7 +187,11 @@ const draw = (t: number, dt: number): void => {
             centerText("Press enter", 24, "Sans-serif", 1, 120);
 
             if (radius >= maxRadius) {
-                waitForEnter().then(() => setState(GameState.Ready)); // TODO: Go to start screen intead
+                waitForEnter().then(() => {
+                    randomWidhOffset = 1 + Math.random() * 0.6;
+                    randomHeighOffset = 1 + Math.random() * 0.3;
+                    startRace();
+                });
             } else {
                 radius += 10;
             }
@@ -273,64 +295,74 @@ const applyGradient = (track = false) => {
     cx.fillRect(0, 0, width, height);
 };
 
-const drawInitialScreen = (text: string): void => {
+const drawStartScreen = (t: number, wait: boolean, z: number): void => {
     cx.save();
     cx.fillStyle = "rgb(20, 20, 50)";
     cx.rect(0, 0, canvas.width, canvas.height);
     cx.fill();
 
     cx.save();
-    cx.translate(canvas.width / 8, canvas.height / 2.5);
+    cx.translate(canvas.width / 8, canvas.height / 3);
+
     renderCharacter(
         cx,
         playerColor,
-        canvas.height / 6,
-        canvas.height / 2,
-        0,
-        CharacterFacingDirection.Backward,
-        CharacterAnimation.Still,
+        (wait ? canvas.height / 6 / z : canvas.height / 6) * randomWidhOffset,
+        (wait ? canvas.height / 2 / z : canvas.height / 2) * randomHeighOffset,
+        t,
+        wait
+            ? CharacterFacingDirection.Forward
+            : CharacterFacingDirection.Backward,
+        CharacterAnimation.Walk,
     );
     cx.restore();
 
-    centerText("don't be the", 24, "Impact", 1, -30);
-    centerText("13TH GUY", 64, "Impact", 1, 30);
-    centerText(text, 24, "Sans-serif", 1, 80);
-    centerText("Keys: WASD or arrows", 24, "Sans-serif", 1, 140);
-    centerText(
-        "Avoid being the 13th in any situations",
-        24,
-        "Sans-serif",
-        1,
-        170,
-    );
-    centerText(
-        "or you will be eventually eliminated!",
-        24,
-        "Sans-serif",
-        1,
-        200,
-    );
+    if (wait) {
+        centerText(
+            "Avoid being the 13th in any situations",
+            24,
+            "Sans-serif",
+            1,
+            40,
+        );
+        centerText(
+            "or you will be eventually eliminated!",
+            24,
+            "Sans-serif",
+            1,
+            80,
+        );
+        centerText("Keys: W, A, S, D or arrows", 24, "Sans-serif", 1, 140);
+    } else {
+        centerText("don't be the", 24, "Impact", 1, -30);
+        centerText("13TH GUY", 64, "Impact", 1, 30);
+        centerText(
+            "Press enter key to start the race!",
+            24,
+            "Sans-serif",
+            1,
+            80,
+        );
+    }
     cx.restore();
 
     applyCRTEffect();
     applyGradient();
 };
 
-export const start = async (): Promise<void> => {
-    initializeKeyboard();
-
+const drawInitialScreen = (): void => {
     cx.save();
     cx.filter = "grayscale(1) brightness(0.6)";
     cx.fillStyle = "rgb(20, 20, 50)";
     cx.rect(0, 0, canvas.width, canvas.height);
     cx.fill();
     cx.save();
-    cx.translate(canvas.width / 8, canvas.height / 2.5);
+    cx.translate(canvas.width / 8, canvas.height / 3);
     renderCharacter(
         cx,
         playerColor,
-        canvas.height / 6,
-        canvas.height / 2,
+        (canvas.height / 6) * randomWidhOffset,
+        (canvas.height / 2) * randomHeighOffset,
         0,
         CharacterFacingDirection.Backward,
         CharacterAnimation.Still,
@@ -340,19 +372,30 @@ export const start = async (): Promise<void> => {
     centerText("13TH GUY", 64, "Impact", 1, 30);
     applyGradient();
     applyCRTEffect();
+};
+
+export const startRace = async (): Promise<void> => {
+    z = 1;
+    setState(GameState.Start);
+    await waitForEnter();
+    setState(GameState.Wait);
+
+    setTimeout(() => {
+        setState(GameState.Ready);
+    }, 2400);
+};
+
+export const init = async (): Promise<void> => {
+    initializeKeyboard();
+    drawInitialScreen();
+
     await initialize().then(() =>
         centerText("Press any key", 24, "Sans-serif", 1, 80),
     );
     cx.restore();
     await waitForAnyKey();
+    window.requestAnimationFrame(gameLoop);
 
     setState(GameState.Start);
-    drawInitialScreen("Press enter key to start the race!");
-    await waitForEnter();
-
-    // Pause a little to allow music fade in fully before fading it out if user is too fast to press enter
-    setTimeout(() => {
-        setState(GameState.Ready);
-        window.requestAnimationFrame(gameLoop);
-    }, 500);
+    startRace();
 };

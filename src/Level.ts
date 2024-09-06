@@ -75,7 +75,11 @@ export class Level implements Area {
 
     state: State = State.RUNNING;
 
-    constructor(trackTemplate: readonly TT[]) {
+    constructor(
+        trackTemplate: readonly TT[],
+        playerWidthOffset: number,
+        playerHeightOffset: number,
+    ) {
         this.track = new Track(trackTemplate, TRACK_START_Y);
 
         this.x = 0 - this.track.width / 2 - BANK_WIDTH;
@@ -91,7 +95,13 @@ export class Level implements Area {
             x: startElement.minX + startMargin,
             y: startElement.y + 3,
         };
-        this.player = new Character(0, playerStartPosition, this.track);
+        this.player = new Character(
+            0,
+            playerStartPosition,
+            this.track,
+            playerWidthOffset,
+            playerHeightOffset,
+        );
         this.characters.push(this.player);
         this.camera.follow(this.player);
         this.resetZoom();
@@ -216,8 +226,8 @@ export class Level implements Area {
 
             // If player character finishes
             // TODO: add time limit or how many can finish if needed
-            // TODO: Check better if finished without magic number
-            if (c.y < this.track.finishY * 0.994) {
+            // TODO: take some steps after finish
+            if (c.y + c.height < this.track.finishY) {
                 c.finished = true;
                 if (ci === 0 && c.rank === 13) this.state = State.GAME_OVER;
                 else if (ci === 0) this.state = State.FINISHED;
@@ -340,8 +350,6 @@ export class Level implements Area {
         cx.scale(this.camera.zoom, this.camera.zoom);
         cx.translate(-this.camera.x, -this.camera.y);
 
-        cx.font = "1px Sans-serif";
-
         sortedCharacters.forEach((char, index) => {
             if (!char.finished) {
                 char.rank = index + 1;
@@ -356,9 +364,20 @@ export class Level implements Area {
                         ? "white"
                         : "yellow";
 
+            cx.font = !char.ai
+                ? "1.4px Sans-serif"
+                : char.eliminated || char.rank === 13
+                  ? "1.2px Sans-serif"
+                  : "1px Sans-serif";
             cx.fillText(
-                text,
-                char.x + char.width / 4,
+                char.eliminated ? "13 " + String.fromCharCode(10013) : text,
+                char.x +
+                    char.width /
+                        (!char.ai
+                            ? 8
+                            : char.eliminated || char.rank === 13
+                              ? 6
+                              : 4),
                 char.y - char.height * 2.5,
             );
         });
