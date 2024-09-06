@@ -338,7 +338,6 @@ const drawStartScreen = (t: number, wait: boolean, z: number): void => {
     }
     cx.restore();
 
-    applyCRTEffect();
     applyGradient();
 };
 
