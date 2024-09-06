@@ -47,7 +47,7 @@ const colors: string[] = [
     "blue",
     "orange",
     "tomato",
-    "gray",
+    "pink",
     "slateblue",
     "violet",
     "dodgerblue",
@@ -57,7 +57,7 @@ const colors: string[] = [
     "darkslategray",
     "darkturquoise",
     "deepskyblue",
-    "dimgray",
+    "lightblue",
     "firebrick",
     "forestgreen",
     "fuchsia",
@@ -144,12 +144,18 @@ export class Character implements GameObject {
     }
 
     move(): void {
-        if (!this.eliminated && !this.finished) {
+        if (this.eliminated || this.finished) {
+            this.direction = ZERO_VECTOR;
+            this.velocity = ZERO_VECTOR;
+        } else {
             this.x += this.velocity.x;
             this.y += this.velocity.y;
-        } else {
-            this.direction = ZERO_VECTOR;
         }
+    }
+
+    stop(): void {
+        // Move character after finishing a little
+        this.y += this.velocity.y * 8;
     }
 
     drop(position: Vector): void {
@@ -223,7 +229,7 @@ export class Character implements GameObject {
 
         renderCharacter(
             cx,
-            this.color,
+            this.eliminated ? "rgba(128,128,128,0.8" : this.color,
             this.width,
             renderHeight,
             animationTime,
