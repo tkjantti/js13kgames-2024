@@ -129,8 +129,8 @@ export function calculateCollisionBetweenCharacters(
     a: GameObject,
     b: GameObject,
 ): boolean {
-    const radiusA = a.width / 2;
-    const radiusB = b.width / 2;
+    const radiusA = a.width * 0.4;
+    const radiusB = b.width * 0.4;
 
     const centerA: Vector = {
         x: a.x + a.width / 2,
