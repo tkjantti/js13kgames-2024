@@ -33,6 +33,7 @@ import { easeInQuad } from "./easings";
 import { GameObject } from "./GameObject";
 import { cx } from "./graphics";
 import { getKeys } from "./keyboard";
+import { random } from "./random";
 import { mirrorHorizontally } from "./rendering";
 import { Track } from "./Track";
 import { isZero, normalize, Vector, ZERO_VECTOR } from "./Vector";
@@ -74,6 +75,9 @@ export class Character implements GameObject {
     rank: number = 0;
     finished: boolean = false;
     eliminated: boolean = false;
+
+    // Makes walk animations between characters go out of sync.
+    private timeOffset = random(2000);
 
     private direction: Vector = ZERO_VECTOR;
     private latestDirection: Vector = { x: 0, y: -1 };
@@ -213,7 +217,9 @@ export class Character implements GameObject {
         }
 
         const animationTime =
-            isZero(this.direction) && this.fallStartTime == null ? 0 : t;
+            isZero(this.direction) && this.fallStartTime == null
+                ? 0
+                : t + this.timeOffset;
 
         renderCharacter(
             cx,

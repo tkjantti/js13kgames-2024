@@ -110,7 +110,7 @@ export function calculateCollisionToObstacle(
         const speedToOther = dotProduct(a.velocity, directionToOther);
         const bouncingVelocity = multiply(
             directionToOther,
-            -speedToOther * OBSTACLE_BOUNCE_FACTOR,
+            -Math.abs(speedToOther) * OBSTACLE_BOUNCE_FACTOR,
         );
 
         let aNew = add(a.velocity, bouncingVelocity);
@@ -129,8 +129,8 @@ export function calculateCollisionBetweenCharacters(
     a: GameObject,
     b: GameObject,
 ): boolean {
-    const radiusA = a.width / 2;
-    const radiusB = b.width / 2;
+    const radiusA = a.width * 0.4;
+    const radiusB = b.width * 0.4;
 
     const centerA: Vector = {
         x: a.x + a.width / 2,
@@ -151,8 +151,10 @@ export function calculateCollisionBetweenCharacters(
         const speedAToB = dotProduct(a.velocity, directionAToB);
         const speedBToA = dotProduct(b.velocity, directionBToA);
 
-        const velocityAToB = multiply(directionAToB, speedAToB);
-        const velocityBToA = multiply(directionBToA, speedBToA);
+        // Use absolute values for speed in case that the objects
+        // are moving away from each other already.
+        const velocityAToB = multiply(directionAToB, Math.abs(speedAToB));
+        const velocityBToA = multiply(directionBToA, Math.abs(speedBToA));
 
         let aNew = add(a.velocity, velocityBToA);
         if (length(aNew) > MAX_SPEED) {
