@@ -154,6 +154,13 @@ export class Track {
         if (element.surfaces.some((s) => isRaft(s))) {
             element.calculateBlocks();
         }
+
+        // Check if a raft is over chasm.
+        if (element.surfaces.length === 0) {
+            const previousElement = this.elements[Math.max(row - 1, 0)];
+            return previousElement.isFree(element.y, col);
+        }
+
         return !!element.blocks[col];
     }
 

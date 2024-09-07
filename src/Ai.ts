@@ -66,10 +66,14 @@ export class Ai {
         ) {
             return { x: -1, y: 0 };
         } else if (this.host.y > this.target.y + this.target.height) {
+            if (!this.track.isFree(currentBlock.row, currentBlock.col)) {
+                // Waiting for a raft to reach destination
+                return ZERO_VECTOR;
+            }
             return { x: 0, y: -1 };
         } else if (this.host.y > this.target.y) {
             if (!this.track.isFree(this.target.row, this.target.col)) {
-                // Waiting for a raft
+                // Waiting for a raft to arrive
                 return ZERO_VECTOR;
             }
 

@@ -131,6 +131,23 @@ export class TrackElement {
         }
     }
 
+    isFree(y: number, col: number): boolean {
+        const margin = BLOCK_WIDTH * 0.1;
+
+        const x = LEFTMOST_EDGE + col * BLOCK_WIDTH;
+        const block: Area = {
+            x: x + margin,
+            y: y + margin,
+            width: BLOCK_WIDTH - 2 * margin,
+            height: ELEMENT_HEIGHT - 2 * margin,
+        };
+
+        return (
+            this.surfaces.some((s) => includes(s, block)) &&
+            !this.objects.some((o) => overlap(o, block))
+        );
+    }
+
     findEmptySpot(c: Dimensions, otherObjects: GameObject[]): Vector | null {
         const margin = c.width * 0.5;
         const withMargin: Dimensions = {
