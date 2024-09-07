@@ -27,12 +27,16 @@ import {
     BLOCK_WIDTH,
     createTrack,
     ELEMENT_HEIGHT,
+    isRaft,
     LEFTMOST_EDGE,
     TrackElement,
     TrackElementType,
     TT,
 } from "./TrackElement";
 import { Vector } from "./Vector";
+
+const RAFT_SPEED = 0.005;
+const RAFT_DOCK_TIME = 2000;
 
 export interface IndexRange {
     minI: number;
@@ -54,7 +58,8 @@ export interface Block extends Area {
 }
 
 export class Track {
-    private elements: TrackElement[] = [];
+    private elements: TrackElement[];
+    private elementsWithRafts: TrackElement[];
     private startY: number;
     private checkpoints: Checkpoint[];
 
@@ -68,6 +73,9 @@ export class Track {
     constructor(templates: readonly TT[], startY: number) {
         this.elements = createTrack(templates, startY);
         this.elementCount = this.elements.length;
+        this.elementsWithRafts = this.elements.filter((e) =>
+            e.surfaces.some((s) => isRaft(s)),
+        );
         this.startY = startY;
         this.finishY =
             this.startY - (this.elements.length - 1) * ELEMENT_HEIGHT;
@@ -87,6 +95,52 @@ export class Track {
             }));
     }
 
+    update(t: number, dt: number, objects: readonly Area[]): void {
+        for (let ei = 0; ei < this.elementsWithRafts.length; ei++) {
+            const element = this.elementsWithRafts[ei];
+
+            for (let si = 0; si < element.surfaces.length; si++) {
+                const surface = element.surfaces[si];
+
+                if (isRaft(surface)) {
+                    const raft = surface;
+                    const yStart = element.y;
+                    const yEnd = element.y - ELEMENT_HEIGHT;
+
+                    if (raft.yDirection === -1 && raft.y <= yEnd) {
+                        raft.yDirection = 0;
+                        raft.dockStartTime = t;
+                    } else if (
+                        raft.y <= yEnd &&
+                        t - raft.dockStartTime > RAFT_DOCK_TIME
+                    ) {
+                        raft.yDirection = 1;
+                    } else if (raft.yDirection === 1 && yStart <= raft.y) {
+                        raft.yDirection = 0;
+                        raft.dockStartTime = t;
+                    } else if (
+                        yStart <= raft.y &&
+                        t - raft.dockStartTime > RAFT_DOCK_TIME
+                    ) {
+                        raft.yDirection = -1;
+                    }
+
+                    const yMovement = raft.yDirection * RAFT_SPEED * dt;
+
+                    raft.y += yMovement;
+
+                    // Move objects along with the raft
+                    for (let oi = 0; oi < objects.length; oi++) {
+                        const o = objects[oi];
+                        if (overlap(raft, o)) {
+                            o.y += yMovement;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     get(i: number): TrackElement {
         return this.elements[i];
     }
@@ -96,6 +150,17 @@ export class Track {
             return false;
         }
         const element = this.elements[row];
+
+        if (element.surfaces.some((s) => isRaft(s))) {
+            element.calculateBlocks();
+        }
+
+        // Check if a raft is over chasm.
+        if (element.surfaces.length === 0) {
+            const previousElement = this.elements[Math.max(row - 1, 0)];
+            return previousElement.isFree(element.y, col);
+        }
+
         return !!element.blocks[col];
     }
 
