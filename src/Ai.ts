@@ -26,7 +26,7 @@ import { getCenter } from "./Area";
 import { GameObject } from "./GameObject";
 import { random } from "./random";
 import { Block, Track } from "./Track";
-import { BLOCK_COUNT } from "./TrackElement";
+import { BLOCK_COUNT, BlockType } from "./TrackElement";
 import { Vector, ZERO_VECTOR } from "./Vector";
 
 export class Ai {
@@ -90,7 +90,8 @@ export class Ai {
             const row = currentBlock.row + 1;
             const col = currentBlock.col + diff;
 
-            if (this.track.isFree(row, col)) {
+            const blockType = this.track.getBlockType(row, col);
+            if (blockType === BlockType.Free || blockType === BlockType.Raft) {
                 return this.track.getBlock(row, col);
             }
         }

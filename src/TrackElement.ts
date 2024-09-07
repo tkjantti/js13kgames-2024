@@ -63,6 +63,12 @@ export enum TrackElementType {
     Raft,
 }
 
+export enum BlockType {
+    NotGood,
+    Free,
+    Raft,
+}
+
 export interface Raft extends Area {
     yDirection: number;
     dockStartTime: number;
@@ -133,6 +139,26 @@ export class TrackElement {
 
             this.blocks[i] = isVacant;
         }
+    }
+
+    getBlockType(col: number): BlockType {
+        const margin = BLOCK_WIDTH * 0.1;
+
+        const x = LEFTMOST_EDGE + col * BLOCK_WIDTH + margin;
+        const width = BLOCK_WIDTH - 2 * margin;
+
+        const hasRaft = this.surfaces.some(
+            (surface) =>
+                isRaft(surface) &&
+                surface.x <= x &&
+                x + width <= surface.x + surface.width,
+        );
+
+        if (hasRaft) {
+            return BlockType.Raft;
+        }
+
+        return this.blocks[col] ? BlockType.Free : BlockType.NotGood;
     }
 
     isFree(y: number, col: number): boolean {
