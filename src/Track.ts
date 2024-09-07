@@ -25,6 +25,7 @@
 import { Area, overlap } from "./Area";
 import {
     BLOCK_WIDTH,
+    BlockType,
     createTrack,
     ELEMENT_HEIGHT,
     isRaft,
@@ -143,6 +144,15 @@ export class Track {
 
     get(i: number): TrackElement {
         return this.elements[i];
+    }
+
+    getBlockType(row: number, col: number): BlockType {
+        if (row < 0 || this.elements.length <= row) {
+            return BlockType.NotGood;
+        }
+
+        const element = this.elements[row];
+        return element.getBlockType(col);
     }
 
     isFree(row: number, col: number): boolean {

@@ -26,12 +26,14 @@ import { getCenter } from "./Area";
 import { GameObject } from "./GameObject";
 import { random } from "./random";
 import { Block, Track } from "./Track";
-import { BLOCK_COUNT } from "./TrackElement";
+import { BLOCK_COUNT, BLOCK_WIDTH, BlockType } from "./TrackElement";
 import { Vector, ZERO_VECTOR } from "./Vector";
 
 export class Ai {
     private host: GameObject;
     private track: Track;
+
+    private horizontalMargin: number = 0;
 
     target: Block | null = null;
 
@@ -58,10 +60,10 @@ export class Ai {
             this.target = nextTarget;
         }
 
-        if (this.host.x < this.target.x) {
+        if (this.host.x < this.target.x + this.horizontalMargin) {
             return { x: 1, y: 0 };
         } else if (
-            this.target.x + this.target.width <=
+            this.target.x + this.target.width - this.horizontalMargin <=
             this.host.x + this.host.width
         ) {
             return { x: -1, y: 0 };
@@ -90,7 +92,9 @@ export class Ai {
             const row = currentBlock.row + 1;
             const col = currentBlock.col + diff;
 
-            if (this.track.isFree(row, col)) {
+            const blockType = this.track.getBlockType(row, col);
+            if (blockType === BlockType.Free || blockType === BlockType.Raft) {
+                this.horizontalMargin = random(0.2) * BLOCK_WIDTH;
                 return this.track.getBlock(row, col);
             }
         }

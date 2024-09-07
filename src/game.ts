@@ -288,10 +288,6 @@ const draw = (t: number, dt: number): void => {
     cx.restore();
 };
 
-export const onCanvasSizeChanged = (): void => {
-    level?.resetZoom();
-};
-
 const applyCRTEffect = (): void => {
     const imageData = cx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
