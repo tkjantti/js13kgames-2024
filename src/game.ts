@@ -176,19 +176,9 @@ const draw = (t: number, dt: number): void => {
                     centerText("Ready...", 64, "Impact", 1);
                 }
 
-                const duration = 10; // Duration in seconds
-                const totalFrames = duration * 60;
-                let frame = 0;
-
-                function updateRadius() {
-                    if (frame <= totalFrames && radius > 0) {
-                        radius = (canvas.width / 2) * (1 - frame / totalFrames);
-                        frame++;
-                        requestAnimationFrame(updateRadius);
-                    }
+                if (radius > 0) {
+                    radius -= dt / 2;
                 }
-
-                updateRadius();
             }
             applyGradient();
 
@@ -207,7 +197,7 @@ const draw = (t: number, dt: number): void => {
             centerText("Press ENTER", 24, "Sans-serif", 1, 120);
 
             if (radius < maxRadius) {
-                radius += canvas.width / 400;
+                radius += dt;
             }
             applyGradient();
 
@@ -237,7 +227,7 @@ const draw = (t: number, dt: number): void => {
             if (radius >= maxRadius) {
                 centerText("Press ENTER", 32, "Sans-serif", 24, 120);
             } else {
-                radius += canvas.width / 400;
+                radius += dt;
             }
             applyGradient();
 
