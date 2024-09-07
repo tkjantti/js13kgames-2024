@@ -1,5 +1,10 @@
 import { canvas, cx } from "./graphics";
-import { initializeKeyboard, waitForAnyKey, waitForEnter } from "./keyboard";
+import {
+    initializeKeyboard,
+    sleep,
+    waitForAnyKey,
+    waitForEnter,
+} from "./keyboard";
 import { Level, State } from "./Level";
 import { simpleTrack } from "./tracks";
 
@@ -73,7 +78,7 @@ const setState = (state: GameState): void => {
             break;
         case GameState.GameFinished:
             playTune(SFX_FINISHED);
-            waitForEnter().then(() => setState(GameState.Ready));
+            sleep(8000).then(() => setState(GameState.Ready));
             break;
         default:
             break;
@@ -182,18 +187,36 @@ const draw = (t: number, dt: number): void => {
         case GameState.GameOver: {
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
-
             cx.beginPath();
             cx.arc(centerX, centerY, radius, 0, Math.PI * 2);
             cx.fillStyle = "#802010";
             cx.fill();
             centerText("❌ ELIMINATED!", 64, "Impact", radius / maxRadius);
             centerText("You were the 13TH GUY.", 24, "Sans-serif", 1, 80);
-            centerText("Press ENTER", 24, "Sans-serif", 1, 120);
+            if (radius >= maxRadius) {
+                centerText("Press ENTER", 24, "Sans-serif", 1, 120);
+            }
 
+            if (radius < maxRadius) {
+                cx.save();
+                cx.globalAlpha = 0.7;
+                cx.translate(canvas.width / 8, radius - canvas.height / 6);
+                renderCharacter(
+                    cx,
+                    "gray",
+                    (canvas.height / 6) * randomWidhOffset,
+                    (canvas.height / 2) * randomHeighOffset,
+                    t,
+                    CharacterFacingDirection.Backward,
+                    CharacterAnimation.Still,
+                );
+                cx.globalAlpha = 0;
+                cx.restore();
+            }
             if (radius < maxRadius) {
                 radius += dt;
             }
+
             applyGradient();
 
             break;
@@ -217,11 +240,28 @@ const draw = (t: number, dt: number): void => {
                     20,
                 );
                 centerText("Ready for the next race.", 32, "Sans-serif", 1, 70);
+                cx.save();
+                cx.translate(
+                    radius < canvas.width / 6 ? radius : canvas.width / 6,
+                    canvas.height / 3,
+                );
+                renderCharacter(
+                    cx,
+                    playerColor,
+                    (canvas.height / 6) * randomWidhOffset,
+                    (canvas.height / 2) * randomHeighOffset,
+                    t,
+                    radius < canvas.width / 6 || radius >= maxRadius
+                        ? CharacterFacingDirection.Right
+                        : CharacterFacingDirection.Backward,
+                    radius < canvas.width / 6
+                        ? CharacterAnimation.Walk
+                        : CharacterAnimation.Still,
+                );
+                cx.restore();
             }
 
-            if (radius >= maxRadius) {
-                centerText("Press ENTER", 32, "Sans-serif", 24, 120);
-            } else {
+            if (radius < maxRadius) {
                 radius += dt;
             }
             applyGradient();
@@ -305,7 +345,7 @@ const drawStartScreen = (t: number, wait: boolean, z: number): void => {
     cx.fill();
 
     cx.save();
-    cx.translate(canvas.width / 8, canvas.height / 3);
+    cx.translate(canvas.width / 8 + z, canvas.height / 3);
 
     renderCharacter(
         cx,
