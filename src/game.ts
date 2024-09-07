@@ -1,10 +1,5 @@
 import { canvas, cx } from "./graphics";
-import {
-    initializeKeyboard,
-    sleep,
-    waitForAnyKey,
-    waitForEnter,
-} from "./keyboard";
+import { initializeKeyboard, waitForAnyKey, waitForEnter } from "./keyboard";
 import { Level, State } from "./Level";
 import { simpleTrack } from "./tracks";
 

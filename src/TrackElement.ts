@@ -60,6 +60,7 @@ export enum TrackElementType {
     Normal,
     CheckPoint,
     Finish,
+    Raft,
 }
 
 export interface Raft extends Area {
@@ -90,6 +91,8 @@ export class TrackElement {
                 return "rgb(20, 50, 20)";
             case TrackElementType.Finish:
                 return "rgb(0, 255, 0)";
+            case TrackElementType.Raft:
+                return "rgb(50,80,80)";
             default:
                 return "rgb(40,10,40)";
         }
@@ -304,6 +307,7 @@ export function createTrack(
                 // Nothing here!
                 break;
             case TT.Raft: {
+                eType = TrackElementType.Raft;
                 const raft: Raft = {
                     yDirection: -1,
                     dockStartTime: 0,
@@ -316,6 +320,7 @@ export function createTrack(
                 break;
             }
             case TT.TwoRafts: {
+                eType = TrackElementType.Raft;
                 const raft1: Raft = {
                     yDirection: -1,
                     dockStartTime: 0,
