@@ -28,6 +28,19 @@ export const simpleTrack: readonly TT[] = [
     TT.FullWidth,
     TT.FullWidth,
     TT.Checkpoint,
+    TT.Raft,
+    TT.Chasm,
+    TT.VeryNarrow,
+    TT.Checkpoint,
+    TT.Basic,
+    TT.FullWidthWithObstacleAtCenter,
+    TT.Finish,
+];
+
+export const secondTrack: readonly TT[] = [
+    TT.FullWidth,
+    TT.FullWidth,
+    TT.Checkpoint,
     TT.TwoRafts,
     TT.Chasm,
     TT.FullWidthWithObstacleAtCenter,

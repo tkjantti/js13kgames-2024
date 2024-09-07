@@ -475,13 +475,13 @@ export function renderCharacter(
         cx.save();
 
         cx.shadowColor = "rgba(0, 0, 0, 0.5)";
-        cx.shadowOffsetY = -10;
         cx.shadowBlur = 0;
 
         // Face
         cx.fillStyle = faceColor;
         const faceWidth = headWidth - faceMargin;
         const faceHeight = headHeight - faceMargin * 1.75;
+        cx.shadowOffsetY = -faceHeight / 10;
         const faceX = (w - faceWidth) / 2;
         const faceY = headHeight - faceHeight;
 

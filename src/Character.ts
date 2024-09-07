@@ -233,7 +233,7 @@ export class Character implements GameObject {
             this.width,
             renderHeight,
             animationTime,
-            direction,
+            this.finished ? CharacterFacingDirection.Backward : direction,
             this.getAnimation(),
         );
         cx.restore();

@@ -6,7 +6,7 @@ import {
     waitForEnter,
 } from "./keyboard";
 import { Level, State } from "./Level";
-import { simpleTrack } from "./tracks";
+import { secondTrack, simpleTrack } from "./tracks";
 
 import {
     initialize,
@@ -37,7 +37,7 @@ let randomHeighOffset = 1 + Math.random() * 0.3;
 // Player zoom level for animation
 let z = 1;
 
-let level = new Level(simpleTrack, randomWidhOffset, randomHeighOffset);
+let level: Level; // = new Level(simpleTrack, randomWidhOffset, randomHeighOffset);
 
 const maxRadius = Math.max(screen.width, screen.height) / 1.5;
 
@@ -63,7 +63,19 @@ const setState = (state: GameState): void => {
         case GameState.Start:
             break;
         case GameState.Ready:
-            level = new Level(simpleTrack, randomWidhOffset, randomHeighOffset);
+            if (level) {
+                level = new Level(
+                    secondTrack,
+                    randomWidhOffset,
+                    randomHeighOffset,
+                );
+            } else {
+                level = new Level(
+                    simpleTrack,
+                    randomWidhOffset,
+                    randomHeighOffset,
+                );
+            }
             radius = maxRadius;
             playTune(SFX_RACE);
             break;
@@ -135,7 +147,7 @@ const draw = (t: number, dt: number): void => {
     cx.save();
     cx.fillStyle = "rgb(0, 0, 10)";
     cx.fillRect(0, 0, canvas.width, canvas.height);
-    level.draw(t, dt);
+    level?.draw(t, dt);
     cx.restore();
 
     cx.save();
@@ -200,7 +212,7 @@ const draw = (t: number, dt: number): void => {
             if (radius < maxRadius) {
                 cx.save();
                 cx.globalAlpha = 0.7;
-                cx.translate(canvas.width / 8, radius - canvas.height / 6);
+                cx.translate(canvas.width / 8, radius - canvas.height);
                 renderCharacter(
                     cx,
                     "gray",
@@ -277,7 +289,7 @@ const draw = (t: number, dt: number): void => {
 };
 
 export const onCanvasSizeChanged = (): void => {
-    level.resetZoom();
+    level?.resetZoom();
 };
 
 const applyCRTEffect = (): void => {
