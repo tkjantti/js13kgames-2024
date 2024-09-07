@@ -220,7 +220,7 @@ const draw = (t: number, dt: number): void => {
                     (canvas.height / 2) * randomHeighOffset,
                     t,
                     CharacterFacingDirection.Backward,
-                    CharacterAnimation.Still,
+                    CharacterAnimation.Fall,
                 );
                 cx.globalAlpha = 0;
                 cx.restore();
