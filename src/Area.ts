@@ -30,8 +30,8 @@ export interface Dimensions {
 }
 
 export interface Area extends Dimensions {
-    readonly x: number;
-    readonly y: number;
+    x: number;
+    y: number;
 }
 
 export function getCenter(area: Area): Vector {
@@ -44,6 +44,13 @@ export function getCenter(area: Area): Vector {
 export function overlap(a: Area, b: Area): boolean {
     const horizontally = b.x <= a.x + a.width && a.x <= b.x + b.width;
     const vertically = b.y <= a.y + a.height && a.y <= b.y + b.height;
+
+    return horizontally && vertically;
+}
+
+export function includes(host: Area, o: Area): boolean {
+    const horizontally = host.x <= o.x && o.x + o.width <= host.x + host.width;
+    const vertically = host.y <= o.y && o.y + o.height <= host.y + host.height;
 
     return horizontally && vertically;
 }

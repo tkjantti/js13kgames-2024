@@ -27,12 +27,15 @@ import {
     BLOCK_WIDTH,
     createTrack,
     ELEMENT_HEIGHT,
+    isRaft,
     LEFTMOST_EDGE,
     TrackElement,
     TrackElementType,
     TT,
 } from "./TrackElement";
 import { Vector } from "./Vector";
+
+const RAFT_SPEED = 0.005;
 
 export interface IndexRange {
     minI: number;
@@ -87,6 +90,44 @@ export class Track {
             }));
     }
 
+    update(t: number, dt: number): void {
+        for (let ei = 0; ei < this.elements.length; ei++) {
+            const element = this.elements[ei];
+
+            if (element.surfaces.some((s) => isRaft(s))) {
+                for (let si = 0; si < element.surfaces.length; si++) {
+                    const surface = element.surfaces[si];
+
+                    if (isRaft(surface)) {
+                        const raft = surface;
+                        const yStart = element.y;
+                        const yEnd = element.y - ELEMENT_HEIGHT;
+
+                        if (raft.yDirection === -1 && raft.y <= yEnd) {
+                            raft.yDirection = 0;
+                            raft.dockStartTime = t;
+                        } else if (
+                            raft.y <= yEnd &&
+                            t - raft.dockStartTime > 1000
+                        ) {
+                            raft.yDirection = 1;
+                        } else if (raft.yDirection === 1 && yStart <= raft.y) {
+                            raft.yDirection = 0;
+                            raft.dockStartTime = t;
+                        } else if (
+                            yStart <= raft.y &&
+                            t - raft.dockStartTime > 1000
+                        ) {
+                            raft.yDirection = -1;
+                        }
+
+                        raft.y += raft.yDirection * RAFT_SPEED * dt;
+                    }
+                }
+            }
+        }
+    }
+
     get(i: number): TrackElement {
         return this.elements[i];
     }
@@ -96,6 +137,10 @@ export class Track {
             return false;
         }
         const element = this.elements[row];
+
+        if (element.surfaces.some((s) => isRaft(s))) {
+            element.calculateBlocks();
+        }
         return !!element.blocks[col];
     }
 

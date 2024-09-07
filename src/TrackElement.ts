@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import { Area, Dimensions, overlap } from "./Area";
+import { Area, Dimensions, includes, overlap } from "./Area";
 import { Vector } from "./Vector";
 import { GameObject } from "./GameObject";
 import { Obstacle } from "./Obstacle";
@@ -49,6 +49,8 @@ export enum TT { // "Track template"
     DualPassage,
     FullWidthWithObstacleAtCenter,
     FullWidthWithObstacles,
+    Chasm,
+    Raft,
     Checkpoint,
     Finish,
 }
@@ -57,6 +59,15 @@ export enum TrackElementType {
     Normal,
     CheckPoint,
     Finish,
+}
+
+export interface Raft extends Area {
+    yDirection: number;
+    dockStartTime: number;
+}
+
+export function isRaft(surface: Area): surface is Raft {
+    return "yDirection" in surface;
 }
 
 // An element is one horizontal slice of the track. A track is
@@ -69,7 +80,7 @@ export class TrackElement {
     readonly height: number;
     readonly minX: number;
     readonly maxX: number;
-    readonly blocks: boolean[];
+    readonly blocks: boolean[] = new Array(BLOCK_COUNT);
     readonly objects: readonly GameObject[];
 
     get color(): string {
@@ -97,27 +108,27 @@ export class TrackElement {
         this.maxX = Math.max(...this.surfaces.map((s) => s.x + s.width));
         this.width = this.maxX - this.minX;
         this.height = ELEMENT_HEIGHT;
+        this.calculateBlocks();
+    }
 
-        const blocks = new Array(BLOCK_COUNT);
+    calculateBlocks(): void {
         const margin = BLOCK_WIDTH * 0.1;
 
         for (let i = 0; i < BLOCK_COUNT; i++) {
             const x = LEFTMOST_EDGE + i * BLOCK_WIDTH;
             const block: Area = {
                 x: x + margin,
-                y: y + margin,
+                y: this.y + margin,
                 width: BLOCK_WIDTH - 2 * margin,
                 height: ELEMENT_HEIGHT - 2 * margin,
             };
 
             const isVacant: boolean =
-                this.surfaces.some((s) => overlap(s, block)) &&
+                this.surfaces.some((s) => includes(s, block)) &&
                 !this.objects.some((o) => overlap(o, block));
 
-            blocks[i] = isVacant;
+            this.blocks[i] = isVacant;
         }
-
-        this.blocks = blocks;
     }
 
     findEmptySpot(c: Dimensions, otherObjects: GameObject[]): Vector | null {
@@ -270,6 +281,20 @@ export function createTrack(
                         y: centerY - Obstacle.HEIGHT / 2,
                     }),
                 ];
+                break;
+            case TT.Chasm:
+                // Nothing here!
+                break;
+            case TT.Raft:
+                const raft: Raft = {
+                    yDirection: -1,
+                    dockStartTime: 0,
+                    x: LEFTMOST_EDGE + BLOCK_WIDTH * 3,
+                    y,
+                    width: VERY_NARROW_WIDTH,
+                    height: ELEMENT_HEIGHT,
+                };
+                surfaces = [raft];
                 break;
             case TT.Checkpoint:
                 eType = TrackElementType.CheckPoint;
