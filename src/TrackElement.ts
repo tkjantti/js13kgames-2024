@@ -303,7 +303,7 @@ export function createTrack(
             case TT.Chasm:
                 // Nothing here!
                 break;
-            case TT.Raft:
+            case TT.Raft: {
                 const raft: Raft = {
                     yDirection: -1,
                     dockStartTime: 0,
@@ -314,7 +314,8 @@ export function createTrack(
                 };
                 surfaces = [raft];
                 break;
-            case TT.TwoRafts:
+            }
+            case TT.TwoRafts: {
                 const raft1: Raft = {
                     yDirection: -1,
                     dockStartTime: 0,
@@ -333,6 +334,7 @@ export function createTrack(
                 };
                 surfaces = [raft1, raft2];
                 break;
+            }
             case TT.Checkpoint:
                 eType = TrackElementType.CheckPoint;
                 surfaces = [
