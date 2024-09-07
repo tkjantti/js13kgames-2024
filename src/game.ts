@@ -1,10 +1,5 @@
 import { canvas, cx } from "./graphics";
-import {
-    initializeKeyboard,
-    sleep,
-    waitForAnyKey,
-    waitForEnter,
-} from "./keyboard";
+import { initializeKeyboard, waitForAnyKey, waitForEnter } from "./keyboard";
 import { Level, State } from "./Level";
 import { simpleTrack } from "./tracks";
 
@@ -161,16 +156,16 @@ const draw = (t: number, dt: number): void => {
                     cx.beginPath();
                     cx.arc(centerX, centerY, radius, 0, Math.PI * 2);
                     cx.fillStyle =
-                        radius < maxRadius / 12
+                        radius < maxRadius / 4
                             ? "#105000"
-                            : radius < maxRadius / 4
+                            : radius < maxRadius / 2
                               ? "#CCCC40"
                               : "#802010";
                     cx.fill();
                 }
-                if (radius < maxRadius / 12) {
+                if (radius < maxRadius / 4) {
                     centerText("↑ GO!", 64, "Impact", 1);
-                } else if (radius < maxRadius / 4) {
+                } else if (radius < maxRadius / 2) {
                     centerText("Set...", 64, "Impact", 1);
                 } else {
                     centerText("Ready...", 64, "Impact", 1);
@@ -210,12 +205,12 @@ const draw = (t: number, dt: number): void => {
             if (radius >= 50) {
                 cx.beginPath();
                 cx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-                cx.fillStyle = "#CCCC40";
+                cx.fillStyle = "#105000";
                 cx.fill();
                 centerText("RACE FINISHED!", 48, "Impact", 1, -70);
                 centerText("☻", 64, "Impact", 1, -20);
                 centerText(
-                    "You were number " + level.characters[0].rank + "!",
+                    "You were number " + level.characters[0].rank,
                     32,
                     "Impact",
                     1,

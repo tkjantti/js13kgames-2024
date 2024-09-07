@@ -33,7 +33,7 @@ import {
     getMovementVelocity,
 } from "./physics";
 import { Track } from "./Track";
-import { TT } from "./TrackElement";
+import { TrackElementType, TT } from "./TrackElement";
 import { Vector, ZERO_VECTOR } from "./Vector";
 import {
     playTune,
@@ -297,10 +297,16 @@ export class Level implements Area {
 
             const surfaces = element.surfaces;
             cx.fillStyle = element.color;
+            cx.shadowColor = element.color
+                .replace("rgb", "rgba")
+                .replace(")", ",0.6)");
+            cx.shadowOffsetY =
+                element.height *
+                (element.type === TrackElementType.Raft ? 2 : 10);
 
+            if (element.type === TrackElementType.Raft) cx.globalAlpha = 0.5;
             for (let i = 0; i < surfaces.length; i++) {
                 const surface = surfaces[i];
-                cx.shadowOffsetY = surface.height * 10;
                 cx.fillRect(
                     surface.x,
                     surface.y,
@@ -308,6 +314,7 @@ export class Level implements Area {
                     surface.height,
                 );
             }
+            cx.globalAlpha = 1;
 
             objectsToDraw.push(...element.objects);
         }
