@@ -110,7 +110,7 @@ const FadeOutIn = (tune1, tune2) => {
             tune1.volume = currentVolume;
         } else {
             tune1.volume = 0;
-            if (currentVolume === 0) tune1.pause();
+            tune1.pause();
             clearInterval(fadeOutInterval1);
 
             setTimeout(() => {
