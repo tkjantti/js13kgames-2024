@@ -170,16 +170,20 @@ export class Level implements Area {
         for (let ci = 0; ci < this.characters.length; ci++) {
             const c = this.characters[ci];
 
+            // Do not collide if character is finished or eliminated
+            if (c.finished || c.eliminated) continue;
+
             for (let oi = 0; oi < this.characters.length; oi++) {
                 if (oi === ci) continue;
                 const other = this.characters[oi];
+                if (other.finished || other.eliminated) continue;
 
                 if (calculateCollisionBetweenCharacters(c, other)) {
                     const yDistance = Math.abs(c.y - this.player.y);
                     const volumeByDistance =
                         ci === 0 ? 1 : 1 - Math.min(yDistance / 100, 1);
                     if (volumeByDistance > 0)
-                        playTune(SFX_BOUNCE, volumeByDistance);
+                        playTune(SFX_BOUNCE, volumeByDistance * 0.5);
                 }
             }
         }
@@ -219,6 +223,7 @@ export class Level implements Area {
                 //  13th character will be eliminated if it falls
                 if (c.rank === 13) {
                     c.eliminated = true;
+                    c.stop();
                     if (!c.ai) this.state = State.GAME_OVER;
                     return;
                 }
@@ -229,8 +234,14 @@ export class Level implements Area {
             // TODO: take some steps after finish
             if (c.y + c.height < this.track.finishY) {
                 c.finished = true;
-                if (ci === 0 && c.rank === 13) this.state = State.GAME_OVER;
-                else if (ci === 0) this.state = State.FINISHED;
+                c.stop();
+                if (ci === 0) {
+                    if (c.rank === 13) {
+                        this.state = State.GAME_OVER;
+                    } else {
+                        this.state = State.FINISHED;
+                    }
+                }
             }
         }
     }
@@ -241,6 +252,7 @@ export class Level implements Area {
         //  13th character will be eliminated if it falls
         if (c.rank === 13) {
             c.eliminated = true;
+            c.stop();
             if (!c.ai) this.state = State.GAME_OVER;
             return;
         }
@@ -333,6 +345,9 @@ export class Level implements Area {
             (char) => !char.finished,
         );
 
+        // Sort finished characters based on their rank
+        finishedCharacters.sort((a, b) => a.rank - b.rank);
+
         // Sort unfinished characters based on their Y coordinate
         unfinishedCharacters.sort(
             (a, b) => a.y + a.height / 2 - (b.y + b.height / 2),
@@ -351,18 +366,18 @@ export class Level implements Area {
         cx.translate(-this.camera.x, -this.camera.y);
 
         sortedCharacters.forEach((char, index) => {
-            if (!char.finished) {
-                char.rank = index + 1;
-            }
+            char.rank = index + 1;
             const text = `${char.rank}`;
             cx.fillStyle =
-                char.rank === 13 || char.eliminated
+                char.rank === 13
                     ? "red"
-                    : char.rank === 1
-                      ? "lightgreen"
-                      : char.ai
-                        ? "white"
-                        : "yellow";
+                    : char.eliminated
+                      ? "crimson"
+                      : char.rank === 1
+                        ? "lightgreen"
+                        : char.ai
+                          ? "white"
+                          : "yellow";
 
             cx.font = !char.ai
                 ? "1.4px Sans-serif"
@@ -370,7 +385,7 @@ export class Level implements Area {
                   ? "1.2px Sans-serif"
                   : "1px Sans-serif";
             cx.fillText(
-                char.eliminated ? "13 " + String.fromCharCode(10013) : text,
+                char.eliminated ? "❌ 13" : text,
                 char.x +
                     char.width /
                         (!char.ai

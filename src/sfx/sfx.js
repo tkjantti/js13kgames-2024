@@ -134,6 +134,8 @@ export const playTune = (tune, vol = 1) => {
         }
         case SFX_START: {
             startTune.volume = 0;
+            startTune.currentTime = 0;
+            raceTune.currentTime = 0;
             var promise = startTune.play();
             if (promise !== undefined) {
                 promise
@@ -146,7 +148,6 @@ export const playTune = (tune, vol = 1) => {
                     });
             }
             FadeIn(startTune);
-            startTune.currentTime = 0;
             break;
         }
         //SFX
