@@ -26,7 +26,7 @@ import { Area, Dimensions, includes, overlap } from "./Area";
 import { Vector } from "./Vector";
 import { GameObject } from "./GameObject";
 import { Obstacle } from "./Obstacle";
-import { randomMinMax } from "./random";
+import { random, randomMinMax } from "./random";
 
 export const BLOCK_WIDTH = 10;
 export const BLOCK_COUNT = 9;
@@ -51,6 +51,7 @@ export enum TT { // "Track template"
     FullWidthWithObstacles,
     Chasm,
     Raft,
+    TwoRafts,
     Checkpoint,
     Finish,
 }
@@ -312,6 +313,25 @@ export function createTrack(
                     height: ELEMENT_HEIGHT,
                 };
                 surfaces = [raft];
+                break;
+            case TT.TwoRafts:
+                const raft1: Raft = {
+                    yDirection: -1,
+                    dockStartTime: 0,
+                    x: LEFTMOST_EDGE + BLOCK_WIDTH * 1,
+                    y: y - random() * ELEMENT_HEIGHT,
+                    width: BLOCK_WIDTH * 2,
+                    height: ELEMENT_HEIGHT,
+                };
+                const raft2: Raft = {
+                    yDirection: -1,
+                    dockStartTime: 0,
+                    x: RIGHTMOST_EDGE - BLOCK_WIDTH * 3,
+                    y: y - random() * ELEMENT_HEIGHT,
+                    width: BLOCK_WIDTH * 2,
+                    height: ELEMENT_HEIGHT,
+                };
+                surfaces = [raft1, raft2];
                 break;
             case TT.Checkpoint:
                 eType = TrackElementType.CheckPoint;
