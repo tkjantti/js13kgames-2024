@@ -210,7 +210,7 @@ const draw = (t: number, dt: number): void => {
                 centerText("RACE FINISHED!", 48, "Impact", 1, -70);
                 centerText("☻", 64, "Impact", 1, -20);
                 centerText(
-                    "You were number " + level.characters[0].rank + "!",
+                    "You were number " + level.characters[0].rank,
                     32,
                     "Impact",
                     1,
