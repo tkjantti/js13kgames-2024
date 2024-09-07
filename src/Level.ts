@@ -336,7 +336,7 @@ export class Level implements Area {
 
         const gradient = cx.createLinearGradient(0, 0, 0, canvas.height);
         gradient.addColorStop(0, "rgba(0, 0, 0, 1)");
-        gradient.addColorStop(0.1, "rgba(0, 0, 0, 0.8)");
+        gradient.addColorStop(0.1, "rgba(0, 0, 0, 0.6)");
         gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
 
         cx.fillStyle = gradient;
