@@ -251,12 +251,10 @@ const draw = (t: number, dt: number): void => {
                     (canvas.height / 6) * randomWidhOffset,
                     (canvas.height / 2) * randomHeighOffset,
                     t,
-                    radius < canvas.width / 6 || radius >= maxRadius
+                    radius < canvas.width / 6
                         ? CharacterFacingDirection.Right
                         : CharacterFacingDirection.Backward,
-                    radius < canvas.width / 6
-                        ? CharacterAnimation.Walk
-                        : CharacterAnimation.Still,
+                    CharacterAnimation.Walk,
                 );
                 cx.restore();
             }
@@ -366,14 +364,14 @@ const drawStartScreen = (t: number, wait: boolean, z: number): void => {
             24,
             "Sans-serif",
             1,
-            40,
+            0,
         );
         centerText(
             "or you will be eventually ❌ eliminated!",
             24,
             "Sans-serif",
             1,
-            80,
+            40,
         );
         centerText("Keys: W, A, S, D or arrows", 24, "Sans-serif", 1, 140);
     } else {
