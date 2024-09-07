@@ -30,11 +30,14 @@ export class Camera {
     public x = 0;
     public y = 0;
     public zoom = 1;
+    public visibleAreaHeight?: number;
 
     private shakePower = 0;
     private shakeDecay = 0;
 
-    public target: GameObject | null = null;
+    private target: GameObject | null = null;
+
+    public followHorizontally: boolean = false;
 
     constructor(
         private level: Area,
@@ -81,6 +84,10 @@ export class Camera {
     }
 
     update(): void {
+        if (this.visibleAreaHeight != null) {
+            this.zoom = this.view.height / this.visibleAreaHeight;
+        }
+
         if (this.target) {
             this.fitZoom();
             this.followFrame(this.target);
@@ -116,19 +123,26 @@ export class Camera {
     }
 
     private followFrame(o: GameObject): void {
-        let x = o.x + o.width;
-        let y = o.y + o.height;
-
         const viewAreaWidth = this.view.width / this.zoom;
         const viewAreaHeight = this.view.height / this.zoom;
 
-        // Keep camera within level in x-direction.
-        if (x - viewAreaWidth / 2 < this.level.x) {
-            x = this.level.x + viewAreaWidth / 2;
-        } else if (x + viewAreaWidth / 2 > this.level.x + this.level.width) {
-            x = this.level.x + this.level.width - viewAreaWidth / 2;
+        if (this.followHorizontally) {
+            let x = o.x + o.width;
+
+            // Keep camera within level in x-direction.
+            if (x - viewAreaWidth / 2 < this.level.x) {
+                x = this.level.x + viewAreaWidth / 2;
+            } else if (
+                x + viewAreaWidth / 2 >
+                this.level.x + this.level.width
+            ) {
+                x = this.level.x + this.level.width - viewAreaWidth / 2;
+            }
+
+            this.x = x;
         }
 
+        let y = o.y + o.height;
         // Characted should be 1/4 height from bottom
         y -= viewAreaHeight / 4;
 
@@ -139,7 +153,6 @@ export class Camera {
             y = this.level.y + this.level.height - viewAreaHeight / 2;
         }
 
-        this.x = x;
         this.y = y;
     }
 }

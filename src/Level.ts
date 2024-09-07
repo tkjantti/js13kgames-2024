@@ -43,10 +43,12 @@ import {
     // @ts-ignore
 } from "./sfx/sfx.js";
 
+const TRACK_VISIBLE_HEIGHT = 100;
+
 const TRACK_START_Y = 400;
 
 // Width of empty area on the left and right side of the track.
-const BANK_WIDTH = 10;
+const BANK_WIDTH = 1000;
 
 // Length of empty area before the start and after the end of the
 // track.
@@ -80,6 +82,8 @@ export class Level implements Area {
         playerWidthOffset: number,
         playerHeightOffset: number,
     ) {
+        this.camera.visibleAreaHeight = TRACK_VISIBLE_HEIGHT;
+
         this.track = new Track(trackTemplate, TRACK_START_Y);
 
         this.x = 0 - this.track.width / 2 - BANK_WIDTH;
@@ -117,7 +121,6 @@ export class Level implements Area {
     }
 
     resetZoom() {
-        this.camera.zoom = 2;
         this.camera.update();
     }
 
