@@ -57,7 +57,8 @@ export interface Block extends Area {
 }
 
 export class Track {
-    private elements: TrackElement[] = [];
+    private elements: TrackElement[];
+    private elementsWithRafts: TrackElement[];
     private startY: number;
     private checkpoints: Checkpoint[];
 
@@ -71,6 +72,9 @@ export class Track {
     constructor(templates: readonly TT[], startY: number) {
         this.elements = createTrack(templates, startY);
         this.elementCount = this.elements.length;
+        this.elementsWithRafts = this.elements.filter((e) =>
+            e.surfaces.some((s) => isRaft(s)),
+        );
         this.startY = startY;
         this.finishY =
             this.startY - (this.elements.length - 1) * ELEMENT_HEIGHT;
@@ -91,38 +95,36 @@ export class Track {
     }
 
     update(t: number, dt: number): void {
-        for (let ei = 0; ei < this.elements.length; ei++) {
-            const element = this.elements[ei];
+        for (let ei = 0; ei < this.elementsWithRafts.length; ei++) {
+            const element = this.elementsWithRafts[ei];
 
-            if (element.surfaces.some((s) => isRaft(s))) {
-                for (let si = 0; si < element.surfaces.length; si++) {
-                    const surface = element.surfaces[si];
+            for (let si = 0; si < element.surfaces.length; si++) {
+                const surface = element.surfaces[si];
 
-                    if (isRaft(surface)) {
-                        const raft = surface;
-                        const yStart = element.y;
-                        const yEnd = element.y - ELEMENT_HEIGHT;
+                if (isRaft(surface)) {
+                    const raft = surface;
+                    const yStart = element.y;
+                    const yEnd = element.y - ELEMENT_HEIGHT;
 
-                        if (raft.yDirection === -1 && raft.y <= yEnd) {
-                            raft.yDirection = 0;
-                            raft.dockStartTime = t;
-                        } else if (
-                            raft.y <= yEnd &&
-                            t - raft.dockStartTime > 1000
-                        ) {
-                            raft.yDirection = 1;
-                        } else if (raft.yDirection === 1 && yStart <= raft.y) {
-                            raft.yDirection = 0;
-                            raft.dockStartTime = t;
-                        } else if (
-                            yStart <= raft.y &&
-                            t - raft.dockStartTime > 1000
-                        ) {
-                            raft.yDirection = -1;
-                        }
-
-                        raft.y += raft.yDirection * RAFT_SPEED * dt;
+                    if (raft.yDirection === -1 && raft.y <= yEnd) {
+                        raft.yDirection = 0;
+                        raft.dockStartTime = t;
+                    } else if (
+                        raft.y <= yEnd &&
+                        t - raft.dockStartTime > 1000
+                    ) {
+                        raft.yDirection = 1;
+                    } else if (raft.yDirection === 1 && yStart <= raft.y) {
+                        raft.yDirection = 0;
+                        raft.dockStartTime = t;
+                    } else if (
+                        yStart <= raft.y &&
+                        t - raft.dockStartTime > 1000
+                    ) {
+                        raft.yDirection = -1;
                     }
+
+                    raft.y += raft.yDirection * RAFT_SPEED * dt;
                 }
             }
         }
