@@ -82,8 +82,6 @@ export class Level implements Area {
         playerWidthOffset: number,
         playerHeightOffset: number,
     ) {
-        this.camera.visibleAreaHeight = TRACK_VISIBLE_HEIGHT;
-
         this.track = new Track(trackTemplate, TRACK_START_Y);
 
         this.x = 0 - this.track.width / 2 - BANK_WIDTH;
@@ -107,8 +105,10 @@ export class Level implements Area {
             playerHeightOffset,
         );
         this.characters.push(this.player);
+
         this.camera.follow(this.player);
-        this.resetZoom();
+        this.camera.visibleAreaHeight = TRACK_VISIBLE_HEIGHT;
+        this.camera.update();
 
         for (let i = 1; i < CHARACTER_COUNT; i++) {
             const startPosition = {
@@ -118,10 +118,6 @@ export class Level implements Area {
             const aiCharacter = new Character(i, startPosition, this.track);
             this.characters.push(aiCharacter);
         }
-    }
-
-    resetZoom() {
-        this.camera.update();
     }
 
     update(t: number, dt: number): void {

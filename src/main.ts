@@ -24,12 +24,11 @@
 
 import "./style.css";
 import { canvas } from "./graphics";
-import { onCanvasSizeChanged, init } from "./game";
+import { init } from "./game";
 
 const resize = (): void => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    onCanvasSizeChanged();
 };
 
 window.addEventListener("resize", resize, false);
