@@ -124,7 +124,7 @@ export class Level implements Area {
     update(t: number, dt: number): void {
         this.camera.update();
 
-        this.track.update(t, dt);
+        this.track.update(t, dt, this.characters);
 
         this.calculateMovement(t, dt);
 

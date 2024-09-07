@@ -36,6 +36,7 @@ import {
 import { Vector } from "./Vector";
 
 const RAFT_SPEED = 0.005;
+const RAFT_DOCK_TIME = 2000;
 
 export interface IndexRange {
     minI: number;
@@ -94,7 +95,7 @@ export class Track {
             }));
     }
 
-    update(t: number, dt: number): void {
+    update(t: number, dt: number, objects: readonly Area[]): void {
         for (let ei = 0; ei < this.elementsWithRafts.length; ei++) {
             const element = this.elementsWithRafts[ei];
 
@@ -111,7 +112,7 @@ export class Track {
                         raft.dockStartTime = t;
                     } else if (
                         raft.y <= yEnd &&
-                        t - raft.dockStartTime > 1000
+                        t - raft.dockStartTime > RAFT_DOCK_TIME
                     ) {
                         raft.yDirection = 1;
                     } else if (raft.yDirection === 1 && yStart <= raft.y) {
@@ -119,12 +120,22 @@ export class Track {
                         raft.dockStartTime = t;
                     } else if (
                         yStart <= raft.y &&
-                        t - raft.dockStartTime > 1000
+                        t - raft.dockStartTime > RAFT_DOCK_TIME
                     ) {
                         raft.yDirection = -1;
                     }
 
-                    raft.y += raft.yDirection * RAFT_SPEED * dt;
+                    const yMovement = raft.yDirection * RAFT_SPEED * dt;
+
+                    raft.y += yMovement;
+
+                    // Move objects along with the raft
+                    for (let oi = 0; oi < objects.length; oi++) {
+                        const o = objects[oi];
+                        if (overlap(raft, o)) {
+                            o.y += yMovement;
+                        }
+                    }
                 }
             }
         }
