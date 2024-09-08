@@ -54,8 +54,6 @@ const BANK_WIDTH = 1000;
 // track.
 const BANK_HEIGHT = 40;
 
-const CHARACTER_COUNT = 20;
-
 export enum State {
     RUNNING,
     GAME_OVER,
@@ -68,6 +66,7 @@ export class Level implements Area {
     private track: Track;
 
     public characters: Character[] = [];
+    private charactersCount = 40;
     private player: Character;
 
     readonly x;
@@ -90,7 +89,7 @@ export class Level implements Area {
         this.height = this.track.height + 2 * BANK_HEIGHT;
 
         const startElement = this.track.get(0);
-        const startPositionGap = startElement.width / CHARACTER_COUNT;
+        const startPositionGap = startElement.width / this.charactersCount;
         const startMargin = startPositionGap * 0.3;
 
         const playerStartPosition = {
@@ -110,7 +109,7 @@ export class Level implements Area {
         this.camera.visibleAreaHeight = TRACK_VISIBLE_HEIGHT;
         this.camera.update();
 
-        for (let i = 1; i < CHARACTER_COUNT; i++) {
+        for (let i = 1; i < this.charactersCount; i++) {
             const startPosition = {
                 x: startElement.minX + startMargin + i * startPositionGap,
                 y: startElement.y + 3,
@@ -237,10 +236,15 @@ export class Level implements Area {
                 c.finished = true;
                 c.stop();
                 if (ci === 0) {
-                    if (c.rank === 13) {
+                    if (c.rank === 13 || c.rank > this.characters.length - 13) {
                         this.state = State.GAME_OVER;
                     } else {
                         this.state = State.FINISHED;
+                    }
+                } else {
+                    // All finished but last 13
+                    if (c.rank == this.characters.length - 13) {
+                        this.state = State.GAME_OVER;
                     }
                 }
             }
@@ -381,11 +385,13 @@ export class Level implements Area {
                     ? "red"
                     : char.eliminated
                       ? "crimson"
-                      : char.rank === 1
-                        ? "lightgreen"
-                        : char.ai
-                          ? "white"
-                          : "yellow";
+                      : char.rank > characters.length - 13
+                        ? "orange"
+                        : char.rank === 1
+                          ? "lightgreen"
+                          : char.ai
+                            ? "white"
+                            : "yellow";
 
             cx.font = !char.ai
                 ? "1.4px Sans-serif"
