@@ -243,12 +243,16 @@ export class Level implements Area {
                     } else {
                         this.state = State.FINISHED;
                     }
-                } else {
-                    // All finished but last 13
-                    if (c.rank == this.characters.length - 13) {
-                        // TODO: set all left eliminated
-                        this.state = State.GAME_OVER;
+                }
+                // All finished but last 13
+                if (c.rank == this.characters.length - 13) {
+                    // Set all unfinised characters as eliminated
+                    for (let ci = 0; ci < this.characters.length; ci++) {
+                        if (!this.characters[ci].finished) {
+                            this.characters[ci].eliminated = true;
+                        }
                     }
+                    this.state = State.GAME_OVER;
                 }
             }
         }
