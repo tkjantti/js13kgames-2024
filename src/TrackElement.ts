@@ -64,8 +64,9 @@ export enum TrackElementType {
 }
 
 export enum BlockType {
-    NotGood,
+    Empty,
     Free,
+    Obstacle,
     Raft,
 }
 
@@ -153,12 +154,19 @@ export class TrackElement {
                 surface.x <= x &&
                 x + width <= surface.x + surface.width,
         );
-
         if (hasRaft) {
             return BlockType.Raft;
         }
 
-        return this.blocks[col] ? BlockType.Free : BlockType.NotGood;
+        const hasObstacle = this.objects.some(
+            (obstacle) =>
+                obstacle.x <= x && x + width <= obstacle.x + obstacle.width,
+        );
+        if (hasObstacle) {
+            return BlockType.Obstacle;
+        }
+
+        return this.blocks[col] ? BlockType.Free : BlockType.Empty;
     }
 
     isFree(y: number, col: number): boolean {

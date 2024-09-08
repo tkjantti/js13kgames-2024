@@ -29,6 +29,12 @@ import { Block, Track } from "./Track";
 import { BLOCK_COUNT, BLOCK_WIDTH, BlockType } from "./TrackElement";
 import { Vector, ZERO_VECTOR } from "./Vector";
 
+function isWalkableToSomeExtent(t: BlockType): boolean {
+    return (
+        t === BlockType.Free || t === BlockType.Obstacle || t === BlockType.Raft
+    );
+}
+
 export class Ai {
     private host: GameObject;
     private track: Track;
@@ -58,22 +64,48 @@ export class Ai {
             }
 
             this.target = nextTarget;
+            return ZERO_VECTOR;
         }
 
-        if (this.host.x < this.target.x + this.horizontalMargin) {
+        const isLeftFromTarget: boolean =
+            this.host.x < this.target.x + this.horizontalMargin;
+        const isRightFromTarget: boolean =
+            this.target.x + this.target.width - this.horizontalMargin <=
+            this.host.x + this.host.width;
+
+        const isBehindTarget: boolean =
+            this.host.y > this.target.y + this.target.height;
+        const isBehindEndOfTarget: boolean =
+            this.host.y > this.target.y + this.target.height * 0.1;
+        const currentBlockType = this.track.getBlockType(
+            currentBlock.row,
+            currentBlock.col,
+        );
+
+        if (
+            isLeftFromTarget &&
+            isWalkableToSomeExtent(
+                this.track.getBlockType(currentBlock.row, currentBlock.col + 1),
+            )
+        ) {
             return { x: 1, y: 0 };
         } else if (
-            this.target.x + this.target.width - this.horizontalMargin <=
-            this.host.x + this.host.width
+            isRightFromTarget &&
+            isWalkableToSomeExtent(
+                this.track.getBlockType(currentBlock.row, currentBlock.col - 1),
+            )
         ) {
             return { x: -1, y: 0 };
-        } else if (this.host.y > this.target.y + this.target.height) {
-            if (!this.track.isFree(currentBlock.row, currentBlock.col)) {
+        } else if (isBehindTarget) {
+            if (
+                currentBlockType !== BlockType.Free &&
+                !this.track.isFree(currentBlock.row, currentBlock.col)
+            ) {
                 // Waiting for a raft to reach destination
                 return ZERO_VECTOR;
             }
             return { x: 0, y: -1 };
-        } else if (this.host.y > this.target.y) {
+        } else if (isBehindEndOfTarget) {
             if (!this.track.isFree(this.target.row, this.target.col)) {
                 // Waiting for a raft to arrive
                 return ZERO_VECTOR;
