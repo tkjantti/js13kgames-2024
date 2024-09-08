@@ -48,7 +48,7 @@ const TRACK_VISIBLE_HEIGHT = 70;
 const TRACK_START_Y = 400;
 
 // Width of empty area on the left and right side of the track.
-const BANK_WIDTH = 1000;
+const BANK_WIDTH = 5;
 
 // Length of empty area before the start and after the end of the
 // track.

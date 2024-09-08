@@ -37,8 +37,6 @@ export class Camera {
 
     private target: GameObject | null = null;
 
-    public followHorizontally: boolean = false;
-
     constructor(
         private level: Area,
         private view: Dimensions,
@@ -89,7 +87,6 @@ export class Camera {
         }
 
         if (this.target) {
-            this.fitZoom();
             this.followFrame(this.target);
         }
 
@@ -109,24 +106,11 @@ export class Camera {
         this.shakePower -= this.shakeDecay * (1.0 / 60);
     }
 
-    private fitZoom(): void {
-        const zoomedWidth = this.level.width * this.zoom;
-        const zoomedHeight = this.level.height * this.zoom;
-
-        // Zoom such that camera stays within the this.level.
-        if (zoomedWidth < this.view.width || zoomedHeight < this.view.height) {
-            this.zoom = Math.max(
-                this.view.width / this.level.width,
-                this.view.height / this.level.height,
-            );
-        }
-    }
-
     private followFrame(o: GameObject): void {
         const viewAreaWidth = this.view.width / this.zoom;
         const viewAreaHeight = this.view.height / this.zoom;
 
-        if (this.followHorizontally) {
+        if (viewAreaWidth < this.level.width) {
             let x = o.x + o.width;
 
             // Keep camera within level in x-direction.
@@ -140,6 +124,8 @@ export class Camera {
             }
 
             this.x = x;
+        } else {
+            this.x = 0;
         }
 
         let y = o.y + o.height;
