@@ -43,7 +43,7 @@ import {
     // @ts-ignore
 } from "./sfx/sfx.js";
 
-const TRACK_VISIBLE_HEIGHT = 100;
+const TRACK_VISIBLE_HEIGHT = 70;
 
 const TRACK_START_Y = 400;
 
