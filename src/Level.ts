@@ -67,7 +67,7 @@ export class Level implements Area {
 
     public characters: Character[] = [];
     private charactersCount = 40;
-    private player: Character;
+    private player = new Character(0, ZERO_VECTOR, undefined, 0, 0);
 
     readonly x;
     readonly y;
@@ -80,6 +80,7 @@ export class Level implements Area {
         trackTemplate: readonly TT[],
         playerWidthOffset: number,
         playerHeightOffset: number,
+        chars: Character[] | undefined,
     ) {
         this.track = new Track(trackTemplate, TRACK_START_Y);
 
@@ -89,13 +90,15 @@ export class Level implements Area {
         this.height = this.track.height + 2 * BANK_HEIGHT;
 
         const startElement = this.track.get(0);
-        const startPositionGap = startElement.width / this.charactersCount;
+        const startPositionGap =
+            startElement.width / (chars ? chars.length : this.charactersCount);
         const startMargin = startPositionGap * 0.3;
 
         const playerStartPosition = {
             x: startElement.minX + startMargin,
             y: startElement.y + 3,
         };
+
         this.player = new Character(
             0,
             playerStartPosition,
@@ -109,7 +112,13 @@ export class Level implements Area {
         this.camera.visibleAreaHeight = TRACK_VISIBLE_HEIGHT;
         this.camera.update();
 
-        for (let i = 1; i < this.charactersCount; i++) {
+        for (
+            let i = 1;
+            i < (chars ? chars.length : this.charactersCount);
+            i++
+        ) {
+            if (chars && chars[i].eliminated) continue; // Skip already eliminated characters
+
             const startPosition = {
                 x: startElement.minX + startMargin + i * startPositionGap,
                 y: startElement.y + 3,
@@ -235,24 +244,22 @@ export class Level implements Area {
             if (c.y + c.height < this.track.finishY) {
                 c.finished = true;
                 c.stop();
-                if (ci === 0) {
-                    if (c.rank === 13 || c.rank > this.characters.length - 13) {
-                        c.eliminated = true;
-                        c.stop();
+                // If all finished but last 13
+                if (c.rank == this.characters.length - 13) {
+                    // Set all unfinised characters as eliminated
+                    for (let ci = 0; ci < this.characters.length; ci++) {
+                        if (
+                            this.characters[ci].rank >
+                            this.characters.length - 13
+                        ) {
+                            this.characters[ci].eliminated = true;
+                        }
+                    }
+                    if (this.characters[0].eliminated) {
                         this.state = State.GAME_OVER;
                     } else {
                         this.state = State.FINISHED;
                     }
-                }
-                // All finished but last 13
-                if (c.rank == this.characters.length - 13) {
-                    // Set all unfinised characters as eliminated
-                    for (let ci = 0; ci < this.characters.length; ci++) {
-                        if (!this.characters[ci].finished) {
-                            this.characters[ci].eliminated = true;
-                        }
-                    }
-                    this.state = State.GAME_OVER;
                 }
             }
         }

@@ -119,13 +119,13 @@ export class Character implements GameObject {
     constructor(
         id: number,
         position: Vector,
-        track: Track,
+        track: Track | undefined,
         wOffset = 1 + Math.random() * 0.6,
         hOffset = 1 + Math.random() * 0.4,
     ) {
         this.x = position.x;
         this.y = position.y;
-        this.ai = id === 0 ? null : new Ai(this, track);
+        this.ai = id === 0 || !track ? null : new Ai(this, track);
         this.color = 0 <= id && id < colors.length ? colors[id] : "black";
         this.width = CHARACTER_DIMENSIONS.width * wOffset;
         this.height = CHARACTER_DIMENSIONS.height * hOffset;

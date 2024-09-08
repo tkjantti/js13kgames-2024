@@ -37,7 +37,7 @@ let randomHeighOffset = 1 + Math.random() * 0.3;
 // Player zoom level for animation
 let z = 1;
 
-let level: Level; // = new Level(simpleTrack, randomWidhOffset, randomHeighOffset);
+let level: Level;
 
 const maxRadius = Math.max(screen.width, screen.height) / 1.5;
 
@@ -63,17 +63,19 @@ const setState = (state: GameState): void => {
         case GameState.Start:
             break;
         case GameState.Ready:
-            if (level) {
+            if (level && level.characters.length > 14) {
                 level = new Level(
                     secondTrack,
                     randomWidhOffset,
                     randomHeighOffset,
+                    level.characters,
                 );
             } else {
                 level = new Level(
                     simpleTrack,
                     randomWidhOffset,
                     randomHeighOffset,
+                    undefined,
                 );
             }
             radius = maxRadius;
@@ -90,7 +92,12 @@ const setState = (state: GameState): void => {
             break;
         case GameState.GameFinished:
             playTune(SFX_FINISHED);
-            sleep(8000).then(() => setState(GameState.Ready));
+            // Players left for next race?
+            if (level.characters.length > 14) {
+                sleep(8000).then(() => setState(GameState.Ready));
+            } else {
+                sleep(8000).then(() => setState(GameState.Start));
+            }
             break;
         default:
             break;
@@ -203,10 +210,56 @@ const draw = (t: number, dt: number): void => {
             cx.arc(centerX, centerY, radius, 0, Math.PI * 2);
             cx.fillStyle = "#802010";
             cx.fill();
-            centerText("❌ ELIMINATED!", 64, "Impact", radius / maxRadius);
-            centerText("You were the 13TH GUY.", 24, "Sans-serif", 1, 80);
+            centerText("❌ ELIMINATED!", 48, "Impact", 1, -70);
+            if (level.characters.length > 14) {
+                if (level.characters[0].rank === 13) {
+                    centerText(
+                        "You were the 13TH GUY.",
+                        24,
+                        "Sans-serif",
+                        1,
+                        0,
+                    );
+                } else {
+                    centerText(
+                        "You were one of the last 13TH GUYs in this race.",
+                        24,
+                        "Sans-serif",
+                        1,
+                        0,
+                    );
+                }
+                centerText(
+                    "You were number " +
+                        level.characters[0].rank +
+                        "/" +
+                        level.characters.length,
+                    32,
+                    "Impact",
+                    1,
+                    40,
+                );
+            } else {
+                centerText(
+                    "You were one of the last 13TH GUYs in this race.",
+                    24,
+                    "Sans-serif",
+                    1,
+                    0,
+                );
+                centerText(
+                    "Your final rank is " + level.characters[0].rank,
+                    32,
+                    "Impact",
+                    1,
+                    40,
+                );
+            }
+
+            centerText("Game over", 32, "Sans-serif", 1, 100);
+
             if (radius >= maxRadius) {
-                centerText("Press ENTER", 24, "Sans-serif", 1, 120);
+                centerText("Press ENTER", 24, "Sans-serif", 1, 160);
             }
 
             if (radius < maxRadius) {
@@ -242,16 +295,39 @@ const draw = (t: number, dt: number): void => {
                 cx.arc(centerX, centerY, radius, 0, Math.PI * 2);
                 cx.fillStyle = "#105000";
                 cx.fill();
-                centerText("RACE FINISHED!", 48, "Impact", 1, -70);
-                centerText("☻", 64, "Impact", 1, -20);
-                centerText(
-                    "You were number " + level.characters[0].rank,
-                    32,
-                    "Impact",
-                    1,
-                    20,
-                );
-                centerText("Ready for the next race.", 32, "Sans-serif", 1, 70);
+
+                if (level.characters.length > 14) {
+                    centerText("RACE FINISHED!", 48, "Impact", 1, -70);
+                    centerText("☻", 64, "Impact", 1, -20);
+                    centerText(
+                        "You were number " +
+                            level.characters[0].rank +
+                            "/" +
+                            level.characters.length,
+                        32,
+                        "Impact",
+                        1,
+                        20,
+                    );
+                    centerText(
+                        "Ready for the next race.",
+                        32,
+                        "Sans-serif",
+                        1,
+                        70,
+                    );
+                } else {
+                    centerText("RACE AND GAME FINISHED!", 48, "Impact", 1, -70);
+                    centerText("☻", 64, "Impact", 1, -20);
+                    centerText(
+                        "Your were the number one!",
+                        32,
+                        "Impact",
+                        1,
+                        20,
+                    );
+                    centerText("Game over", 32, "Sans-serif", 1, 70);
+                }
                 cx.save();
                 cx.translate(
                     radius < canvas.width / 6 ? radius : canvas.width / 6,
@@ -368,7 +444,7 @@ const drawStartScreen = (t: number, wait: boolean, z: number): void => {
 
     if (wait) {
         centerText(
-            "Avoid being the 13th in any situations",
+            "Avoid being a 13th in any situations",
             24,
             "Sans-serif",
             1,
