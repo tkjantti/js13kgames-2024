@@ -238,6 +238,7 @@ export class Level implements Area {
                 if (ci === 0) {
                     if (c.rank === 13 || c.rank > this.characters.length - 13) {
                         c.eliminated = true;
+                        c.stop();
                         this.state = State.GAME_OVER;
                     } else {
                         this.state = State.FINISHED;
@@ -245,6 +246,7 @@ export class Level implements Area {
                 } else {
                     // All finished but last 13
                     if (c.rank == this.characters.length - 13) {
+                        // TODO: set all left eliminated
                         this.state = State.GAME_OVER;
                     }
                 }
