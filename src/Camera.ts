@@ -24,16 +24,12 @@
 
 import { Area, Dimensions } from "./Area";
 import { GameObject } from "./GameObject";
-import { random } from "./random";
 
 export class Camera {
     public x = 0;
     public y = 0;
     public zoom = 1;
     public visibleAreaHeight?: number;
-
-    private shakePower = 0;
-    private shakeDecay = 0;
 
     private target: GameObject | null = null;
 
@@ -60,27 +56,6 @@ export class Camera {
         this.target = target;
     }
 
-    zoomToLevel(): void {
-        this.target = null;
-
-        this.x = this.level.x + this.level.width / 2;
-        this.y = this.level.y + this.level.height / 2;
-
-        if (
-            this.level.width / this.level.height >=
-            this.view.width / this.view.height
-        ) {
-            this.zoom = this.view.width / this.level.width;
-        } else {
-            this.zoom = this.view.height / this.level.height;
-        }
-    }
-
-    shake(power = 8, length = 0.5): void {
-        this.shakePower = power;
-        this.shakeDecay = power / length;
-    }
-
     update(): void {
         if (this.visibleAreaHeight != null) {
             this.zoom = this.view.height / this.visibleAreaHeight;
@@ -89,21 +64,6 @@ export class Camera {
         if (this.target) {
             this.followFrame(this.target);
         }
-
-        this.shakeFrame();
-    }
-
-    private shakeFrame(): void {
-        const { shakePower } = this;
-
-        if (shakePower <= 0) {
-            return;
-        }
-
-        this.x += random(shakePower * 2) - shakePower;
-        this.y += random(shakePower * 2) - shakePower;
-
-        this.shakePower -= this.shakeDecay * (1.0 / 60);
     }
 
     private followFrame(o: GameObject): void {
@@ -131,13 +91,6 @@ export class Camera {
         let y = o.y + o.height;
         // Characted should be 1/4 height from bottom
         y -= viewAreaHeight / 4;
-
-        // Keep camera within level in y-direction.
-        if (y - viewAreaHeight / 2 < this.level.y) {
-            y = this.level.y + viewAreaHeight / 2;
-        } else if (y + viewAreaHeight / 2 > this.level.y + this.level.height) {
-            y = this.level.y + this.level.height - viewAreaHeight / 2;
-        }
 
         this.y = y;
     }
