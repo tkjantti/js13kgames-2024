@@ -237,6 +237,7 @@ export class Level implements Area {
                 c.stop();
                 if (ci === 0) {
                     if (c.rank === 13 || c.rank > this.characters.length - 13) {
+                        c.eliminated = true;
                         this.state = State.GAME_OVER;
                     } else {
                         this.state = State.FINISHED;
