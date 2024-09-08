@@ -63,7 +63,11 @@ const setState = (state: GameState): void => {
         case GameState.Start:
             break;
         case GameState.Ready:
-            if (level && level.characters.length > 14) {
+            if (
+                level &&
+                level.characters.length > 14 &&
+                !level.characters[0].eliminated
+            ) {
                 level = new Level(
                     secondTrack,
                     randomWidhOffset,
@@ -220,6 +224,13 @@ const draw = (t: number, dt: number): void => {
                         1,
                         0,
                     );
+                    centerText(
+                        "You were number 13 / " + level.characters.length,
+                        32,
+                        "Impact",
+                        1,
+                        40,
+                    );
                 } else {
                     centerText(
                         "You were one of the last 13TH GUYs in this race.",
@@ -228,18 +239,19 @@ const draw = (t: number, dt: number): void => {
                         1,
                         0,
                     );
+                    centerText(
+                        "You were number " +
+                            level.characters[0].rank +
+                            " / " +
+                            level.characters.length,
+                        32,
+                        "Impact",
+                        1,
+                        40,
+                    );
                 }
-                centerText(
-                    "You were number " +
-                        level.characters[0].rank +
-                        "/" +
-                        level.characters.length,
-                    32,
-                    "Impact",
-                    1,
-                    40,
-                );
             } else {
+                // Final rank
                 centerText(
                     "You were one of the last 13TH GUYs in this race.",
                     24,

@@ -238,12 +238,17 @@ export class Level implements Area {
                 }
             }
 
-            // If player character finishes
-            // TODO: add time limit or how many can finish if needed
             // TODO: take some steps after finish
             if (c.y + c.height < this.track.finishY) {
-                c.finished = true;
-                c.stop();
+                if (c.rank === 13) {
+                    c.eliminated = true;
+                    c.stop();
+                    if (!c.ai) this.state = State.GAME_OVER;
+                } else {
+                    c.finished = true;
+                    c.stop();
+                }
+
                 // If all finished but last 13
                 if (c.rank == this.characters.length - 13) {
                     // Set all unfinised characters as eliminated
@@ -255,6 +260,7 @@ export class Level implements Area {
                             this.characters[ci].eliminated = true;
                         }
                     }
+                    // If player character is eliminated or finishes
                     if (this.characters[0].eliminated) {
                         this.state = State.GAME_OVER;
                     } else {
