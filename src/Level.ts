@@ -174,8 +174,7 @@ export class Level implements Area {
             // Do not collide if character is finished or eliminated
             if (c.finished || c.eliminated) continue;
 
-            for (let oi = 0; oi < this.characters.length; oi++) {
-                if (oi === ci) continue;
+            for (let oi = ci + 1; oi < this.characters.length; oi++) {
                 const other = this.characters[oi];
                 if (other.finished || other.eliminated) continue;
 
