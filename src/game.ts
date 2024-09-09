@@ -65,9 +65,8 @@ const setState = (state: GameState): void => {
         case GameState.Start:
             break;
         case GameState.Ready:
-            if (level && !level.player.eliminated) {
-                const track =
-                    level.characters.length > 27 ? thirdTrack : secondTrack;
+            if (raceNumber > 1 && !level.player.eliminated) {
+                const track = raceNumber === 3 ? thirdTrack : secondTrack;
                 level = new Level(
                     track,
                     randomWidhOffset,
