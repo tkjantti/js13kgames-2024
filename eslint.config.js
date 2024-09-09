@@ -6,7 +6,7 @@ import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended"
 
 export default tseslint.config(
     {
-        ignores: ["dist/*"],
+        ignores: ["dist/*", "vite.config.js"],
     },
     eslint.configs.recommended,
     ...tseslint.configs.recommended,
