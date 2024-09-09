@@ -51,16 +51,37 @@ const colors: string[] = [
     "slateblue",
     "violet",
     "dodgerblue",
-    "darkcyan",
-    "darkmagenta",
-    "darkseagreen",
-    "darkslategray",
-    "darkturquoise",
+    "cyan",
+    "magenta",
+    "lightgreen",
+    "lightgray",
+    "turquoise",
     "deepskyblue",
     "lightblue",
-    "firebrick",
-    "forestgreen",
+    "lightcoral",
+    "springgreen",
     "fuchsia",
+    "crimson",
+    "lavender",
+    "coral",
+    "teal",
+    "indigo",
+    "salmon",
+    "chartreuse",
+    "periwinkle",
+    "lightpink",
+    "lightyellow",
+    "peach",
+    "mint",
+    "aqua",
+    "lightgoldenrodyellow",
+    "gold",
+    "beige",
+    "skyblue",
+    "khaki",
+    "sienna",
+    "lime",
+    "azure",
 ];
 
 export const playerColor = colors[0];
@@ -98,13 +119,13 @@ export class Character implements GameObject {
     constructor(
         id: number,
         position: Vector,
-        track: Track,
+        track: Track | undefined,
         wOffset = 1 + Math.random() * 0.6,
         hOffset = 1 + Math.random() * 0.4,
     ) {
         this.x = position.x;
         this.y = position.y;
-        this.ai = id === 0 ? null : new Ai(this, track);
+        this.ai = id === 0 || !track ? null : new Ai(this, track);
         this.color = 0 <= id && id < colors.length ? colors[id] : "black";
         this.width = CHARACTER_DIMENSIONS.width * wOffset;
         this.height = CHARACTER_DIMENSIONS.height * hOffset;
@@ -202,6 +223,11 @@ export class Character implements GameObject {
         //     );
         //     cx.restore();
         // }
+
+        // TODO: This fixes some colors seeing as black
+        colors.forEach((color) => {
+            cx.fillStyle = color;
+        });
 
         // Different render height than actual height, for pseudo-3d effect.
         const renderHeight = this.height * 3;

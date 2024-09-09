@@ -54,8 +54,6 @@ const BANK_WIDTH = 5;
 // track.
 const BANK_HEIGHT = 40;
 
-const CHARACTER_COUNT = 20;
-
 export enum State {
     RUNNING,
     GAME_OVER,
@@ -68,7 +66,8 @@ export class Level implements Area {
     private track: Track;
 
     public characters: Character[] = [];
-    private player: Character;
+    private charactersCount = 40;
+    private player = new Character(0, ZERO_VECTOR, undefined, 0, 0);
 
     readonly x;
     readonly y;
@@ -81,6 +80,7 @@ export class Level implements Area {
         trackTemplate: readonly TT[],
         playerWidthOffset: number,
         playerHeightOffset: number,
+        chars: Character[] | undefined,
     ) {
         this.track = new Track(trackTemplate, TRACK_START_Y);
 
@@ -90,13 +90,15 @@ export class Level implements Area {
         this.height = this.track.height + 2 * BANK_HEIGHT;
 
         const startElement = this.track.get(0);
-        const startPositionGap = startElement.width / CHARACTER_COUNT;
+        const startPositionGap =
+            startElement.width / (chars ? chars.length : this.charactersCount);
         const startMargin = startPositionGap * 0.3;
 
         const playerStartPosition = {
             x: startElement.minX + startMargin,
             y: startElement.y + 3,
         };
+
         this.player = new Character(
             0,
             playerStartPosition,
@@ -110,7 +112,13 @@ export class Level implements Area {
         this.camera.visibleAreaHeight = TRACK_VISIBLE_HEIGHT;
         this.camera.update();
 
-        for (let i = 1; i < CHARACTER_COUNT; i++) {
+        for (
+            let i = 1;
+            i < (chars ? chars.length : this.charactersCount);
+            i++
+        ) {
+            if (chars && chars[i].eliminated) continue; // Skip already eliminated characters
+
             const startPosition = {
                 x: startElement.minX + startMargin + i * startPositionGap,
                 y: startElement.y + 3,
@@ -229,14 +237,30 @@ export class Level implements Area {
                 }
             }
 
-            // If player character finishes
-            // TODO: add time limit or how many can finish if needed
             // TODO: take some steps after finish
             if (c.y + c.height < this.track.finishY) {
-                c.finished = true;
-                c.stop();
-                if (ci === 0) {
-                    if (c.rank === 13) {
+                if (c.rank === 13) {
+                    c.eliminated = true;
+                    c.stop();
+                    if (!c.ai) this.state = State.GAME_OVER;
+                } else {
+                    c.finished = true;
+                    c.stop();
+                }
+
+                // If all finished but last 13
+                if (c.rank == this.characters.length - 13) {
+                    // Set all unfinised characters as eliminated
+                    for (let ci = 0; ci < this.characters.length; ci++) {
+                        if (
+                            this.characters[ci].rank >
+                            this.characters.length - 13
+                        ) {
+                            this.characters[ci].eliminated = true;
+                        }
+                    }
+                    // If player character is eliminated or finishes
+                    if (this.characters[0].eliminated) {
                         this.state = State.GAME_OVER;
                     } else {
                         this.state = State.FINISHED;
@@ -380,11 +404,13 @@ export class Level implements Area {
                     ? "red"
                     : char.eliminated
                       ? "crimson"
-                      : char.rank === 1
-                        ? "lightgreen"
-                        : char.ai
-                          ? "white"
-                          : "yellow";
+                      : char.rank > characters.length - 13
+                        ? "orange"
+                        : char.rank === 1
+                          ? "lightgreen"
+                          : char.ai
+                            ? "white"
+                            : "yellow";
 
             cx.font = !char.ai
                 ? "1.4px Sans-serif"
