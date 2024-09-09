@@ -98,7 +98,7 @@ export class Ai {
             return { x: -1, y: 0 };
         } else if (isBehindTarget) {
             if (
-                currentBlockType !== BlockType.Free &&
+                currentBlockType === BlockType.Empty &&
                 !this.track.isFree(currentBlock.row, currentBlock.col)
             ) {
                 // Waiting for a raft to reach destination
