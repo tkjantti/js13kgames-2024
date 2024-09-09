@@ -215,8 +215,10 @@ export class Character implements GameObject {
 
         if (this.fallStartTime != null) {
             // Draw smaller as the character falls down.
-            const sizeRatio =
-                1 - easeInQuad((t - this.fallStartTime) / FALL_TIME);
+            const sizeRatio = Math.max(
+                1 - easeInQuad((t - this.fallStartTime) / FALL_TIME),
+                0,
+            );
             cx.translate(this.width / 2, renderHeight / 2);
             cx.scale(sizeRatio, sizeRatio);
             cx.translate(-this.width / 2, -renderHeight / 2);

@@ -43,12 +43,12 @@ import {
     // @ts-ignore
 } from "./sfx/sfx.js";
 
-const TRACK_VISIBLE_HEIGHT = 100;
+const TRACK_VISIBLE_HEIGHT = 70;
 
 const TRACK_START_Y = 400;
 
 // Width of empty area on the left and right side of the track.
-const BANK_WIDTH = 1000;
+const BANK_WIDTH = 5;
 
 // Length of empty area before the start and after the end of the
 // track.
@@ -174,8 +174,7 @@ export class Level implements Area {
             // Do not collide if character is finished or eliminated
             if (c.finished || c.eliminated) continue;
 
-            for (let oi = 0; oi < this.characters.length; oi++) {
-                if (oi === ci) continue;
+            for (let oi = ci + 1; oi < this.characters.length; oi++) {
                 const other = this.characters[oi];
                 if (other.finished || other.eliminated) continue;
 

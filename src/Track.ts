@@ -148,7 +148,7 @@ export class Track {
 
     getBlockType(row: number, col: number): BlockType {
         if (row < 0 || this.elements.length <= row) {
-            return BlockType.NotGood;
+            return BlockType.Empty;
         }
 
         const element = this.elements[row];

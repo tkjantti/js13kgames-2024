@@ -45,7 +45,7 @@ import { GameObject } from "./GameObject";
  */
 const MAX_SPEED = 1;
 
-const CHARACTER_MAX_RUN_SPEED = 0.1;
+const CHARACTER_MAX_RUN_SPEED = 0.01;
 const CHARACTER_RUN_ACCELERATION = 0.001;
 const CHARACTER_STOP_ACCELERATION = 0.001;
 
@@ -68,15 +68,14 @@ export function getMovementVelocity(
         return newVelocity;
     }
 
-    const changeOfSpeed = Math.min(
-        CHARACTER_RUN_ACCELERATION * dt,
-        CHARACTER_MAX_RUN_SPEED,
-    );
-    const movement = multiply(direction, changeOfSpeed);
+    const movement = multiply(direction, CHARACTER_RUN_ACCELERATION * dt);
     let newVelocity = add(c.velocity, movement);
 
-    if (length(newVelocity) > CHARACTER_MAX_RUN_SPEED) {
-        newVelocity = multiply(normalize(newVelocity), CHARACTER_MAX_RUN_SPEED);
+    if (length(newVelocity) > CHARACTER_MAX_RUN_SPEED * dt) {
+        newVelocity = multiply(
+            normalize(newVelocity),
+            CHARACTER_MAX_RUN_SPEED * dt,
+        );
     }
 
     return newVelocity;
