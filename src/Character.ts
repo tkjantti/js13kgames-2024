@@ -86,7 +86,7 @@ const colors: string[] = [
 
 export const playerColor = colors[0];
 
-export const CHARACTER_DIMENSIONS: Readonly<Dimensions> = {
+const CHARACTER_DIMENSIONS: Readonly<Dimensions> = {
     width: 2,
     height: 2,
 };

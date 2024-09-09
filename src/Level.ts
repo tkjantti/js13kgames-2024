@@ -22,9 +22,9 @@
  * SOFTWARE.
  */
 
-import { Area } from "./Area";
+import { Area, overlap } from "./Area";
 import { Camera } from "./Camera";
-import { Character, CHARACTER_DIMENSIONS, FALL_TIME } from "./Character";
+import { Character, FALL_TIME } from "./Character";
 import { GameObject } from "./GameObject";
 import { canvas, cx } from "./graphics";
 import {
@@ -33,7 +33,7 @@ import {
     getMovementVelocity,
 } from "./physics";
 import { Track } from "./Track";
-import { TrackElementType, TT } from "./TrackElement";
+import { BLOCK_WIDTH, TrackElementType, TT } from "./TrackElement";
 import { Vector, ZERO_VECTOR } from "./Vector";
 import {
     playTune,
@@ -42,6 +42,7 @@ import {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
 } from "./sfx/sfx.js";
+import { randomMinMax } from "./random.js";
 
 const TRACK_VISIBLE_HEIGHT = 70;
 
@@ -273,21 +274,26 @@ export class Level implements Area {
     private dropToLatestCheckpoint(c: Character): void {
         const checkpoint = this.track.getCheckpoint(c.latestCheckpointIndex);
 
+        const dropPosition: Area = {
+            x: randomMinMax(
+                checkpoint.minX + BLOCK_WIDTH,
+                checkpoint.maxX - BLOCK_WIDTH,
+            ),
+            y: checkpoint.y + checkpoint.height / 2,
+            width: c.width,
+            height: c.height,
+        };
+
+        if (this.characters.some((o) => overlap(o, dropPosition))) {
+            // No luck, wait for the next frame.
+            return;
+        }
+
         //  13th character will be eliminated if it falls
         if (c.rank === 13) {
             c.eliminated = true;
             c.stop();
             if (!c.ai) this.state = State.GAME_OVER;
-            return;
-        }
-
-        const dropPosition = checkpoint.findEmptySpot(
-            CHARACTER_DIMENSIONS,
-            this.characters,
-        );
-
-        if (dropPosition == null) {
-            // No luck, wait for the next frame.
             return;
         }
 
