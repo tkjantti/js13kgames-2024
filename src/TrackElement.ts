@@ -28,10 +28,11 @@ import { GameObject } from "./GameObject";
 import { Obstacle } from "./Obstacle";
 import { random, randomMinMax } from "./random";
 
-export const BLOCK_WIDTH = 10;
-export const BLOCK_COUNT = 9;
-
 export const ELEMENT_HEIGHT = 16;
+
+export const BLOCK_WIDTH = 10;
+export const BLOCK_HEIGHT = ELEMENT_HEIGHT;
+export const BLOCK_COUNT = 9;
 
 const FULL_WIDTH = BLOCK_WIDTH * BLOCK_COUNT;
 const NORMAL_WIDTH = BLOCK_WIDTH * 7;
