@@ -66,7 +66,7 @@ const setState = (state: GameState): void => {
             if (
                 level &&
                 level.characters.length > 14 &&
-                !level.characters[0].eliminated
+                !level.player.eliminated
             ) {
                 level = new Level(
                     secondTrack,
@@ -100,7 +100,7 @@ const setState = (state: GameState): void => {
             if (level.characters.length > 14) {
                 sleep(8000).then(() => setState(GameState.Ready));
             } else {
-                sleep(8000).then(() => setState(GameState.Start));
+                waitForEnter().then(() => startRace());
             }
             break;
         default:
@@ -216,22 +216,7 @@ const draw = (t: number, dt: number): void => {
             cx.fill();
             centerText("❌ ELIMINATED!", 48, "Impact", 1, -70);
             if (level.characters.length > 14) {
-                if (level.characters[0].rank === 13) {
-                    centerText(
-                        "You were the 13TH GUY.",
-                        24,
-                        "Sans-serif",
-                        1,
-                        0,
-                    );
-                    centerText(
-                        "You were number 13 / " + level.characters.length,
-                        32,
-                        "Impact",
-                        1,
-                        40,
-                    );
-                } else {
+                if (level.player.rank > level.characters.length - 13) {
                     centerText(
                         "You were one of the last 13TH GUYs in this race.",
                         24,
@@ -241,9 +226,24 @@ const draw = (t: number, dt: number): void => {
                     );
                     centerText(
                         "You were number " +
-                            level.characters[0].rank +
+                            level.player.rank +
                             " / " +
                             level.characters.length,
+                        32,
+                        "Impact",
+                        1,
+                        40,
+                    );
+                } else {
+                    centerText(
+                        "You were the 13TH GUY.",
+                        24,
+                        "Sans-serif",
+                        1,
+                        0,
+                    );
+                    centerText(
+                        "You were number 13 / " + level.characters.length,
                         32,
                         "Impact",
                         1,
@@ -260,7 +260,7 @@ const draw = (t: number, dt: number): void => {
                     0,
                 );
                 centerText(
-                    "Your final rank is " + level.characters[0].rank,
+                    "Your final rank is " + level.player.rank,
                     32,
                     "Impact",
                     1,
@@ -313,7 +313,7 @@ const draw = (t: number, dt: number): void => {
                     centerText("☻", 64, "Impact", 1, -20);
                     centerText(
                         "You were number " +
-                            level.characters[0].rank +
+                            level.player.rank +
                             "/" +
                             level.characters.length,
                         32,
@@ -332,13 +332,14 @@ const draw = (t: number, dt: number): void => {
                     centerText("RACE AND GAME FINISHED!", 48, "Impact", 1, -70);
                     centerText("☻", 64, "Impact", 1, -20);
                     centerText(
-                        "Your were the number one!",
+                        "Your were the number ONE!",
                         32,
                         "Impact",
                         1,
                         20,
                     );
                     centerText("Game over", 32, "Sans-serif", 1, 70);
+                    centerText("Press ENTER", 32, "Sans-serif", 1, 120);
                 }
                 cx.save();
                 cx.translate(
@@ -354,7 +355,9 @@ const draw = (t: number, dt: number): void => {
                     radius < canvas.width / 6
                         ? CharacterFacingDirection.Right
                         : CharacterFacingDirection.Backward,
-                    CharacterAnimation.Walk,
+                    level.characters.length > 14
+                        ? CharacterAnimation.Walk
+                        : CharacterAnimation.Still,
                 );
                 cx.restore();
             }
@@ -460,16 +463,16 @@ const drawStartScreen = (t: number, wait: boolean, z: number): void => {
             24,
             "Sans-serif",
             1,
-            0,
+            -20,
         );
         centerText(
             "or you will be eventually ❌ eliminated!",
             24,
             "Sans-serif",
             1,
-            40,
+            20,
         );
-        centerText("Keys: W, A, S, D or arrows", 24, "Sans-serif", 1, 140);
+        centerText("Keys: W, A, S, D or arrows", 24, "Sans-serif", 1, 80);
     } else {
         Logo();
         centerText("Press ENTER to start the race!", 24, "Sans-serif", 1, 80);

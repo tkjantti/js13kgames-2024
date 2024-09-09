@@ -67,7 +67,7 @@ export class Level implements Area {
 
     public characters: Character[] = [];
     private charactersCount = 40;
-    private player = new Character(0, ZERO_VECTOR, undefined, 0, 0);
+    public player = new Character(0, ZERO_VECTOR, undefined, 0, 0);
 
     readonly x;
     readonly y;
@@ -228,7 +228,7 @@ export class Level implements Area {
             const checkpointIndex = this.track.findLatestCheckpoint(c.y);
             if (checkpointIndex > c.latestCheckpointIndex) {
                 c.latestCheckpointIndex = checkpointIndex;
-                //  13th character will be eliminated if it falls
+                //  13th character will be eliminated if it falls or is 13th in checkpoint
                 if (c.rank === 13) {
                     c.eliminated = true;
                     c.stop();
@@ -248,17 +248,29 @@ export class Level implements Area {
                     c.stop();
                 }
 
-                // If all finished but last 13
-                if (c.rank == this.characters.length - 13) {
-                    // Set all unfinised characters as eliminated
+                // If all finished but last 13, or player finishes
+                if (!c.ai || c.rank == this.characters.length - 13) {
+                    let eliminatedCount = this.characters.filter(
+                        (character) => character.eliminated,
+                    ).length;
+
+                    // Set all unfinished characters as eliminated
                     for (let ci = 0; ci < this.characters.length; ci++) {
                         if (
                             this.characters[ci].rank >
                             this.characters.length - 13
                         ) {
-                            this.characters[ci].eliminated = true;
+                            if (eliminatedCount < 13) {
+                                if (!this.characters[ci].eliminated) {
+                                    this.characters[ci].eliminated = true;
+                                    eliminatedCount++;
+                                }
+                            } else {
+                                break;
+                            }
                         }
                     }
+
                     // If player character is eliminated or finishes
                     if (this.characters[0].eliminated) {
                         this.state = State.GAME_OVER;
