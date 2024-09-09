@@ -6,7 +6,7 @@ import {
     waitForEnter,
 } from "./keyboard";
 import { Level, State } from "./Level";
-import { secondTrack, simpleTrack } from "./tracks";
+import { thirdTrack, secondTrack, simpleTrack } from "./tracks";
 
 import {
     initialize,
@@ -29,6 +29,8 @@ const TIME_STEP = 1000 / 60;
 const MAX_FRAME = TIME_STEP * 5;
 
 let lastTime = 0;
+
+let raceNumber = 0;
 
 // Randomize player character
 let randomWidhOffset = 1 + Math.random() * 0.6;
@@ -63,13 +65,11 @@ const setState = (state: GameState): void => {
         case GameState.Start:
             break;
         case GameState.Ready:
-            if (
-                level &&
-                level.characters.length > 14 &&
-                !level.player.eliminated
-            ) {
+            if (level && !level.player.eliminated) {
+                const track =
+                    level.characters.length > 27 ? thirdTrack : secondTrack;
                 level = new Level(
-                    secondTrack,
+                    track,
                     randomWidhOffset,
                     randomHeighOffset,
                     level.characters,
@@ -82,6 +82,7 @@ const setState = (state: GameState): void => {
                     undefined,
                 );
             }
+            raceNumber++;
             radius = maxRadius;
             playTune(SFX_RACE);
             break;
@@ -322,7 +323,7 @@ const draw = (t: number, dt: number): void => {
                         20,
                     );
                     centerText(
-                        "Ready for the next race.",
+                        "Ready for the next race " + raceNumber + " / 3",
                         32,
                         "Sans-serif",
                         1,
@@ -506,6 +507,7 @@ const drawInitialScreen = (): void => {
 };
 
 export const startRace = async (): Promise<void> => {
+    raceNumber = 1;
     z = 1;
     setState(GameState.Start);
     await waitForEnter();
