@@ -26,9 +26,8 @@ import { easeInOutQuad, easeInOutSine } from "./easings";
 import { triangle } from "./sequences";
 
 export enum CharacterAnimation {
-    Still,
+    Stand,
     Walk,
-    Run,
     Fall,
 }
 
@@ -67,6 +66,10 @@ export function renderCharacter(
     let bouncing = 0;
 
     switch (animation) {
+        case CharacterAnimation.Stand:
+            period = 800;
+            bouncing = easeInOutSine(triangle(period / 2, t)) * 0.04 * h;
+            break;
         case CharacterAnimation.Walk:
             period = 800;
             bouncing = easeInOutSine(triangle(period / 2, t)) * 0.02 * h;
@@ -77,20 +80,6 @@ export function renderCharacter(
             leg2Angle = arm1Angle =
                 -Math.PI / 8 +
                 easeInOutQuad(triangle(period, t + period / 2)) * (Math.PI / 4);
-            break;
-        case CharacterAnimation.Run:
-            period = 1600;
-            bouncing =
-                easeInOutSine(triangle(period / 2, t) + period / 2) * 0.1 * h;
-            leg1Angle = arm2Angle =
-                (-Math.PI * 3) / 8 +
-                easeInOutQuad(triangle(period, t)) * 3 * (Math.PI / 4);
-
-            leg2Angle = arm1Angle =
-                (-Math.PI * 3) / 8 +
-                easeInOutQuad(triangle(period, t + period / 2)) *
-                    3 *
-                    (Math.PI / 4);
             break;
         case CharacterAnimation.Fall:
             period = 3200;
