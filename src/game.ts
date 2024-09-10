@@ -310,7 +310,13 @@ const draw = (t: number, dt: number): void => {
                 } else {
                     centerText("GAME FINISHED!", 48, "Impact", 1, -70);
                     centerText("☻", 64, "Impact", 1, -20);
-                    centerText("The number ONE!", 32, "Impact", 1, 20);
+                    centerText(
+                        "Congratulations to the winner!",
+                        32,
+                        "Impact",
+                        1,
+                        20,
+                    );
                     centerText("Press ENTER", 32, "Sans-serif", 1, 100);
                 }
                 cx.save();
@@ -329,7 +335,7 @@ const draw = (t: number, dt: number): void => {
                         : CharacterFacingDirection.Backward,
                     level.characters.length > 14
                         ? CharacterAnimation.Walk
-                        : CharacterAnimation.Still,
+                        : CharacterAnimation.Stand,
                 );
                 cx.restore();
             }
@@ -469,7 +475,7 @@ const drawInitialScreen = (): void => {
         (canvas.height / 2) * randomHeighOffset,
         0,
         CharacterFacingDirection.Backward,
-        CharacterAnimation.Still,
+        CharacterAnimation.Stand,
     );
     cx.restore();
     Logo();

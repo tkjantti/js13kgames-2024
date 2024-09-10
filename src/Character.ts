@@ -276,6 +276,6 @@ export class Character implements GameObject {
             return CharacterAnimation.Walk;
         }
 
-        return CharacterAnimation.Still;
+        return CharacterAnimation.Stand;
     }
 }
