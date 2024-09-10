@@ -22,16 +22,16 @@
  * SOFTWARE.
  */
 
-import { Area, Dimensions, includes, overlap } from "./Area";
-import { Vector } from "./Vector";
+import { Area, includes, overlap } from "./Area";
 import { GameObject } from "./GameObject";
 import { Obstacle } from "./Obstacle";
-import { random, randomMinMax } from "./random";
-
-export const BLOCK_WIDTH = 10;
-export const BLOCK_COUNT = 9;
+import { random } from "./random";
 
 export const ELEMENT_HEIGHT = 16;
+
+export const BLOCK_WIDTH = 10;
+export const BLOCK_HEIGHT = ELEMENT_HEIGHT;
+export const BLOCK_COUNT = 9;
 
 const FULL_WIDTH = BLOCK_WIDTH * BLOCK_COUNT;
 const NORMAL_WIDTH = BLOCK_WIDTH * 7;
@@ -184,43 +184,6 @@ export class TrackElement {
             this.surfaces.some((s) => includes(s, block)) &&
             !this.objects.some((o) => overlap(o, block))
         );
-    }
-
-    findEmptySpot(c: Dimensions, otherObjects: GameObject[]): Vector | null {
-        const margin = c.width * 0.5;
-        const withMargin: Dimensions = {
-            width: c.width + 2 * margin,
-            height: c.height + 2 * margin,
-        };
-
-        for (let iRandom = 0; iRandom < 50; iRandom++) {
-            const x = randomMinMax(this.minX, this.maxX - withMargin.width);
-            const y =
-                this.y + randomMinMax(0, ELEMENT_HEIGHT - withMargin.height);
-
-            const spotWithMargin: Area = {
-                x,
-                y,
-                width: withMargin.width,
-                height: withMargin.height,
-            };
-
-            if (!this.surfaces.some((s) => overlap(s, spotWithMargin))) {
-                continue;
-            }
-
-            if (this.objects.some((o) => overlap(o, spotWithMargin))) {
-                continue;
-            }
-
-            if (otherObjects.some((o) => overlap(o, spotWithMargin))) {
-                continue;
-            }
-
-            return { x: x + margin, y: y + margin };
-        }
-
-        return null;
     }
 }
 

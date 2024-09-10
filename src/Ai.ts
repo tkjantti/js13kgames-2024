@@ -26,8 +26,13 @@ import { getCenter } from "./Area";
 import { GameObject } from "./GameObject";
 import { random } from "./random";
 import { Block, Track } from "./Track";
-import { BLOCK_COUNT, BLOCK_WIDTH, BlockType } from "./TrackElement";
-import { Vector, ZERO_VECTOR } from "./Vector";
+import {
+    BLOCK_COUNT,
+    BLOCK_HEIGHT,
+    BLOCK_WIDTH,
+    BlockType,
+} from "./TrackElement";
+import { normalize, Vector, ZERO_VECTOR } from "./Vector";
 
 function isWalkableToSomeExtent(t: BlockType): boolean {
     return (
@@ -35,10 +40,28 @@ function isWalkableToSomeExtent(t: BlockType): boolean {
     );
 }
 
+/*
+ * Margin to keep ai from going too close to the edge so that it
+ * wouldn't fall too easily.
+ */
+const Y_MARGIN = 0.3 * BLOCK_HEIGHT;
+
+const FORWARD: Vector = { x: 0, y: -1 };
+const LEFT: Vector = { x: -1, y: 0 };
+const RIGHT: Vector = { x: 1, y: 0 };
+const DIAGONAL_LEFT: Vector = normalize({ x: -1, y: -1 });
+const DIAGONAL_RIGHT: Vector = normalize({ x: 1, y: -1 });
+
 export class Ai {
     private host: GameObject;
     private track: Track;
 
+    /*
+     * Randomized every now and then. Not useful for an individual
+     * character, but makes it looks a bit more interesting when all
+     * the characters don't go exactly the
+     * same path.
+     */
     private horizontalMargin: number = 0;
 
     target: Block | null = null;
@@ -67,6 +90,11 @@ export class Ai {
             return ZERO_VECTOR;
         }
 
+        const isLessThanHalfwayInCurrentBlock: boolean =
+            this.host.y > currentBlock.y + currentBlock.height / 2;
+        const isAtTheEndOfCurrentBlock: boolean =
+            this.host.y <= currentBlock.y + Y_MARGIN;
+
         const isLeftFromTarget: boolean =
             this.host.x < this.target.x + this.horizontalMargin;
         const isRightFromTarget: boolean =
@@ -75,27 +103,58 @@ export class Ai {
 
         const isBehindTarget: boolean =
             this.host.y > this.target.y + this.target.height;
+        const hasReachedTarget: boolean =
+            this.host.y + this.host.height < this.target.y + this.target.height;
         const isBehindEndOfTarget: boolean =
-            this.host.y > this.target.y + this.target.height * 0.1;
+            this.host.y > this.target.y + Y_MARGIN;
+
         const currentBlockType = this.track.getBlockType(
             currentBlock.row,
             currentBlock.col,
         );
 
+        if (hasReachedTarget && currentBlockType !== BlockType.Raft) {
+            const oldTarget = this.target;
+            const nextTarget = this.findNextTarget(oldTarget);
+
+            if (nextTarget == null) {
+                return ZERO_VECTOR;
+            }
+
+            this.target = nextTarget;
+            return ZERO_VECTOR;
+        }
+
         if (
             isLeftFromTarget &&
+            isBehindTarget &&
+            isLessThanHalfwayInCurrentBlock &&
+            this.track.isFree(currentBlock.row, currentBlock.col + 1)
+        ) {
+            return DIAGONAL_RIGHT;
+        } else if (
+            isRightFromTarget &&
+            isBehindTarget &&
+            isLessThanHalfwayInCurrentBlock &&
+            this.track.isFree(currentBlock.row, currentBlock.col - 1)
+        ) {
+            return DIAGONAL_LEFT;
+        } else if (
+            isLeftFromTarget &&
+            isAtTheEndOfCurrentBlock &&
             isWalkableToSomeExtent(
                 this.track.getBlockType(currentBlock.row, currentBlock.col + 1),
             )
         ) {
-            return { x: 1, y: 0 };
+            return RIGHT;
         } else if (
             isRightFromTarget &&
+            isAtTheEndOfCurrentBlock &&
             isWalkableToSomeExtent(
                 this.track.getBlockType(currentBlock.row, currentBlock.col - 1),
             )
         ) {
-            return { x: -1, y: 0 };
+            return LEFT;
         } else if (isBehindTarget) {
             if (
                 currentBlockType === BlockType.Empty &&
@@ -104,14 +163,14 @@ export class Ai {
                 // Waiting for a raft to reach destination
                 return ZERO_VECTOR;
             }
-            return { x: 0, y: -1 };
+            return FORWARD;
         } else if (isBehindEndOfTarget) {
             if (!this.track.isFree(this.target.row, this.target.col)) {
                 // Waiting for a raft to arrive
                 return ZERO_VECTOR;
             }
 
-            return { x: 0, y: -1 };
+            return FORWARD;
         } else {
             this.target = null;
             return ZERO_VECTOR;
@@ -125,6 +184,7 @@ export class Ai {
             const col = currentBlock.col + diff;
 
             const blockType = this.track.getBlockType(row, col);
+
             if (blockType === BlockType.Free || blockType === BlockType.Raft) {
                 this.horizontalMargin = random(0.2) * BLOCK_WIDTH;
                 return this.track.getBlock(row, col);
