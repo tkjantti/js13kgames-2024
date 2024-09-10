@@ -96,7 +96,7 @@ const setState = (state: GameState): void => {
             break;
         case GameState.GameFinished:
             playTune(SFX_FINISHED);
-            // Players left for next race?
+            // Players left for next round?
             if (level.characters.length > 14) {
                 sleep(8000).then(() => setState(GameState.Ready));
             } else {
@@ -218,14 +218,14 @@ const draw = (t: number, dt: number): void => {
             if (level.characters.length > 14) {
                 if (level.player.rank > level.characters.length - 13) {
                     centerText(
-                        "You were one of the last 13TH GUYs in this race.",
+                        "You are one of the last 13TH GUYs in this round.",
                         24,
                         "Sans-serif",
                         1,
                         0,
                     );
                     centerText(
-                        "You were number " +
+                        "You finished " +
                             level.player.rank +
                             " / " +
                             level.characters.length,
@@ -235,15 +235,10 @@ const draw = (t: number, dt: number): void => {
                         40,
                     );
                 } else {
+                    centerText("You are the 13TH GUY.", 24, "Sans-serif", 1, 0);
                     centerText(
-                        "You were the 13TH GUY.",
-                        24,
-                        "Sans-serif",
-                        1,
-                        0,
-                    );
-                    centerText(
-                        "You were number 13 / " + level.characters.length,
+                        "Your final ranks is 13th of " +
+                            level.characters.length,
                         32,
                         "Impact",
                         1,
@@ -253,7 +248,7 @@ const draw = (t: number, dt: number): void => {
             } else {
                 // Final rank
                 centerText(
-                    "You were one of the last 13TH GUYs in this race.",
+                    "You are one of the last 13TH GUYs.",
                     24,
                     "Sans-serif",
                     1,
@@ -267,11 +262,8 @@ const draw = (t: number, dt: number): void => {
                     40,
                 );
             }
-
-            centerText("Game over", 32, "Sans-serif", 1, 100);
-
             if (radius >= maxRadius) {
-                centerText("Press ENTER", 24, "Sans-serif", 1, 160);
+                centerText("Press ENTER", 24, "Sans-serif", 1, 120);
             }
 
             if (radius < maxRadius) {
@@ -309,37 +301,30 @@ const draw = (t: number, dt: number): void => {
                 cx.fill();
 
                 if (level.characters.length > 14) {
-                    centerText("RACE FINISHED!", 48, "Impact", 1, -70);
+                    centerText("✪ QUALIFIED!", 48, "Impact", 1, -80);
                     centerText("☻", 64, "Impact", 1, -20);
                     centerText(
-                        "You were number " +
+                        "You finished " +
                             level.player.rank +
-                            "/" +
+                            " / " +
                             level.characters.length,
                         32,
                         "Impact",
                         1,
-                        20,
+                        30,
                     );
                     centerText(
-                        "Ready for the next race " + raceNumber + " / 3",
+                        "Next round is " + raceNumber + " / 3",
                         32,
                         "Sans-serif",
                         1,
-                        70,
+                        90,
                     );
                 } else {
-                    centerText("RACE AND GAME FINISHED!", 48, "Impact", 1, -70);
+                    centerText("GAME FINISHED!", 48, "Impact", 1, -70);
                     centerText("☻", 64, "Impact", 1, -20);
-                    centerText(
-                        "Your were the number ONE!",
-                        32,
-                        "Impact",
-                        1,
-                        20,
-                    );
-                    centerText("Game over", 32, "Sans-serif", 1, 70);
-                    centerText("Press ENTER", 32, "Sans-serif", 1, 120);
+                    centerText("Your are the number ONE!", 32, "Impact", 1, 20);
+                    centerText("Press ENTER", 32, "Sans-serif", 1, 100);
                 }
                 cx.save();
                 cx.translate(
@@ -472,7 +457,7 @@ const drawStartScreen = (t: number, wait: boolean, z: number): void => {
             1,
             20,
         );
-        centerText("Keys: W, A, S, D or arrows", 24, "Sans-serif", 1, 80);
+        centerText("⌨ W A S D ▲ ▼ ◄ ►", 24, "Sans-serif", 1, 80);
     } else {
         Logo();
         centerText("Press ENTER to start the race!", 24, "Sans-serif", 1, 80);

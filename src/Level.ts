@@ -222,6 +222,12 @@ export class Level implements Area {
         }
     }
 
+    private centerText(text: string, x: number, y: number, width: number) {
+        const textMetrics = cx.measureText(text);
+        const textX = x + (width - textMetrics.width) / 2;
+        cx.fillText(text, textX, y);
+    }
+
     private checkGameState(): void {
         for (let ci = 0; ci < this.characters.length; ci++) {
             const c = this.characters[ci];
@@ -435,16 +441,21 @@ export class Level implements Area {
                 : char.eliminated || char.rank === 13
                   ? "1.2px Sans-serif"
                   : "1px Sans-serif";
-            cx.fillText(
+
+            if (!char.ai) {
+                this.centerText(
+                    "▲",
+                    char.x,
+                    char.y - char.height * 3.25,
+                    char.width,
+                );
+            }
+
+            this.centerText(
                 char.eliminated ? "❌ 13" : text,
-                char.x +
-                    char.width /
-                        (!char.ai
-                            ? 8
-                            : char.eliminated || char.rank === 13
-                              ? 6
-                              : 4),
+                char.x,
                 char.y - char.height * 2.5,
+                char.width,
             );
         });
 
