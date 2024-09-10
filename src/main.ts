@@ -27,8 +27,8 @@ import { canvas } from "./graphics";
 import { init } from "./game";
 
 const resize = (): void => {
-    const maxWidth = 1920; // Set your desired maximum width
-    const maxHeight = 1080; // Set your desired maximum height
+    const maxWidth = 1920;
+    const maxHeight = 1080;
 
     const width = Math.min(window.innerWidth, maxWidth);
     const height = Math.min(window.innerHeight, maxHeight);
