@@ -218,44 +218,34 @@ const draw = (t: number, dt: number): void => {
             if (level.characters.length > 14) {
                 if (level.player.rank > level.characters.length - 13) {
                     centerText(
-                        "You are one of the last 13TH GUYs in this round.",
+                        "One of the last 13TH GUYs in this round",
                         24,
                         "Sans-serif",
                         1,
                         0,
                     );
                     centerText(
-                        "You finished " +
-                            level.player.rank +
-                            " / " +
-                            level.characters.length,
+                        "The final ranks is " + level.player.rank + ".",
                         32,
                         "Impact",
                         1,
                         40,
                     );
                 } else {
-                    centerText("You are the 13TH GUY.", 24, "Sans-serif", 1, 0);
-                    centerText(
-                        "Your final ranks is 13th of " +
-                            level.characters.length,
-                        32,
-                        "Impact",
-                        1,
-                        40,
-                    );
+                    centerText("The 13TH GUY", 24, "Sans-serif", 1, 0);
+                    centerText("The final rank is 13.", 32, "Impact", 1, 40);
                 }
             } else {
                 // Final rank
                 centerText(
-                    "You are one of the last 13TH GUYs in this round..",
+                    "One of the last 13TH GUYs in this round",
                     24,
                     "Sans-serif",
                     1,
                     0,
                 );
                 centerText(
-                    "Your final rank is " + level.player.rank,
+                    "The final rank is " + level.player.rank + ".",
                     32,
                     "Impact",
                     1,
@@ -304,10 +294,7 @@ const draw = (t: number, dt: number): void => {
                     centerText("✪ QUALIFIED!", 48, "Impact", 1, -80);
                     centerText("☻", 64, "Impact", 1, -20);
                     centerText(
-                        "You finished " +
-                            level.player.rank +
-                            " / " +
-                            level.characters.length,
+                        level.player.rank + " / " + level.characters.length,
                         32,
                         "Impact",
                         1,
@@ -323,7 +310,7 @@ const draw = (t: number, dt: number): void => {
                 } else {
                     centerText("GAME FINISHED!", 48, "Impact", 1, -70);
                     centerText("☻", 64, "Impact", 1, -20);
-                    centerText("Your are the number ONE!", 32, "Impact", 1, 20);
+                    centerText("The number ONE!", 32, "Impact", 1, 20);
                     centerText("Press ENTER", 32, "Sans-serif", 1, 100);
                 }
                 cx.save();
