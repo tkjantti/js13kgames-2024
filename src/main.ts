@@ -27,8 +27,28 @@ import { canvas } from "./graphics";
 import { init } from "./game";
 
 const resize = (): void => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const maxWidth = 1920;
+    const maxHeight = 1080;
+
+    const width = Math.min(window.innerWidth, maxWidth);
+    const height = Math.min(window.innerHeight, maxHeight);
+
+    canvas.width = width;
+    canvas.height = height;
+
+    // Calculate the scale factor to fill the screen
+    const scaleX = window.innerWidth / width;
+    const scaleY = window.innerHeight / height;
+    const scale = Math.min(scaleX, scaleY);
+
+    // Center the canvas
+    canvas.style.position = "absolute";
+    canvas.style.left = `${(window.innerWidth - width * scale) / 2}px`;
+    canvas.style.top = `${(window.innerHeight - height * scale) / 2}px`;
+
+    // Apply the scaling
+    canvas.style.transform = `scale(${scale})`;
+    canvas.style.transformOrigin = "top left";
 };
 
 window.addEventListener("resize", resize, false);
