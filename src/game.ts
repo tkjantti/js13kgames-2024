@@ -248,7 +248,7 @@ const draw = (t: number, dt: number): void => {
             } else {
                 // Final rank
                 centerText(
-                    "You are one of the last 13TH GUYs.",
+                    "You are one of the last 13TH GUYs in this round..",
                     24,
                     "Sans-serif",
                     1,
