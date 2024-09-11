@@ -215,30 +215,11 @@ const draw = (t: number, dt: number): void => {
             cx.fillStyle = "#802010";
             cx.fill();
             centerText("❌ ELIMINATED!", 48, "Impact", 1, -70);
-            if (level.characters.length > 14) {
-                if (level.player.rank > level.characters.length - 13) {
-                    centerText(
-                        "One of the last 13TH GUYs in this round",
-                        24,
-                        "Sans-serif",
-                        1,
-                        0,
-                    );
-                    centerText(
-                        "The final rank is " + level.player.rank + ".",
-                        32,
-                        "Impact",
-                        1,
-                        40,
-                    );
-                } else {
-                    centerText("The 13TH GUY", 24, "Sans-serif", 1, 0);
-                    centerText("The final rank is 13.", 32, "Impact", 1, 40);
-                }
+            if (level.player.rank === 13) {
+                centerText("Don't be the 13TH GUY", 24, "Sans-serif", 1, 0);
             } else {
-                // Final rank
                 centerText(
-                    "One of the last 13TH GUYs in this round",
+                    "Don't be one of the last 13TH GUYs",
                     24,
                     "Sans-serif",
                     1,
@@ -249,11 +230,11 @@ const draw = (t: number, dt: number): void => {
                     32,
                     "Impact",
                     1,
-                    40,
+                    50,
                 );
             }
             if (radius >= maxRadius) {
-                centerText("Press ENTER", 24, "Sans-serif", 1, 120);
+                centerText("Press ENTER", 24, "Sans-serif", 1, 80);
             }
 
             if (radius < maxRadius) {
@@ -292,20 +273,13 @@ const draw = (t: number, dt: number): void => {
 
                 if (level.characters.length > 14) {
                     centerText("✪ QUALIFIED!", 48, "Impact", 1, -80);
-                    centerText("☻", 64, "Impact", 1, -20);
-                    centerText(
-                        level.player.rank + " / " + level.characters.length,
-                        32,
-                        "Impact",
-                        1,
-                        30,
-                    );
+                    centerText("☻", 80, "Impact", 1, 0);
                     centerText(
                         "Next round is " + raceNumber + " / 3",
                         32,
                         "Sans-serif",
                         1,
-                        90,
+                        60,
                     );
                 } else {
                     centerText("GAME FINISHED!", 48, "Impact", 1, -70);
@@ -437,7 +411,7 @@ const drawStartScreen = (t: number, wait: boolean, z: number): void => {
 
     if (wait) {
         centerText(
-            "Avoid being a 13th in any situations",
+            "Avoid being the 13th (or among the last 13)",
             24,
             "Sans-serif",
             1,
