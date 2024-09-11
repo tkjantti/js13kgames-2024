@@ -30,6 +30,7 @@ import {
     createTrack,
     ELEMENT_HEIGHT,
     isRaft,
+    isSlope,
     LEFTMOST_EDGE,
     TrackElement,
     TrackElementType,
@@ -97,25 +98,25 @@ export class Track {
         for (let ei = 0; ei < this.elements.length; ei++) {
             const element = this.elements[ei];
 
-            if (element.slope !== 0) {
-                for (let oi = 0; oi < objects.length; oi++) {
-                    const o = objects[oi];
-                    if (
-                        element.y <= o.y &&
-                        o.y + o.height < element.y + element.height &&
-                        element.minX <= o.x &&
-                        o.x + o.width <= element.maxX
-                    ) {
-                        o.velocity = add(o.velocity, {
-                            x: 0,
-                            y: -0.002 * element.slope * dt,
-                        });
-                    }
-                }
-            }
-
             for (let si = 0; si < element.surfaces.length; si++) {
                 const surface = element.surfaces[si];
+
+                if (isSlope(surface)) {
+                    for (let oi = 0; oi < objects.length; oi++) {
+                        const o = objects[oi];
+                        if (
+                            element.y <= o.y &&
+                            o.y + o.height < element.y + element.height &&
+                            element.minX <= o.x &&
+                            o.x + o.width <= element.maxX
+                        ) {
+                            o.velocity = add(o.velocity, {
+                                x: 0,
+                                y: -0.002 * surface.force * dt,
+                            });
+                        }
+                    }
+                }
 
                 if (isRaft(surface)) {
                     const raft = surface;
