@@ -24,7 +24,7 @@
 
 import { Area, overlap } from "./Area";
 import { Camera } from "./Camera";
-import { Character, FALL_TIME } from "./Character";
+import { Character, CHARACTER_DIMENSIONS, FALL_TIME } from "./Character";
 import { GameObject } from "./GameObject";
 import { canvas, cx } from "./graphics";
 import {
@@ -91,13 +91,15 @@ export class Level implements Area {
         this.height = this.track.height + 2 * BANK_HEIGHT;
 
         const startElement = this.track.get(0);
-        const startPositionGap =
-            startElement.width / (chars ? chars.length : this.charactersCount);
-        const startMargin = startPositionGap * 0.3;
+
+        const CHARS_PER_ROW = 15;
+        const xGap = startElement.width / CHARS_PER_ROW;
+        const yGap = CHARACTER_DIMENSIONS.height * 1.9;
+        const startMargin = xGap * 0.3;
 
         const playerStartPosition = {
             x: startElement.minX + startMargin,
-            y: startElement.y + 3,
+            y: startElement.y,
         };
 
         this.player = new Character(
@@ -119,10 +121,12 @@ export class Level implements Area {
             i++
         ) {
             if (chars && chars[i].eliminated) continue; // Skip already eliminated characters
+            const row = Math.floor(i / CHARS_PER_ROW);
+            const col = i % CHARS_PER_ROW;
 
             const startPosition = {
-                x: startElement.minX + startMargin + i * startPositionGap,
-                y: startElement.y + 3,
+                x: startElement.minX + startMargin + col * xGap,
+                y: startElement.y + row * yGap,
             };
             const aiCharacter = new Character(i, startPosition, this.track);
             this.characters.push(aiCharacter);
