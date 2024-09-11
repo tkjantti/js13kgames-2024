@@ -43,7 +43,7 @@ import { GameObject } from "./GameObject";
  * any inaccuracies in collision detection won't make the objects go
  * too fast.
  */
-const MAX_SPEED = 1;
+const MAX_SPEED = 0.5;
 
 const CHARACTER_MAX_RUN_SPEED = 0.01;
 const CHARACTER_RUN_ACCELERATION = 0.0005;

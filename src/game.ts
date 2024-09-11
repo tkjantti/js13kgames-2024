@@ -225,7 +225,7 @@ const draw = (t: number, dt: number): void => {
                         0,
                     );
                     centerText(
-                        "The final ranks is " + level.player.rank + ".",
+                        "The final rank is " + level.player.rank + ".",
                         32,
                         "Impact",
                         1,
