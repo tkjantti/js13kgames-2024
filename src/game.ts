@@ -259,7 +259,7 @@ const draw = (t: number, dt: number): void => {
             if (radius < maxRadius) {
                 cx.save();
                 cx.globalAlpha = 0.7;
-                cx.translate(canvas.width / 8, radius - canvas.height / 2);
+                cx.translate(canvas.width / 8, radius * 2 - canvas.height);
                 renderCharacter(
                     cx,
                     "gray",
