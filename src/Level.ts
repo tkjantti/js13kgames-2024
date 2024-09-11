@@ -357,13 +357,37 @@ export class Level implements Area {
             if (element.type === TrackElementType.Raft) cx.globalAlpha = 0.5;
             for (let i = 0; i < surfaces.length; i++) {
                 const surface = surfaces[i];
+
+                cx.strokeStyle = "rgba(255,255,255,0.4)";
+                cx.lineWidth = 0.1;
+                // Borders for other than rafts
+                if (element.type !== TrackElementType.Raft) {
+                    cx.strokeRect(
+                        surface.x,
+                        surface.y + 0.1,
+                        surface.width,
+                        surface.height,
+                    );
+                }
+                // Surface
                 cx.fillRect(
                     surface.x,
                     surface.y,
                     surface.width,
                     surface.height,
                 );
+
+                // Borders for rafts
+                if (element.type === TrackElementType.Raft) {
+                    cx.strokeRect(
+                        surface.x,
+                        surface.y,
+                        surface.width,
+                        surface.height,
+                    );
+                }
             }
+
             cx.globalAlpha = 1;
 
             objectsToDraw.push(...element.objects);

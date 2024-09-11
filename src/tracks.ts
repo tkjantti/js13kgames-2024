@@ -48,6 +48,7 @@ export const simpleTrack: readonly TT[] = [
 
 export const secondTrack: readonly TT[] = [
     TT.FullWidth,
+    TT.FullWidth,
     TT.BasicSlope,
     TT.FullWidthWithObstacles,
     TT.Basic,
