@@ -23,6 +23,7 @@
  */
 
 import { Area, overlap } from "./Area";
+import { GameObject } from "./GameObject";
 import {
     BLOCK_WIDTH,
     BlockType,
@@ -34,7 +35,7 @@ import {
     TrackElementType,
     TT,
 } from "./TrackElement";
-import { Vector } from "./Vector";
+import { add, Vector } from "./Vector";
 
 const RAFT_SPEED = 0.005;
 const RAFT_DOCK_TIME = 2000;
@@ -60,7 +61,6 @@ export interface Block extends Area {
 
 export class Track {
     private elements: TrackElement[];
-    private elementsWithRafts: TrackElement[];
     private startY: number;
     private checkpoints: Checkpoint[];
 
@@ -74,9 +74,6 @@ export class Track {
     constructor(templates: readonly TT[], startY: number) {
         this.elements = createTrack(templates, startY);
         this.elementCount = this.elements.length;
-        this.elementsWithRafts = this.elements.filter((e) =>
-            e.surfaces.some((s) => isRaft(s)),
-        );
         this.startY = startY;
         this.finishY =
             this.startY - (this.elements.length - 1) * ELEMENT_HEIGHT;
@@ -96,9 +93,26 @@ export class Track {
             }));
     }
 
-    update(t: number, dt: number, objects: readonly Area[]): void {
-        for (let ei = 0; ei < this.elementsWithRafts.length; ei++) {
-            const element = this.elementsWithRafts[ei];
+    update(t: number, dt: number, objects: readonly GameObject[]): void {
+        for (let ei = 0; ei < this.elements.length; ei++) {
+            const element = this.elements[ei];
+
+            if (element.slope !== 0) {
+                for (let oi = 0; oi < objects.length; oi++) {
+                    const o = objects[oi];
+                    if (
+                        element.y <= o.y &&
+                        o.y + o.height < element.y + element.height &&
+                        element.minX <= o.x &&
+                        o.x + o.width <= element.maxX
+                    ) {
+                        o.velocity = add(o.velocity, {
+                            x: 0,
+                            y: -0.002 * element.slope * dt,
+                        });
+                    }
+                }
+            }
 
             for (let si = 0; si < element.surfaces.length; si++) {
                 const surface = element.surfaces[si];
