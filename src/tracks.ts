@@ -26,6 +26,11 @@ import { TT } from "./TrackElement";
 
 export const simpleTrack: readonly TT[] = [
     TT.FullWidth,
+    TT.BasicSlope,
+    TT.BasicSlope,
+    TT.BasicSlope,
+    TT.BasicSlope,
+
     TT.FullWidth,
     TT.Checkpoint,
     TT.FullWidth,
@@ -101,6 +106,8 @@ export const thirdTrack: readonly TT[] = [
     TT.Checkpoint,
     TT.FullWidth,
     TT.FullWidth,
+    TT.TwoRafts,
+    TT.Chasm,
     TT.TwoRafts,
     TT.Chasm,
     TT.FullWidth,

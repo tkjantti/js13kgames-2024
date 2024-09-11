@@ -61,6 +61,8 @@ export enum State {
     FINISHED,
 }
 
+const SHADOW_COLOR = "rgba(40, 10, 40, 0.6)";
+
 export class Level implements Area {
     private camera: Camera = new Camera(this, canvas);
 
@@ -340,7 +342,7 @@ export class Level implements Area {
             viewArea.y + viewArea.height,
         );
 
-        cx.shadowColor = "rgba(40, 10, 40, 0.6)";
+        cx.shadowColor = SHADOW_COLOR;
 
         for (let e = maxI; e >= minI; e--) {
             const element = this.track.get(e);
@@ -385,6 +387,24 @@ export class Level implements Area {
                         surface.width,
                         surface.height,
                     );
+                }
+
+                if (element.slope > 0) {
+                    // Texture with 12 arrows pointing up
+                    cx.shadowOffsetY = 0;
+                    cx.font = "9px Arial";
+                    cx.textAlign = "center";
+                    cx.textBaseline = "middle";
+
+                    const spacing = surface.width / 9;
+
+                    for (let i = 1; i <= 8; i++) {
+                        cx.fillText(
+                            "↑",
+                            surface.x + i * spacing,
+                            surface.y + surface.height / 2,
+                        );
+                    }
                 }
             }
 
