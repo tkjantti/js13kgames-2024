@@ -100,13 +100,17 @@ export class TrackElement {
     get color(): string {
         switch (this.type) {
             case TrackElementType.CheckPoint:
-                return "rgb(20, 50, 20)";
+                return "rgb(80, 110, 80)";
             case TrackElementType.Finish:
                 return "rgb(0, 255, 0)";
             case TrackElementType.Raft:
                 return "rgb(50,80,80)";
             default:
-                return `rgb(${40 + this.slope * 50}, ${10 + this.slope * 50}, ${40 + this.slope * 50})`;
+                if (this.slope > 0) {
+                    return `rgba(${100 + this.slope * 50}, ${100 + this.slope * 50}, ${200 + this.slope * 50}, ${1 - this.slope})`;
+                } else {
+                    return "rgb(80, 50, 80)";
+                }
         }
     }
 
