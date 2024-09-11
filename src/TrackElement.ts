@@ -100,9 +100,9 @@ export class TrackElement {
     get color(): string {
         switch (this.type) {
             case TrackElementType.CheckPoint:
-                return "rgba(50, 80, 50, 0.6)";
+                return "rgb(50, 80, 50)";
             case TrackElementType.Finish:
-                return "rgba(0, 255, 0, 0.8)";
+                return "rgb(0, 255, 0)";
             case TrackElementType.Raft:
                 return "rgb(50,60,120)";
             default:

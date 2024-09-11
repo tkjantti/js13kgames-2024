@@ -36,13 +36,12 @@ export const simpleTrack: readonly TT[] = [
     TT.Checkpoint,
     TT.FullWidth,
     TT.VeryNarrow,
-    TT.Raft,
-    TT.Chasm,
     TT.Basic,
     TT.Checkpoint,
     TT.BasicSlope,
     TT.FullWidthWithObstacles,
     TT.FullWidthWithObstacleAtCenter,
+    TT.FullWidthWithObstacles,
     TT.Finish,
 ];
 

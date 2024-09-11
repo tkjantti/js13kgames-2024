@@ -61,8 +61,6 @@ export enum State {
     FINISHED,
 }
 
-const SHADOW_COLOR = "rgba(40, 10, 40, 0.6)";
-
 export class Level implements Area {
     private camera: Camera = new Camera(this, canvas);
 
@@ -342,16 +340,14 @@ export class Level implements Area {
             viewArea.y + viewArea.height,
         );
 
-        cx.shadowColor = SHADOW_COLOR;
-
         for (let e = maxI; e >= minI; e--) {
             const element = this.track.get(e);
 
             const surfaces = element.surfaces;
             cx.fillStyle = element.color;
             cx.shadowColor = element.color
-                .replace("rgb", "rgba")
-                .replace(")", ",0.6)");
+                .replace("rgb(", "rgba(")
+                .replace(")", ",0.5)");
             cx.shadowOffsetY =
                 element.height *
                 (element.type === TrackElementType.Raft ? 2 : 8);
