@@ -171,7 +171,7 @@ export class Level implements Area {
             ) {
                 c.fallStartTime = t;
             } else {
-                movementDirection = c.getMovement();
+                movementDirection = c.getMovement(t, dt);
 
                 c.setDirection(movementDirection);
                 c.velocity = getMovementVelocity(c, movementDirection, dt);

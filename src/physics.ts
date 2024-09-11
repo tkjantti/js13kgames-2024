@@ -45,7 +45,7 @@ import { GameObject } from "./GameObject";
  */
 const MAX_SPEED = 0.5;
 
-const CHARACTER_MAX_RUN_SPEED = 0.01;
+export const CHARACTER_MAX_RUN_SPEED = 0.01;
 const CHARACTER_RUN_ACCELERATION = 0.0005;
 
 /*
