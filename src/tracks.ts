@@ -103,6 +103,7 @@ export const thirdTrack: readonly TT[] = [
     TT.FullWidth,
     TT.TwoRafts,
     TT.Chasm,
+    TT.FullWidth,
     TT.TwoRafts,
     TT.Chasm,
     TT.FullWidth,
