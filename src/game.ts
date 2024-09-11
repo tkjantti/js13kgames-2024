@@ -234,7 +234,7 @@ const draw = (t: number, dt: number): void => {
                 );
             }
             if (radius >= maxRadius) {
-                centerText("Press ENTER", 24, "Sans-serif", 1, 80);
+                centerText("Press ENTER", 24, "Sans-serif", 1, 100);
             }
 
             if (radius < maxRadius) {
@@ -282,16 +282,16 @@ const draw = (t: number, dt: number): void => {
                         60,
                     );
                 } else {
-                    centerText("GAME FINISHED!", 48, "Impact", 1, -70);
-                    centerText("☻", 64, "Impact", 1, -20);
+                    centerText("GAME FINISHED!", 48, "Impact", 1, -80);
+                    centerText("☻", 80, "Impact", 1, 0);
                     centerText(
                         "Congratulations to the winner!",
                         32,
                         "Impact",
                         1,
-                        20,
+                        60,
                     );
-                    centerText("Press ENTER", 32, "Sans-serif", 1, 100);
+                    centerText("Press ENTER", 32, "Sans-serif", 1, 120);
                 }
                 cx.save();
                 cx.translate(
