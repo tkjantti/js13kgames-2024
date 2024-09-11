@@ -389,6 +389,19 @@ export class Level implements Area {
                     );
                 }
 
+                if (
+                    element.type === TrackElementType.CheckPoint ||
+                    element.type === TrackElementType.Finish
+                ) {
+                    cx.fillStyle = "rgba(255, 255, 255,0.2)";
+                    cx.fillRect(
+                        surface.x,
+                        surface.y + surface.height - 4,
+                        surface.width,
+                        4,
+                    );
+                }
+
                 if (element.slope > 0) {
                     // Texture with 12 arrows pointing up
                     cx.shadowOffsetY = 0;
@@ -403,6 +416,35 @@ export class Level implements Area {
                             "⇪",
                             surface.x + i * spacing,
                             surface.y + surface.height / 2,
+                        );
+                    }
+                }
+
+                if (
+                    element.type === TrackElementType.CheckPoint ||
+                    element.type === TrackElementType.Finish
+                ) {
+                    cx.shadowOffsetY = 0;
+                    cx.font = "9px Arial";
+                    cx.textAlign = "center";
+                    cx.textBaseline = "middle";
+
+                    const spacing =
+                        surface.width /
+                        (element.type === TrackElementType.Finish ? 14 : 10);
+
+                    for (
+                        let i = 1;
+                        i <=
+                        (element.type === TrackElementType.Finish ? 13 : 9);
+                        i++
+                    ) {
+                        cx.fillText(
+                            element.type === TrackElementType.Finish
+                                ? "▒"
+                                : "☂",
+                            surface.x + i * spacing,
+                            surface.y + surface.height / 2.4,
                         );
                     }
                 }
