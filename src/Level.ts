@@ -340,30 +340,112 @@ export class Level implements Area {
             viewArea.y + viewArea.height,
         );
 
-        cx.shadowColor = "rgba(40, 10, 40, 0.6)";
-
         for (let e = maxI; e >= minI; e--) {
             const element = this.track.get(e);
 
             const surfaces = element.surfaces;
             cx.fillStyle = element.color;
             cx.shadowColor = element.color
-                .replace("rgb", "rgba")
-                .replace(")", ",0.6)");
+                .replace("rgb(", "rgba(")
+                .replace(")", ",0.5)");
             cx.shadowOffsetY =
                 element.height *
-                (element.type === TrackElementType.Raft ? 2 : 10);
+                (element.type === TrackElementType.Raft ? 2 : 8);
 
             if (element.type === TrackElementType.Raft) cx.globalAlpha = 0.5;
             for (let i = 0; i < surfaces.length; i++) {
                 const surface = surfaces[i];
+
+                cx.strokeStyle = "rgba(255,255,255,0.4)";
+                cx.lineWidth = 0.1;
+                // Borders for other than rafts
+                if (element.type !== TrackElementType.Raft) {
+                    cx.strokeRect(
+                        surface.x,
+                        surface.y + 0.1,
+                        surface.width,
+                        surface.height,
+                    );
+                }
+                // Surface
                 cx.fillRect(
                     surface.x,
                     surface.y,
                     surface.width,
                     surface.height,
                 );
+
+                // Borders for rafts
+                if (element.type === TrackElementType.Raft) {
+                    cx.strokeRect(
+                        surface.x,
+                        surface.y,
+                        surface.width,
+                        surface.height,
+                    );
+                }
+
+                if (
+                    element.type === TrackElementType.CheckPoint ||
+                    element.type === TrackElementType.Finish
+                ) {
+                    cx.fillStyle = "rgba(255, 255, 255,0.2)";
+                    cx.fillRect(
+                        surface.x,
+                        surface.y + surface.height - 4,
+                        surface.width,
+                        4,
+                    );
+                }
+
+                if (element.slope > 0) {
+                    // Texture with 12 arrows pointing up
+                    cx.shadowOffsetY = 0;
+                    cx.font = "9px Arial";
+                    cx.textAlign = "center";
+                    cx.textBaseline = "middle";
+
+                    const spacing = surface.width / 9;
+
+                    for (let i = 1; i <= 8; i++) {
+                        cx.fillText(
+                            "⇪",
+                            surface.x + i * spacing,
+                            surface.y + surface.height / 2,
+                        );
+                    }
+                }
+
+                if (
+                    element.type === TrackElementType.CheckPoint ||
+                    element.type === TrackElementType.Finish
+                ) {
+                    cx.shadowOffsetY = 0;
+                    cx.font = "9px Arial";
+                    cx.textAlign = "center";
+                    cx.textBaseline = "middle";
+
+                    const spacing =
+                        surface.width /
+                        (element.type === TrackElementType.Finish ? 14 : 10);
+
+                    for (
+                        let i = 1;
+                        i <=
+                        (element.type === TrackElementType.Finish ? 13 : 9);
+                        i++
+                    ) {
+                        cx.fillText(
+                            element.type === TrackElementType.Finish
+                                ? "▒"
+                                : "☂",
+                            surface.x + i * spacing,
+                            surface.y + surface.height / 2.4,
+                        );
+                    }
+                }
             }
+
             cx.globalAlpha = 1;
 
             objectsToDraw.push(...element.objects);
