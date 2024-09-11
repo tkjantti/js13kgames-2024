@@ -24,6 +24,7 @@
 
 import { getCenter } from "./Area";
 import { GameObject } from "./GameObject";
+import { CHARACTER_MAX_RUN_SPEED } from "./physics";
 import { random } from "./random";
 import { Block, Track } from "./Track";
 import {
@@ -43,6 +44,7 @@ function isWalkableToSomeExtent(t: BlockType): boolean {
 /*
  * Margin to keep ai from going too close to the edge so that it
  * wouldn't fall too easily.
+ * If too much, then ai may have trouble going around obstacles.
  */
 const Y_MARGIN = 0.3 * BLOCK_HEIGHT;
 
@@ -75,7 +77,7 @@ export class Ai {
         this.target = null;
     }
 
-    getMovement(): Vector {
+    getMovement(_: number, dt: number): Vector {
         const pos: Vector = getCenter(this.host);
         const currentBlock = this.track.getBlockAt(pos);
 
@@ -163,14 +165,19 @@ export class Ai {
                 // Waiting for a raft to reach destination
                 return ZERO_VECTOR;
             }
-            return FORWARD;
+
+            return Math.abs(this.host.velocity.y) < CHARACTER_MAX_RUN_SPEED * dt
+                ? FORWARD
+                : ZERO_VECTOR;
         } else if (isBehindEndOfTarget) {
             if (!this.track.isFree(this.target.row, this.target.col)) {
                 // Waiting for a raft to arrive
                 return ZERO_VECTOR;
             }
 
-            return FORWARD;
+            return Math.abs(this.host.velocity.y) < CHARACTER_MAX_RUN_SPEED * dt
+                ? FORWARD
+                : ZERO_VECTOR;
         } else {
             this.target = null;
             return ZERO_VECTOR;

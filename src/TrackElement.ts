@@ -49,6 +49,8 @@ export enum TT { // "Track template"
     Narrow,
     VeryNarrow,
     DualPassage,
+    SlopeEmptySlope,
+    SlopeObstacleSlope,
     FullWidthWithObstacleAtCenter,
     FullWidthWithObstacles,
     Chasm,
@@ -81,6 +83,14 @@ export function isRaft(surface: Area): surface is Raft {
     return "yDirection" in surface;
 }
 
+export interface Slope extends Area {
+    force: number;
+}
+
+export function isSlope(surface: Area): surface is Slope {
+    return "force" in surface;
+}
+
 // An element is one horizontal slice of the track. A track is
 // composed by laying down several elements one after the other.
 export class TrackElement {
@@ -91,8 +101,6 @@ export class TrackElement {
     readonly height: number;
     readonly minX: number;
     readonly maxX: number;
-
-    readonly slope: number = 0;
 
     readonly blocks: boolean[] = new Array(BLOCK_COUNT);
     readonly objects: readonly GameObject[];
@@ -106,24 +114,18 @@ export class TrackElement {
             case TrackElementType.Raft:
                 return "rgb(50,60,120)";
             default:
-                if (this.slope > 0) {
-                    return `rgba(${220 + this.slope * 50}, ${80 + this.slope * 50}, ${60 + this.slope * 50}, ${1 - this.slope})`;
-                } else {
-                    return "rgb(80, 50, 80)";
-                }
+                return "rgb(80, 50, 80)";
         }
     }
 
     constructor(
         y: number,
         type: TrackElementType,
-        slope: number,
         surfaces: readonly Area[],
         objects: readonly GameObject[],
     ) {
         this.y = y;
         this.type = type;
-        this.slope = slope;
         this.surfaces = surfaces;
         this.objects = objects;
         this.minX = Math.min(...this.surfaces.map((s) => s.x));
@@ -209,7 +211,6 @@ export function createTrack(
         let eType = TrackElementType.Normal;
         let surfaces: Area[] = [];
         let objects: GameObject[] = [];
-        let slope: number = 0;
 
         switch (t) {
             case TT.FullWidth:
@@ -232,28 +233,28 @@ export function createTrack(
                     },
                 ];
                 break;
-            case TT.BasicSlope:
-                slope = 0.3;
-                surfaces = [
-                    {
-                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 1,
-                        y,
-                        width: NORMAL_WIDTH,
-                        height: ELEMENT_HEIGHT,
-                    },
-                ];
+            case TT.BasicSlope: {
+                const slope: Slope = {
+                    force: 0.3,
+                    x: LEFTMOST_EDGE + BLOCK_WIDTH * 1,
+                    y,
+                    width: NORMAL_WIDTH,
+                    height: ELEMENT_HEIGHT,
+                };
+                surfaces = [slope];
                 break;
-            case TT.BasicSteepSlope:
-                slope = 0.5;
-                surfaces = [
-                    {
-                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 1,
-                        y,
-                        width: NORMAL_WIDTH,
-                        height: ELEMENT_HEIGHT,
-                    },
-                ];
+            }
+            case TT.BasicSteepSlope: {
+                const slope: Slope = {
+                    force: 0.5,
+                    x: LEFTMOST_EDGE + BLOCK_WIDTH * 1,
+                    y,
+                    width: NORMAL_WIDTH,
+                    height: ELEMENT_HEIGHT,
+                };
+                surfaces = [slope];
                 break;
+            }
             case TT.Narrow:
                 surfaces = [
                     {
@@ -290,6 +291,57 @@ export function createTrack(
                     },
                 ];
                 break;
+            case TT.SlopeEmptySlope: {
+                const slopeLeft: Slope = {
+                    force: 0.3,
+                    x: LEFTMOST_EDGE + BLOCK_WIDTH * 0,
+                    y,
+                    width: BLOCK_WIDTH * 3,
+                    height: ELEMENT_HEIGHT,
+                };
+                const slopeRight: Slope = {
+                    force: 0.3,
+                    x: LEFTMOST_EDGE + BLOCK_WIDTH * 6,
+                    y,
+                    width: BLOCK_WIDTH * 3,
+                    height: ELEMENT_HEIGHT,
+                };
+                surfaces = [slopeLeft, slopeRight];
+                break;
+            }
+            case TT.SlopeObstacleSlope: {
+                const slopeLeft: Slope = {
+                    force: 0.3,
+                    x: LEFTMOST_EDGE + BLOCK_WIDTH * 0,
+                    y,
+                    width: BLOCK_WIDTH * 3,
+                    height: ELEMENT_HEIGHT,
+                };
+                const slopeRight: Slope = {
+                    force: 0.3,
+                    x: LEFTMOST_EDGE + BLOCK_WIDTH * 6,
+                    y,
+                    width: BLOCK_WIDTH * 3,
+                    height: ELEMENT_HEIGHT,
+                };
+                surfaces = [
+                    slopeLeft,
+                    {
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 3,
+                        y,
+                        width: BLOCK_WIDTH * 3,
+                        height: ELEMENT_HEIGHT,
+                    },
+                    slopeRight,
+                ];
+                objects = [
+                    new Obstacle({
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 4,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                ];
+                break;
+            }
             case TT.FullWidthWithObstacleAtCenter:
                 surfaces = [
                     {
@@ -398,6 +450,6 @@ export function createTrack(
                 break;
         }
 
-        return new TrackElement(y, eType, slope, surfaces, objects);
+        return new TrackElement(y, eType, surfaces, objects);
     });
 }

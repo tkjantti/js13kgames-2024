@@ -33,7 +33,7 @@ import {
     getMovementVelocity,
 } from "./physics";
 import { Track } from "./Track";
-import { BLOCK_WIDTH, TrackElementType, TT } from "./TrackElement";
+import { BLOCK_WIDTH, isSlope, TrackElementType, TT } from "./TrackElement";
 import { Vector, ZERO_VECTOR } from "./Vector";
 import {
     playTune,
@@ -171,7 +171,7 @@ export class Level implements Area {
             ) {
                 c.fallStartTime = t;
             } else {
-                movementDirection = c.getMovement();
+                movementDirection = c.getMovement(t, dt);
 
                 c.setDirection(movementDirection);
                 c.velocity = getMovementVelocity(c, movementDirection, dt);
@@ -366,6 +366,13 @@ export class Level implements Area {
                         surface.height,
                     );
                 }
+
+                cx.save();
+                if (isSlope(surface)) {
+                    const f = surface.force;
+                    cx.fillStyle = `rgba(${220 + f * 50}, ${80 + f * 50}, ${60 + f * 50}, ${1 - f})`;
+                }
+
                 // Surface
                 cx.fillRect(
                     surface.x,
@@ -373,6 +380,7 @@ export class Level implements Area {
                     surface.width,
                     surface.height,
                 );
+                cx.restore();
 
                 // Borders for rafts
                 if (element.type === TrackElementType.Raft) {
@@ -397,7 +405,7 @@ export class Level implements Area {
                     );
                 }
 
-                if (element.slope > 0) {
+                if (isSlope(surface)) {
                     // Texture with 12 arrows pointing up
                     cx.shadowOffsetY = 0;
                     cx.font = "9px Arial";
