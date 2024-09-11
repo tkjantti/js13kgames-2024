@@ -406,15 +406,18 @@ export class Level implements Area {
                 }
 
                 if (isSlope(surface)) {
-                    // Texture with 12 arrows pointing up
+                    // Texture with arrows pointing up
                     cx.shadowOffsetY = 0;
                     cx.font = "9px Arial";
                     cx.textAlign = "center";
                     cx.textBaseline = "middle";
+                    cx.fillStyle = "rgba(255, 255, 255, 0.1)";
 
-                    const spacing = surface.width / 9;
+                    console.info(element.width);
+                    const spacing =
+                        element.width / (element.width > 70 ? 9 : 7);
 
-                    for (let i = 1; i <= 8; i++) {
+                    for (let i = 1; i <= surface.width / 9 - 1; i++) {
                         cx.fillText(
                             "⇪",
                             surface.x + i * spacing,
@@ -431,10 +434,11 @@ export class Level implements Area {
                     cx.font = "9px Arial";
                     cx.textAlign = "center";
                     cx.textBaseline = "middle";
+                    cx.fillStyle = "rgba(255, 255, 255, 0.1)";
 
-                    const spacing = surface.width / 10;
+                    const spacing = element.width / 10;
 
-                    for (let i = 1; i <= 9; i++) {
+                    for (let i = 1; i <= surface.width / 9 - 1; i++) {
                         cx.fillText(
                             element.type === TrackElementType.Finish
                                 ? "✪"
