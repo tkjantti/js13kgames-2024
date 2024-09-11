@@ -102,7 +102,7 @@ export class TrackElement {
             case TrackElementType.CheckPoint:
                 return "rgb(50, 80, 50)";
             case TrackElementType.Finish:
-                return "rgb(0, 255, 0)";
+                return "rgb(0, 200, 0)";
             case TrackElementType.Raft:
                 return "rgb(50,60,120)";
             default:

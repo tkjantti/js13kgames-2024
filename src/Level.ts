@@ -324,7 +324,6 @@ export class Level implements Area {
 
     draw(t: number, dt: number): void {
         cx.save();
-
         // Apply camera - drawing in level coordinates after these lines:
         cx.translate(canvas.width / 2, canvas.height / 2);
         cx.scale(this.camera.zoom, this.camera.zoom);
@@ -389,7 +388,7 @@ export class Level implements Area {
                     element.type === TrackElementType.CheckPoint ||
                     element.type === TrackElementType.Finish
                 ) {
-                    cx.fillStyle = "rgba(255, 255, 255,0.2)";
+                    cx.fillStyle = "rgba(255, 255, 255, 0.2)";
                     cx.fillRect(
                         surface.x,
                         surface.y + surface.height - 4,
@@ -425,19 +424,12 @@ export class Level implements Area {
                     cx.textAlign = "center";
                     cx.textBaseline = "middle";
 
-                    const spacing =
-                        surface.width /
-                        (element.type === TrackElementType.Finish ? 14 : 10);
+                    const spacing = surface.width / 10;
 
-                    for (
-                        let i = 1;
-                        i <=
-                        (element.type === TrackElementType.Finish ? 13 : 9);
-                        i++
-                    ) {
+                    for (let i = 1; i <= 9; i++) {
                         cx.fillText(
                             element.type === TrackElementType.Finish
-                                ? "▒"
+                                ? "✪"
                                 : "☂",
                             surface.x + i * spacing,
                             surface.y + surface.height / 2.4,
@@ -506,6 +498,10 @@ export class Level implements Area {
         cx.scale(this.camera.zoom, this.camera.zoom);
         cx.translate(-this.camera.x, -this.camera.y);
 
+        const eliminatedCharactersCount = characters
+            .filter((char) => char.eliminated)
+            .length.toString();
+
         sortedCharacters.forEach((char, index) => {
             char.rank = index + 1;
             const text = `${char.rank}`;
@@ -544,6 +540,32 @@ export class Level implements Area {
                 char.width,
             );
         });
+
+        // Top status texts
+        cx.font = canvas.width / 500 + "px Impact";
+        cx.fillStyle =
+            this.player.rank === 13
+                ? "red"
+                : this.player.eliminated
+                  ? "crimson"
+                  : this.player.rank > characters.length - 13
+                    ? "orange"
+                    : this.player.rank === 1
+                      ? "lightgreen"
+                      : "yellow";
+
+        cx.fillText(
+            "▲ " + this.player.rank + " / " + characters.length,
+            -44,
+            this.camera.y - 30,
+        );
+
+        cx.fillStyle = "white";
+        cx.fillText(
+            "❌ " + eliminatedCharactersCount + " / 13 ELIMINATED",
+            12,
+            this.camera.y - 30,
+        );
 
         cx.restore(); // End camera - Drawing no longer in level coordinates
     }
