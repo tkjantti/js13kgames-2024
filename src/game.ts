@@ -192,7 +192,7 @@ const draw = (t: number, dt: number): void => {
                     cx.fill();
                 }
                 if (radius < maxRadius / 4) {
-                    centerText("↑ GO!", 64, "Impact", 1);
+                    centerText("▲ GO! ▲", 64, "Impact", 1);
                 } else if (radius < maxRadius / 2) {
                     centerText("Set...", 64, "Impact", 1);
                 } else {
