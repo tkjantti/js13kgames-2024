@@ -354,7 +354,7 @@ export class Level implements Area {
                 .replace(")", ",0.6)");
             cx.shadowOffsetY =
                 element.height *
-                (element.type === TrackElementType.Raft ? 2 : 10);
+                (element.type === TrackElementType.Raft ? 2 : 8);
 
             if (element.type === TrackElementType.Raft) cx.globalAlpha = 0.5;
             for (let i = 0; i < surfaces.length; i++) {
@@ -400,7 +400,7 @@ export class Level implements Area {
 
                     for (let i = 1; i <= 8; i++) {
                         cx.fillText(
-                            "↑",
+                            "⇪",
                             surface.x + i * spacing,
                             surface.y + surface.height / 2,
                         );
