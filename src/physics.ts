@@ -47,9 +47,15 @@ const MAX_SPEED = 1;
 
 const CHARACTER_MAX_RUN_SPEED = 0.01;
 const CHARACTER_RUN_ACCELERATION = 0.0005;
+
+/*
+ * How much speed decreases when going over max run speed.
+ */
+const CHARACTER_SLOWDOWN_ACCELERATION = -0.0001;
+
 const CHARACTER_STOP_ACCELERATION = 0.0005;
 
-const OBSTACLE_BOUNCE_FACTOR = 200;
+const OBSTACLE_BOUNCE_FACTOR = 3;
 
 export function getMovementVelocity(
     c: GameObject,
@@ -68,16 +74,37 @@ export function getMovementVelocity(
         return newVelocity;
     }
 
-    const movement = multiply(direction, CHARACTER_RUN_ACCELERATION * dt);
-    let newVelocity = add(c.velocity, movement);
+    const currentSpeedInDirection = dotProduct(c.velocity, direction);
 
-    if (length(newVelocity) > CHARACTER_MAX_RUN_SPEED * dt) {
-        newVelocity = multiply(
-            normalize(newVelocity),
-            CHARACTER_MAX_RUN_SPEED * dt,
-        );
+    const perpendicularDirection: Vector = {
+        x: -direction.y,
+        y: direction.x,
+    };
+    const currentSpeedInPerpendicularDirection: number = dotProduct(
+        c.velocity,
+        perpendicularDirection,
+    );
+
+    let accDirectionAmount = CHARACTER_RUN_ACCELERATION * dt;
+    if (currentSpeedInDirection > CHARACTER_MAX_RUN_SPEED * dt) {
+        accDirectionAmount = CHARACTER_SLOWDOWN_ACCELERATION * dt;
     }
 
+    const accSlowdown = CHARACTER_STOP_ACCELERATION * dt;
+    const accPerpendicularTemp =
+        Math.abs(currentSpeedInPerpendicularDirection) > accSlowdown
+            ? -accSlowdown
+            : 0;
+    const accPerpendicularAmount =
+        Math.sign(currentSpeedInPerpendicularDirection) * accPerpendicularTemp;
+
+    const accDirection: Vector = multiply(direction, accDirectionAmount);
+    const accPerpendicular: Vector = multiply(
+        perpendicularDirection,
+        accPerpendicularAmount,
+    );
+
+    const newVelocity = add(c.velocity, add(accDirection, accPerpendicular));
     return newVelocity;
 }
 
