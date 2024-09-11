@@ -65,6 +65,9 @@ export class Track {
     private startY: number;
     private checkpoints: Checkpoint[];
 
+    // Optimization: no need to loop every element in every frame.
+    private specialElements: TrackElement[];
+
     readonly finishY: number;
 
     readonly elementCount: number;
@@ -75,6 +78,11 @@ export class Track {
     constructor(templates: readonly TT[], startY: number) {
         this.elements = createTrack(templates, startY);
         this.elementCount = this.elements.length;
+
+        this.specialElements = this.elements.filter((e) =>
+            e.surfaces.some((s) => isSlope(s) || isRaft(s)),
+        );
+
         this.startY = startY;
         this.finishY =
             this.startY - (this.elements.length - 1) * ELEMENT_HEIGHT;
@@ -95,8 +103,8 @@ export class Track {
     }
 
     update(t: number, dt: number, objects: readonly GameObject[]): void {
-        for (let ei = 0; ei < this.elements.length; ei++) {
-            const element = this.elements[ei];
+        for (let ei = 0; ei < this.specialElements.length; ei++) {
+            const element = this.specialElements[ei];
 
             for (let si = 0; si < element.surfaces.length; si++) {
                 const surface = element.surfaces[si];
