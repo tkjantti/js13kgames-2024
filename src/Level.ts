@@ -482,103 +482,104 @@ export class Level implements Area {
             (obj) => obj instanceof Character,
         );
 
-        // Do not update status texts if round is already ended
-        if (this.state !== State.RUNNING) return;
+        if (this.state === State.RUNNING) {
+            // Separate finished and unfinished characters
+            const finishedCharacters = characters.filter(
+                (char) => char.finished,
+            );
+            const unfinishedCharacters = characters.filter(
+                (char) => !char.finished,
+            );
 
-        // Separate finished and unfinished characters
-        const finishedCharacters = characters.filter((char) => char.finished);
-        const unfinishedCharacters = characters.filter(
-            (char) => !char.finished,
-        );
+            // Sort finished characters based on their rank
+            finishedCharacters.sort((a, b) => a.rank - b.rank);
 
-        // Sort finished characters based on their rank
-        finishedCharacters.sort((a, b) => a.rank - b.rank);
+            // Sort unfinished characters based on their Y coordinate
+            unfinishedCharacters.sort(
+                (a, b) => a.y + a.height / 2 - (b.y + b.height / 2),
+            );
 
-        // Sort unfinished characters based on their Y coordinate
-        unfinishedCharacters.sort(
-            (a, b) => a.y + a.height / 2 - (b.y + b.height / 2),
-        );
+            // Merge finished and sorted unfinished characters
+            const sortedCharacters = [
+                ...finishedCharacters,
+                ...unfinishedCharacters,
+            ];
 
-        // Merge finished and sorted unfinished characters
-        const sortedCharacters = [
-            ...finishedCharacters,
-            ...unfinishedCharacters,
-        ];
+            // Draw the order number and character name
+            cx.save();
+            cx.translate(canvas.width / 2, canvas.height / 2);
+            cx.scale(this.camera.zoom, this.camera.zoom);
+            cx.translate(-this.camera.x, -this.camera.y);
 
-        // Draw the order number and character name
-        cx.save();
-        cx.translate(canvas.width / 2, canvas.height / 2);
-        cx.scale(this.camera.zoom, this.camera.zoom);
-        cx.translate(-this.camera.x, -this.camera.y);
+            const eliminatedCharactersCount = characters
+                .filter((char) => char.eliminated)
+                .length.toString();
 
-        const eliminatedCharactersCount = characters
-            .filter((char) => char.eliminated)
-            .length.toString();
+            sortedCharacters.forEach((char, index) => {
+                char.rank = index + 1;
+                const text = `${char.rank}`;
+                cx.fillStyle =
+                    char.rank === 13
+                        ? "red"
+                        : char.eliminated
+                          ? "crimson"
+                          : char.rank > characters.length - 13
+                            ? "orange"
+                            : char.rank === 1
+                              ? "lightgreen"
+                              : char.ai
+                                ? "white"
+                                : "yellow";
 
-        sortedCharacters.forEach((char, index) => {
-            char.rank = index + 1;
-            const text = `${char.rank}`;
-            cx.fillStyle =
-                char.rank === 13
-                    ? "red"
-                    : char.eliminated
-                      ? "crimson"
-                      : char.rank > characters.length - 13
-                        ? "orange"
-                        : char.rank === 1
-                          ? "lightgreen"
-                          : char.ai
-                            ? "white"
-                            : "yellow";
+                cx.font = !char.ai
+                    ? "1.4px Sans-serif"
+                    : char.eliminated || char.rank === 13
+                      ? "1.2px Sans-serif"
+                      : "1px Sans-serif";
 
-            cx.font = !char.ai
-                ? "1.4px Sans-serif"
-                : char.eliminated || char.rank === 13
-                  ? "1.2px Sans-serif"
-                  : "1px Sans-serif";
+                if (!char.ai) {
+                    this.centerText(
+                        "▲",
+                        char.x,
+                        char.y - char.height * 3.25,
+                        char.width,
+                    );
+                }
 
-            if (!char.ai) {
                 this.centerText(
-                    "▲",
+                    char.eliminated ? "❌ 13" : text,
                     char.x,
-                    char.y - char.height * 3.25,
+                    char.y - char.height * 2.5,
                     char.width,
                 );
-            }
+            });
 
-            this.centerText(
-                char.eliminated ? "❌ 13" : text,
-                char.x,
-                char.y - char.height * 2.5,
-                char.width,
+            // Top status texts
+            cx.font = canvas.width / 500 + "px Impact";
+            cx.fillStyle =
+                this.player.rank === 13
+                    ? "red"
+                    : this.player.eliminated
+                      ? "crimson"
+                      : this.player.rank > characters.length - 13
+                        ? "orange"
+                        : this.player.rank === 1
+                          ? "lightgreen"
+                          : "yellow";
+
+            cx.fillText(
+                "▲ " + this.player.rank + " / " + characters.length,
+                -44,
+                this.camera.y - 30,
             );
-        });
 
-        // Top status texts
-        cx.font = canvas.width / 500 + "px Impact";
-        cx.fillStyle =
-            this.player.rank === 13
-                ? "red"
-                : this.player.eliminated
-                  ? "crimson"
-                  : this.player.rank > characters.length - 13
-                    ? "orange"
-                    : this.player.rank === 1
-                      ? "lightgreen"
-                      : "yellow";
-
-        cx.fillText(
-            "▲ " + this.player.rank + " / " + characters.length,
-            -44,
-            this.camera.y - 30,
-        );
-
-        cx.fillStyle = "white";
-        cx.fillText(
-            "❌ " + eliminatedCharactersCount + " / 13 ELIMINATED",
-            12,
-            this.camera.y - 30,
-        );
+            cx.fillStyle = "white";
+            cx.fillText(
+                "❌ " + eliminatedCharactersCount + " / 13 ELIMINATED",
+                12,
+                this.camera.y - 30,
+            );
+        }
 
         cx.restore(); // End camera - Drawing no longer in level coordinates
     }
