@@ -280,7 +280,7 @@ const draw = (t: number, dt: number): void => {
                     centerText("✪ QUALIFIED!", 48, "Impact", 1, -80);
                     centerText("☻", 80, "Impact", 1, 0);
                     centerText(
-                        "Next round is " + raceNumber + " / 3",
+                        "Ready for next round " + raceNumber + " / 3",
                         32,
                         "Sans-serif",
                         1,
