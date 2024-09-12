@@ -75,7 +75,7 @@ export class Level implements Area {
 
     public characters: Character[] = [];
     private charactersCount = 40;
-    public player = new Character(0, ZERO_VECTOR, undefined, 0, 0);
+    public player = new Character(0, undefined, 0, 0);
 
     readonly x;
     readonly y;
