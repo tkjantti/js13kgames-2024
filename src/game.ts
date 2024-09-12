@@ -14,6 +14,8 @@ import {
     SFX_START,
     SFX_RACE,
     SFX_FINISHED,
+    SFX_GAMEOVER,
+    SFX_RESTART,
     // Ignore lint errors from JS import
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -89,10 +91,13 @@ const setState = (state: GameState): void => {
             break;
         case GameState.GameOver:
             radius = 1;
-            playTune(SFX_FINISHED);
+            playTune(SFX_GAMEOVER);
             randomWidhOffset = 1 + Math.random() * 0.6;
             randomHeighOffset = 1 + Math.random() * 0.3;
-            waitForEnter().then(() => startRace());
+            waitForEnter().then(() => {
+                playTune(SFX_RESTART);
+                startRace();
+            });
             break;
         case GameState.GameFinished:
             playTune(SFX_FINISHED);
@@ -411,7 +416,7 @@ const drawStartScreen = (t: number, wait: boolean, z: number): void => {
 
     if (wait) {
         centerText(
-            "Avoid being the 13th (or among the last 13)",
+            "Avoid being the 13th or among the last 13",
             24,
             "Sans-serif",
             1,
