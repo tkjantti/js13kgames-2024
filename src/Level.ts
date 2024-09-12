@@ -114,6 +114,8 @@ export class Level implements Area {
 
         this.camera.follow(this.player);
         this.camera.visibleAreaHeight = TRACK_VISIBLE_HEIGHT;
+        // this.camera.zoom = 2;
+        // this.camera.y = 200;
         this.camera.update();
 
         for (
