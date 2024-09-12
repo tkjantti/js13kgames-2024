@@ -54,6 +54,11 @@ const RIGHT: Vector = { x: 1, y: 0 };
 const DIAGONAL_LEFT: Vector = normalize({ x: -1, y: -1 });
 const DIAGONAL_RIGHT: Vector = normalize({ x: 1, y: -1 });
 
+/*
+ * How many blocks to see forward for going full speed.
+ */
+const VISIBILITY_BLOCK_COUNT = 3;
+
 export class Ai {
     private host: GameObject;
     private track: Track;
@@ -166,7 +171,8 @@ export class Ai {
                 return ZERO_VECTOR;
             }
 
-            return Math.abs(this.host.velocity.y) < CHARACTER_MAX_RUN_SPEED * dt
+            return this.isClearAhead(currentBlock) ||
+                !this.goingFullSpeedAlready(dt)
                 ? FORWARD
                 : ZERO_VECTOR;
         } else if (isBehindEndOfTarget) {
@@ -175,13 +181,32 @@ export class Ai {
                 return ZERO_VECTOR;
             }
 
-            return Math.abs(this.host.velocity.y) < CHARACTER_MAX_RUN_SPEED * dt
+            return this.isClearAhead(currentBlock) ||
+                !this.goingFullSpeedAlready(dt)
                 ? FORWARD
                 : ZERO_VECTOR;
         } else {
             this.target = null;
             return ZERO_VECTOR;
         }
+    }
+
+    private isClearAhead(currentBlock: Block): boolean {
+        for (
+            let row = currentBlock.row + 1;
+            row <= currentBlock.row + VISIBILITY_BLOCK_COUNT;
+            row++
+        ) {
+            if (!this.track.isFree(row, currentBlock.col)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private goingFullSpeedAlready(dt: number): boolean {
+        return Math.abs(this.host.velocity.y) > CHARACTER_MAX_RUN_SPEED * dt;
     }
 
     private findNextTarget(currentBlock: Block): Block | null {
