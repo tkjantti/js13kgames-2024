@@ -112,10 +112,6 @@ export class Level implements Area {
         );
         this.characters.push(this.player);
 
-        this.camera.follow(this.player);
-        this.camera.visibleAreaHeight = TRACK_VISIBLE_HEIGHT;
-        this.camera.update();
-
         // Add ai characters
         for (
             let i = 1;
@@ -149,6 +145,10 @@ export class Level implements Area {
             c.x = startPosition.x;
             c.y = startPosition.y;
         }
+
+        this.camera.follow(this.player);
+        this.camera.visibleAreaHeight = TRACK_VISIBLE_HEIGHT;
+        this.camera.update();
     }
 
     update(t: number, dt: number): void {
