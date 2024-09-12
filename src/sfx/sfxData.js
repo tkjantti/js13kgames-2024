@@ -13,18 +13,18 @@ export const bounceSfx = {
             // Instrument 0
             i: [
                 0, // OSC1_WAVEFORM
-                200, // OSC1_VOL
+                255, // OSC1_VOL
                 128, // OSC1_SEMI
                 0, // OSC1_XENV
                 3, // OSC2_WAVEFORM
-                197, // OSC2_VOL
+                255, // OSC2_VOL
                 128, // OSC2_SEMI
                 0, // OSC2_DETUNE
                 0, // OSC2_XENV
                 0, // NOISE_VOL
                 5, // ENV_ATTACK
                 6, // ENV_SUSTAIN
-                80, // ENV_RELEASE
+                64, // ENV_RELEASE
                 0, // ENV_EXP_DECAY
                 0, // ARP_CHORD
                 0, // ARP_SPEED
@@ -45,7 +45,46 @@ export const bounceSfx = {
             // Patterns
             p: [1],
             // Columns
-            c: [{ n: [99], f: [] }],
+            c: [
+                {
+                    n: [
+                        99,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        111,
+                    ],
+                    f: [],
+                },
+            ],
         },
     ],
     rowLen: 500, // In sample lengths
@@ -108,11 +147,11 @@ export const finishSfx = {
             i: [
                 0, // OSC1_WAVEFORM
                 0, // OSC1_VOL
-                140, // OSC1_SEMI
+                180, // OSC1_SEMI
                 0, // OSC1_XENV
                 1, // OSC2_WAVEFORM
                 0, // OSC2_VOL
-                140, // OSC2_SEMI
+                180, // OSC2_SEMI
                 0, // OSC2_DETUNE
                 0, // OSC2_XENV
                 255, // NOISE_VOL
@@ -243,11 +282,11 @@ export const gameoverSfx = {
             i: [
                 0, // OSC1_WAVEFORM
                 0, // OSC1_VOL
-                140, // OSC1_SEMI
+                180, // OSC1_SEMI
                 0, // OSC1_XENV
                 0, // OSC2_WAVEFORM
                 0, // OSC2_VOL
-                140, // OSC2_SEMI
+                180, // OSC2_SEMI
                 0, // OSC2_DETUNE
                 0, // OSC2_XENV
                 160, // NOISE_VOL
@@ -333,11 +372,11 @@ export const hitSfx = {
             // Instrument 0
             i: [
                 0, // OSC1_WAVEFORM
-                200, // OSC1_VOL
+                255, // OSC1_VOL
                 128, // OSC1_SEMI
                 0, // OSC1_XENV
                 3, // OSC2_WAVEFORM
-                197, // OSC2_VOL
+                255, // OSC2_VOL
                 128, // OSC2_SEMI
                 0, // OSC2_DETUNE
                 0, // OSC2_XENV
@@ -365,7 +404,46 @@ export const hitSfx = {
             // Patterns
             p: [1],
             // Columns
-            c: [{ n: [99], f: [] }],
+            c: [
+                {
+                    n: [
+                        99,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        ,
+                        111,
+                    ],
+                    f: [],
+                },
+            ],
         },
     ],
     rowLen: 500, // In sample lengths

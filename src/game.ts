@@ -416,7 +416,7 @@ const drawStartScreen = (t: number, wait: boolean, z: number): void => {
 
     if (wait) {
         centerText(
-            "Avoid being the 13th (or among the last 13)",
+            "Avoid being the 13th or among the last 13",
             24,
             "Sans-serif",
             1,
