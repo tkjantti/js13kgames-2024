@@ -516,7 +516,7 @@ export class Level implements Area {
                 .length.toString();
 
             sortedCharacters.forEach((char, index) => {
-                char.rank = index + 1;
+                char.rank = index + 1; // Update ranks of characters
                 const text = `${char.rank}`;
                 cx.fillStyle =
                     char.rank === 13
