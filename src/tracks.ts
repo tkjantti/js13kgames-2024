@@ -98,10 +98,14 @@ export const secondTrack: readonly TT[] = [
 
 export const thirdTrack: readonly TT[] = [
     TT.FullWidth,
-    TT.FullWidth,
-    TT.BasicSteepSlope,
-    TT.BasicSteepSlope,
-    TT.BasicSlope,
+    TT.Basic,
+    TT.Narrow,
+    TT.VeryNarrow,
+    TT.VeryNarrow,
+    TT.Basic,
+    TT.DualPassage,
+    TT.DualPassage,
+    TT.DualPassage,
     TT.FullWidthWithObstacles,
     TT.FullWidthWithMoreObstacles,
     TT.Checkpoint,
