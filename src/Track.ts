@@ -113,10 +113,10 @@ export class Track {
                     for (let oi = 0; oi < objects.length; oi++) {
                         const o = objects[oi];
                         if (
-                            element.y <= o.y &&
-                            o.y + o.height < element.y + element.height &&
-                            element.minX <= o.x &&
-                            o.x + o.width <= element.maxX
+                            surface.y <= o.y &&
+                            o.y + o.height < surface.y + surface.height &&
+                            surface.x <= o.x &&
+                            o.x + o.width <= surface.x + surface.width
                         ) {
                             o.velocity = add(o.velocity, {
                                 x: 0,
