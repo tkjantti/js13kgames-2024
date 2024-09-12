@@ -99,11 +99,11 @@ export const kbSfx = {
             // Instrument 0
             i: [
                 0, // OSC1_WAVEFORM
-                42, // OSC1_VOL
+                128, // OSC1_VOL
                 128, // OSC1_SEMI
                 0, // OSC1_XENV
                 0, // OSC2_WAVEFORM
-                61, // OSC2_VOL
+                168, // OSC2_VOL
                 128, // OSC2_SEMI
                 0, // OSC2_DETUNE
                 0, // OSC2_XENV
@@ -147,30 +147,30 @@ export const finishSfx = {
             i: [
                 0, // OSC1_WAVEFORM
                 0, // OSC1_VOL
-                180, // OSC1_SEMI
+                140, // OSC1_SEMI
                 0, // OSC1_XENV
                 1, // OSC2_WAVEFORM
                 0, // OSC2_VOL
-                180, // OSC2_SEMI
+                140, // OSC2_SEMI
                 0, // OSC2_DETUNE
                 0, // OSC2_XENV
-                255, // NOISE_VOL
-                53, // ENV_ATTACK
-                255, // ENV_SUSTAIN
-                61, // ENV_RELEASE
+                180, // NOISE_VOL
+                43, // ENV_ATTACK
+                164, // ENV_SUSTAIN
+                64, // ENV_RELEASE
                 0, // ENV_EXP_DECAY
                 148, // ARP_CHORD
-                1, // ARP_SPEED
+                0, // ARP_SPEED
                 0, // LFO_WAVEFORM
                 51, // LFO_AMT
                 2, // LFO_FREQ
                 1, // LFO_FX_FREQ
-                3, // FX_FILTER
-                17, // FX_FREQ
+                1, // FX_FILTER
+                1, // FX_FREQ
                 239, // FX_RESONANCE
                 12, // FX_DIST
                 32, // FX_DRIVE
-                57, // FX_PAN_AMT
+                93, // FX_PAN_AMT
                 1, // FX_PAN_FREQ
                 3, // FX_DELAY_AMT
                 1, // FX_DELAY_TIME
