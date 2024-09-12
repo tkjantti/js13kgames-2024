@@ -54,6 +54,8 @@ export enum TT { // "Track template"
     SlopeEmptyPassage,
     PassageEmptySlope,
     SlopeObstacleSlope,
+    FullWidthWithObstaclesOnRight,
+    FullWidthWithObstaclesOnRight2,
     FullWidthWithMoreObstacles,
     FullWidthWithObstacles,
     Chasm,
@@ -360,16 +362,16 @@ export function createTrack(
             case TT.SlopeObstacleSlope: {
                 const slopeLeft: Slope = {
                     force: 0.3,
-                    x: LEFTMOST_EDGE + BLOCK_WIDTH * 0,
+                    x: LEFTMOST_EDGE + BLOCK_WIDTH * 1,
                     y,
-                    width: BLOCK_WIDTH * 3,
+                    width: BLOCK_WIDTH * 2,
                     height: ELEMENT_HEIGHT,
                 };
                 const slopeRight: Slope = {
                     force: 0.3,
                     x: LEFTMOST_EDGE + BLOCK_WIDTH * 6,
                     y,
-                    width: BLOCK_WIDTH * 3,
+                    width: BLOCK_WIDTH * 2,
                     height: ELEMENT_HEIGHT,
                 };
                 surfaces = [
@@ -385,6 +387,56 @@ export function createTrack(
                 objects = [
                     new Obstacle({
                         x: LEFTMOST_EDGE + BLOCK_WIDTH * 4,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                ];
+                break;
+            }
+            case TT.FullWidthWithObstaclesOnRight: {
+                surfaces = [
+                    {
+                        x: -FULL_WIDTH / 2,
+                        y,
+                        width: FULL_WIDTH,
+                        height: ELEMENT_HEIGHT,
+                    },
+                ];
+                objects = [
+                    new Obstacle({
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 4,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                    new Obstacle({
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 6,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                    new Obstacle({
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 8,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                ];
+                break;
+            }
+            case TT.FullWidthWithObstaclesOnRight2: {
+                surfaces = [
+                    {
+                        x: -FULL_WIDTH / 2,
+                        y,
+                        width: FULL_WIDTH,
+                        height: ELEMENT_HEIGHT,
+                    },
+                ];
+                objects = [
+                    new Obstacle({
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 3,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                    new Obstacle({
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 5,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                    new Obstacle({
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 7,
                         y: centerY - Obstacle.HEIGHT / 2,
                     }),
                 ];
