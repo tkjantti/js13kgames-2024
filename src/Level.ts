@@ -38,6 +38,7 @@ import { Vector, ZERO_VECTOR } from "./Vector";
 import {
     playTune,
     SFX_BOUNCE,
+    SFX_HIT,
     // Ignore lint errors from JS import
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -196,7 +197,7 @@ export class Level implements Area {
                     const volumeByDistance =
                         ci === 0 ? 1 : 1 - Math.min(yDistance / 100, 1);
                     if (volumeByDistance > 0)
-                        playTune(SFX_BOUNCE, volumeByDistance * 0.5);
+                        playTune(SFX_HIT, volumeByDistance);
                 }
             }
         }
