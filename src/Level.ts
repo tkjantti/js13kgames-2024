@@ -61,6 +61,13 @@ export enum State {
     FINISHED,
 }
 
+// https://stackoverflow.com/a/12646864
+function shuffleArray<T>(array: T[]) {
+    for (let i = array.length - 1; i >= 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
 export class Level implements Area {
     private camera: Camera = new Camera(this, canvas);
 
@@ -97,14 +104,8 @@ export class Level implements Area {
         const yGap = CHARACTER_DIMENSIONS.height * 1.9;
         const startMargin = xGap * 0.3;
 
-        const playerStartPosition = {
-            x: startElement.minX + startMargin,
-            y: startElement.y,
-        };
-
         this.player = new Character(
             0,
-            playerStartPosition,
             this.track,
             playerWidthOffset,
             playerHeightOffset,
@@ -115,12 +116,28 @@ export class Level implements Area {
         this.camera.visibleAreaHeight = TRACK_VISIBLE_HEIGHT;
         this.camera.update();
 
+        // Add ai characters
         for (
             let i = 1;
             i < (chars ? chars.length : this.charactersCount);
             i++
         ) {
             if (chars && chars[i].eliminated) continue; // Skip already eliminated characters
+
+            const aiCharacter = new Character(i, this.track);
+            this.characters.push(aiCharacter);
+        }
+
+        // Set start positions
+        const charactersOnStartLine: Character[] = [
+            this.player,
+            ...this.characters,
+        ];
+
+        shuffleArray(charactersOnStartLine);
+
+        for (let i = 0; i < charactersOnStartLine.length; i++) {
+            const c = charactersOnStartLine[i];
             const row = Math.floor(i / CHARS_PER_ROW);
             const col = i % CHARS_PER_ROW;
 
@@ -128,8 +145,9 @@ export class Level implements Area {
                 x: startElement.minX + startMargin + col * xGap,
                 y: startElement.y + row * yGap,
             };
-            const aiCharacter = new Character(i, startPosition, this.track);
-            this.characters.push(aiCharacter);
+
+            c.x = startPosition.x;
+            c.y = startPosition.y;
         }
     }
 
