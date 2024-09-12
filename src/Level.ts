@@ -576,7 +576,7 @@ export class Level implements Area {
                 " / " +
                 (characters.length - 13) +
                 " QUALIFIED",
-            -12,
+            -15,
             this.camera.y - 30,
         );
         cx.fillStyle = "white";
