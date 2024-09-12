@@ -23,17 +23,20 @@
  * SOFTWARE.
  */
 
-import { song1, song2, bounceSfx } from "./sfxData.js";
+import { song1, song2, bounceSfx, kbSfx, finishSfx } from "./sfxData.js";
 import CPlayer from "./musicplayer.js";
 
 export const SFX_START = "start";
 export const SFX_RACE = "race";
 export const SFX_BOUNCE = "bounce";
+export const SFX_KB = "keyboard";
 export const SFX_FINISHED = "finished";
 
 const startTune = document.createElement("audio");
 const raceTune = document.createElement("audio");
 const bounceFx = document.createElement("audio");
+const kbFx = document.createElement("audio");
+const finishFx = document.createElement("audio");
 
 export const initMusicPlayer = (audioTrack, tune, isLooped) => {
     return new Promise((resolve) => {
@@ -65,6 +68,8 @@ export const initialize = () => {
         initMusicPlayer(startTune, song1, true),
         initMusicPlayer(raceTune, song2, true),
         initMusicPlayer(bounceFx, bounceSfx, false),
+        initMusicPlayer(kbFx, kbSfx, false),
+        initMusicPlayer(finishFx, finishSfx, false),
     ]);
 };
 
@@ -128,6 +133,8 @@ export const playTune = (tune, vol = 1) => {
             break;
         }
         case SFX_FINISHED: {
+            finishFx.volume = vol;
+            finishFx.play();
             startTune.currentTime = 0;
             FadeOutIn(raceTune, startTune);
             break;
@@ -154,6 +161,11 @@ export const playTune = (tune, vol = 1) => {
         case SFX_BOUNCE: {
             bounceFx.volume = vol;
             bounceFx.play();
+            break;
+        }
+        case SFX_KB: {
+            kbFx.volume = vol;
+            kbFx.play();
             break;
         }
     }
