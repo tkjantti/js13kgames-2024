@@ -49,9 +49,12 @@ export enum TT { // "Track template"
     Narrow,
     VeryNarrow,
     DualPassage,
+    RightPassage,
     SlopeEmptySlope,
+    SlopeEmptyPassage,
+    PassageEmptySlope,
     SlopeObstacleSlope,
-    FullWidthWithObstacleAtCenter,
+    FullWidthWithMoreObstacles,
     FullWidthWithObstacles,
     Chasm,
     Raft,
@@ -291,22 +294,67 @@ export function createTrack(
                     },
                 ];
                 break;
+            case TT.RightPassage: {
+                surfaces = [
+                    {
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 6,
+                        y,
+                        width: BLOCK_WIDTH * 2,
+                        height: ELEMENT_HEIGHT,
+                    },
+                ];
+                break;
+            }
             case TT.SlopeEmptySlope: {
                 const slopeLeft: Slope = {
                     force: 0.3,
-                    x: LEFTMOST_EDGE + BLOCK_WIDTH * 0,
+                    x: LEFTMOST_EDGE + BLOCK_WIDTH * 1,
                     y,
-                    width: BLOCK_WIDTH * 3,
+                    width: BLOCK_WIDTH * 2,
                     height: ELEMENT_HEIGHT,
                 };
                 const slopeRight: Slope = {
                     force: 0.3,
                     x: LEFTMOST_EDGE + BLOCK_WIDTH * 6,
                     y,
-                    width: BLOCK_WIDTH * 3,
+                    width: BLOCK_WIDTH * 2,
                     height: ELEMENT_HEIGHT,
                 };
                 surfaces = [slopeLeft, slopeRight];
+                break;
+            }
+            case TT.SlopeEmptyPassage: {
+                const slopeLeft: Slope = {
+                    force: 0.3,
+                    x: LEFTMOST_EDGE + BLOCK_WIDTH * 1,
+                    y,
+                    width: BLOCK_WIDTH * 2,
+                    height: ELEMENT_HEIGHT,
+                };
+                const passageRight: Area = {
+                    x: LEFTMOST_EDGE + BLOCK_WIDTH * 6,
+                    y,
+                    width: BLOCK_WIDTH * 2,
+                    height: ELEMENT_HEIGHT,
+                };
+                surfaces = [slopeLeft, passageRight];
+                break;
+            }
+            case TT.PassageEmptySlope: {
+                const passage: Area = {
+                    x: LEFTMOST_EDGE + BLOCK_WIDTH * 1,
+                    y,
+                    width: BLOCK_WIDTH * 2,
+                    height: ELEMENT_HEIGHT,
+                };
+                const slope: Slope = {
+                    force: 0.3,
+                    x: LEFTMOST_EDGE + BLOCK_WIDTH * 6,
+                    y,
+                    width: BLOCK_WIDTH * 2,
+                    height: ELEMENT_HEIGHT,
+                };
+                surfaces = [passage, slope];
                 break;
             }
             case TT.SlopeObstacleSlope: {
@@ -342,7 +390,7 @@ export function createTrack(
                 ];
                 break;
             }
-            case TT.FullWidthWithObstacleAtCenter:
+            case TT.FullWidthWithMoreObstacles:
                 surfaces = [
                     {
                         x: -FULL_WIDTH / 2,
@@ -353,7 +401,23 @@ export function createTrack(
                 ];
                 objects = [
                     new Obstacle({
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 0,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                    new Obstacle({
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 2,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                    new Obstacle({
                         x: LEFTMOST_EDGE + BLOCK_WIDTH * 4,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                    new Obstacle({
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 6,
+                        y: centerY - Obstacle.HEIGHT / 2,
+                    }),
+                    new Obstacle({
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 8,
                         y: centerY - Obstacle.HEIGHT / 2,
                     }),
                 ];
