@@ -482,6 +482,9 @@ export class Level implements Area {
             (obj) => obj instanceof Character,
         );
 
+        // Do not update status texts if round is already ended
+        if (this.state !== State.RUNNING) return;
+
         // Separate finished and unfinished characters
         const finishedCharacters = characters.filter((char) => char.finished);
         const unfinishedCharacters = characters.filter(
