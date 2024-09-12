@@ -70,8 +70,6 @@ const resize = (): void => {
     // Apply the scaling
     canvas.style.transform = `scale(${scale})`;
     canvas.style.transformOrigin = "top left";
-
-    console.info("Resized to", canvas.width, canvas.height);
 };
 
 window.addEventListener("resize", resize, false);
