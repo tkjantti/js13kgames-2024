@@ -269,7 +269,7 @@ export class Character implements GameObject {
             return CharacterAnimation.Fall;
         }
 
-        if (!isZero(this.direction)) {
+        if (!isZero(this.velocity)) {
             return CharacterAnimation.Walk;
         }
 
