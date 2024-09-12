@@ -49,6 +49,8 @@ export enum TT { // "Track template"
     Narrow,
     VeryNarrow,
     DualPassage,
+    DualPassageExt,
+    TriplePassage,
     RightPassage,
     SlopeEmptySlope,
     SlopeEmptyPassage,
@@ -290,6 +292,44 @@ export function createTrack(
                     },
                     {
                         x: RIGHTMOST_EDGE - BLOCK_WIDTH * 3,
+                        y,
+                        width: BLOCK_WIDTH * 2,
+                        height: ELEMENT_HEIGHT,
+                    },
+                ];
+                break;
+            case TT.DualPassageExt:
+                surfaces = [
+                    {
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH,
+                        y,
+                        width: BLOCK_WIDTH * 2,
+                        height: ELEMENT_HEIGHT,
+                    },
+                    {
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 4,
+                        y,
+                        width: BLOCK_WIDTH * 5,
+                        height: ELEMENT_HEIGHT,
+                    },
+                ];
+                break;
+            case TT.TriplePassage:
+                surfaces = [
+                    {
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 1,
+                        y,
+                        width: BLOCK_WIDTH * 2,
+                        height: ELEMENT_HEIGHT,
+                    },
+                    {
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 4,
+                        y,
+                        width: BLOCK_WIDTH * 2,
+                        height: ELEMENT_HEIGHT,
+                    },
+                    {
+                        x: LEFTMOST_EDGE + BLOCK_WIDTH * 7,
                         y,
                         width: BLOCK_WIDTH * 2,
                         height: ELEMENT_HEIGHT,

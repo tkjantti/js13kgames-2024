@@ -70,15 +70,15 @@ const colors: string[] = [
     "chartreuse",
     "periwinkle",
     "lightpink",
-    "lightyellow",
+    "chocolate",
     "peach",
     "mint",
     "aqua",
-    "lightgoldenrodyellow",
-    "gold",
+    "indianred",
+    "olive",
     "beige",
     "skyblue",
-    "khaki",
+    "mediumturquoise",
     "sienna",
     "lime",
     "azure",
@@ -105,8 +105,8 @@ export class Character implements GameObject {
 
     private color: string;
 
-    x: number;
-    y: number;
+    x: number = 0;
+    y: number = 0;
     width: number;
     height: number;
 
@@ -118,13 +118,10 @@ export class Character implements GameObject {
 
     constructor(
         id: number,
-        position: Vector,
         track: Track | undefined,
         wOffset = 1 + Math.random() * 0.6,
         hOffset = 1 + Math.random() * 0.4,
     ) {
-        this.x = position.x;
-        this.y = position.y;
         this.ai = id === 0 || !track ? null : new Ai(this, track);
         this.color = 0 <= id && id < colors.length ? colors[id] : "black";
         this.width = CHARACTER_DIMENSIONS.width * wOffset;
