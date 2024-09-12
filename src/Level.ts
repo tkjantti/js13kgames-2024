@@ -556,12 +556,16 @@ export class Level implements Area {
                       : "1px Sans-serif";
 
                 if (!char.ai) {
+                    cx.save();
+                    cx.font = "4.0px Sans-serif";
                     this.centerText(
                         "▲",
                         char.x,
                         char.y - char.height * 3.25,
                         char.width,
                     );
+
+                    cx.restore();
                 }
 
                 this.centerText(
