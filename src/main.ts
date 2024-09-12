@@ -30,21 +30,19 @@ const resize = (): void => {
     const maxWidth = 1920;
     const maxHeight = 1080;
 
-    const width = Math.min(window.innerWidth, maxWidth);
-    const height = Math.min(window.innerHeight, maxHeight);
-
-    canvas.width = width;
-    canvas.height = height;
+    // Set the canvas dimensions to 1920x1080
+    canvas.width = maxWidth;
+    canvas.height = maxHeight;
 
     // Calculate the scale factor to fill the screen
-    const scaleX = window.innerWidth / width;
-    const scaleY = window.innerHeight / height;
+    const scaleX = window.innerWidth / maxWidth;
+    const scaleY = window.innerHeight / maxHeight;
     const scale = Math.min(scaleX, scaleY);
 
     // Center the canvas
     canvas.style.position = "absolute";
-    canvas.style.left = `${(window.innerWidth - width * scale) / 2}px`;
-    canvas.style.top = `${(window.innerHeight - height * scale) / 2}px`;
+    canvas.style.left = `${(window.innerWidth - maxWidth * scale) / 2}px`;
+    canvas.style.top = `${(window.innerHeight - maxHeight * scale) / 2}px`;
 
     // Apply the scaling
     canvas.style.transform = `scale(${scale})`;

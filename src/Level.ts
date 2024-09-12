@@ -552,7 +552,7 @@ export class Level implements Area {
         });
 
         // Top status texts
-        cx.font = canvas.width / 500 + "px Impact";
+        cx.font = "4px Impact";
         cx.fillStyle =
             this.player.rank === 13
                 ? "red"
@@ -566,14 +566,23 @@ export class Level implements Area {
 
         cx.fillText(
             "▲ " + this.player.rank + " / " + characters.length,
-            -44,
+            -42,
             this.camera.y - 30,
         );
-
+        cx.fillStyle = "green";
+        cx.fillText(
+            "✪ " +
+                finishedCharacters.length +
+                " / " +
+                (characters.length - 13) +
+                " QUALIFIED",
+            -12,
+            this.camera.y - 30,
+        );
         cx.fillStyle = "white";
         cx.fillText(
-            "❌ " + eliminatedCharactersCount + " / 13 ELIMINATED",
-            12,
+            "❌ " + eliminatedCharactersCount + " / 13",
+            27,
             this.camera.y - 30,
         );
 
