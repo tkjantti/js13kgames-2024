@@ -73,7 +73,7 @@ export class Obstacle implements GameObject {
             0,
             2 * Math.PI,
         );
-        cx.shadowOffsetY = this.height * 8;
+        cx.shadowOffsetY = this.height * 4;
         cx.shadowBlur = this.height;
         cx.shadowColor = "rgba(0, 0, 0, 0.1)";
         cx.fill();

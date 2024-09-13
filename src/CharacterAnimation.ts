@@ -131,7 +131,7 @@ export function renderCharacter(
     cx.lineJoin = "round";
     cx.lineCap = "round";
 
-    cx.shadowOffsetY = 20;
+    cx.shadowOffsetY = 10;
     cx.shadowBlur = 10;
     cx.shadowColor = "rgba(0, 0, 0, 0.5)";
 

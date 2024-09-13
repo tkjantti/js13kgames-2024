@@ -26,34 +26,13 @@ import "./style.css";
 import { canvas } from "./graphics";
 import { init } from "./game";
 
-const maxWidth = 1920;
-const maxHeight = 1080;
-
 const resize = (): void => {
-    // Calculate the aspect ratio
-    const aspectRatio = maxWidth / maxHeight;
+    const maxWidth = 1366;
+    const maxHeight = 768;
 
-    // Calculate the width and height based on the window size while maintaining the aspect ratio
-    let width = window.innerWidth;
-    let height = window.innerHeight;
+    const width = Math.min(window.innerWidth, maxWidth);
+    const height = Math.min(window.innerHeight, maxHeight);
 
-    if (width / height > aspectRatio) {
-        width = height * aspectRatio;
-    } else {
-        height = width / aspectRatio;
-    }
-
-    // Ensure the width and height do not exceed the maximum resolution
-    if (width > maxWidth) {
-        width = maxWidth;
-        height = maxWidth / aspectRatio;
-    }
-    if (height > maxHeight) {
-        height = maxHeight;
-        width = maxHeight * aspectRatio;
-    }
-
-    // Set the canvas width and height
     canvas.width = width;
     canvas.height = height;
 
