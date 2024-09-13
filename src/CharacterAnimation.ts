@@ -72,7 +72,7 @@ export function renderCharacter(
             break;
         case CharacterAnimation.Walk:
             period = 250;
-            bouncing = easeInOutSine(triangle(period / 2, t / 2)) * 0.02 * h;
+            bouncing = easeInOutSine(triangle(period / 2, t / 2)) * 0.015 * h;
             leg1Angle = arm2Angle =
                 -Math.PI / 8 +
                 easeInOutQuad(triangle(period, t)) * (Math.PI / 4);
