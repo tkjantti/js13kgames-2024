@@ -158,6 +158,8 @@ export const thirdTrack: readonly TT[] = [
     TT.SlopeObstacleSlope,
     TT.SlopeObstacleSlope,
     TT.Basic,
+    TT.Basic,
+    TT.Narrow,
     TT.VeryNarrow,
     TT.FullWidth,
     TT.Finish,
