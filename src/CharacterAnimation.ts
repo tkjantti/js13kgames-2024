@@ -71,8 +71,8 @@ export function renderCharacter(
             bouncing = easeInOutSine(triangle(period / 2, t)) * 0.04 * h;
             break;
         case CharacterAnimation.Walk:
-            period = 800;
-            bouncing = easeInOutSine(triangle(period / 2, t)) * 0.02 * h;
+            period = 250;
+            bouncing = easeInOutSine(triangle(period / 2, t / 2)) * 0.015 * h;
             leg1Angle = arm2Angle =
                 -Math.PI / 8 +
                 easeInOutQuad(triangle(period, t)) * (Math.PI / 4);
@@ -106,8 +106,8 @@ export function renderCharacter(
     cx.save();
     cx.translate(0, -bouncing);
 
-    const armLength = 0.35 * h;
-    const legLength = 0.3 * h;
+    const armLength = 0.3 * h;
+    const legLength = 0.25 * h;
     const torsoLength = 0.4 * h;
 
     const limbWidth = 0.2 * w;
@@ -131,7 +131,7 @@ export function renderCharacter(
     cx.lineJoin = "round";
     cx.lineCap = "round";
 
-    cx.shadowOffsetY = 20;
+    cx.shadowOffsetY = 10;
     cx.shadowBlur = 10;
     cx.shadowColor = "rgba(0, 0, 0, 0.5)";
 

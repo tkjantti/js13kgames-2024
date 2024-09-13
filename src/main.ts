@@ -26,8 +26,8 @@ import "./style.css";
 import { canvas } from "./graphics";
 import { init } from "./game";
 
-const maxWidth = 1920;
-const maxHeight = 1080;
+const maxWidth = 1280;
+const maxHeight = 720;
 
 const resize = (): void => {
     // Calculate the aspect ratio

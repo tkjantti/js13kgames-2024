@@ -7,3 +7,7 @@ body {
 body {
     background-color: black;
 }
+canvas {
+    image-rendering: auto;
+    -ms-interpolation-mode: bicubic;
+}
