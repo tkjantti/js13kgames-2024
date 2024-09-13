@@ -25,23 +25,29 @@
 import { TT } from "./TrackElement";
 
 export const simpleTrack: readonly TT[] = [
+    TT.Checkpoint,
+
+    TT.FullWidth,
     TT.FullWidth,
     TT.FullWidth,
     TT.Checkpoint,
 
     TT.Basic,
-    TT.SlopeEmptySlope,
+    TT.SlopeEmptyPassage,
     TT.SlopeEmptyPassage,
     TT.DualPassage,
     TT.Basic,
     TT.RightPassage,
     TT.RightPassage,
     TT.Basic,
-    TT.TwoRafts,
+    TT.Basic,
+    TT.Raft,
     TT.Chasm,
     TT.FullWidth,
     TT.Checkpoint,
 
+    TT.BasicSteepSlope,
+    TT.BasicSlope,
     TT.FullWidthWithObstacles,
     TT.FullWidthWithMoreObstacles,
     TT.FullWidthWithObstacles,
@@ -53,7 +59,8 @@ export const simpleTrack: readonly TT[] = [
 ];
 
 export const secondTrack: readonly TT[] = [
-    TT.FullWidth,
+    TT.Checkpoint,
+
     TT.FullWidth,
     TT.BasicSteepSlope,
     TT.BasicSlope,
@@ -97,6 +104,8 @@ export const secondTrack: readonly TT[] = [
 ];
 
 export const thirdTrack: readonly TT[] = [
+    TT.Checkpoint,
+
     TT.FullWidth,
     TT.Basic,
     TT.Narrow,
